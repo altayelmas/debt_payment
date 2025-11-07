@@ -1,0 +1,6 @@
+@debt_payment_backend_HostAddress = http://localhost:5047
+
+GET {{debt_payment_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

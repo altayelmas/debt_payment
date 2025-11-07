@@ -1,0 +1,124 @@
+version: '3.8'
+
+networks:
+  debt-network:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: debt_postgres_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - debt-network
+  
+  identityservice:
+    container_name: identity_service
+    build:
+      context: .
+      dockerfile: IdentityService/Dockerfile
+    restart: always
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Database=identity_db;Username=postgres;Password=postgres
+      - Jwt__Key=ewffes4gfa54e4gae5g41aea4sd68as4f61g354aef343D4fsf343a4fad47ga984654sdfa4g6s4
+      - Jwt__Issuer=DebtCalculatorApi
+      - Jwt__Audience=DebtCalculatorClient
+    networks:
+      - debt-network
+    depends_on:
+      - db
+    
+  debtservice:
+    container_name: debt_service
+    build:
+      context: .
+      dockerfile: DebtService/Dockerfile
+    restart: always
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Database=debt_db;Username=postgres;Password=postgres
+      - Jwt__Key=ewffes4gfa54e4gae5g41aea4sd68as4f61g354aef343D4fsf343a4fad47ga984654sdfa4g6s4
+      - Jwt__Issuer=DebtCalculatorApi
+      - Jwt__Audience=DebtCalculatorClient
+    networks:
+      - debt-network
+    depends_on:
+      - db
+    
+  calculationservice:
+    container_name: calculation_service
+    build:
+      context: .
+      dockerfile: CalculationService/Dockerfile
+    restart: always
+    ports:
+      - "5003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ServiceEndpoints__DebtService=http://debtservice:8080 
+      - Jwt__Key=ewffes4gfa54e4gae5g41aea4sd68as4f61g354aef343D4fsf343a4fad47ga984654sdfa4g6s4
+      - Jwt__Issuer=DebtCalculatorApi
+      - Jwt__Audience=DebtCalculatorClient
+    networks:
+      - debt-network
+    depends_on:
+      - debtservice
+
+  apigateway:
+    container_name: api_gateway
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+    restart: always
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ReverseProxy__Clusters__identity-cluster__Destinations__destination1__Address=http://identityservice:8080
+      - ReverseProxy__Clusters__debt-cluster__Destinations__destination1__Address=http://debtservice:8080
+      - ReverseProxy__Clusters__calculation-cluster__Destinations__destination1__Address=http://calculationservice:8080
+      - Jwt__Key=ewffes4gfa54e4gae5g41aea4sd68as4f61g354aef343D4fsf343a4fad47ga984654sdfa4g6s4
+      - Jwt__Issuer=DebtCalculatorApi
+      - Jwt__Audience=DebtCalculatorClient
+    networks:
+      - debt-network
+    depends_on:
+      - identityservice
+      - debtservice
+      - calculationservice
+
+  frontend:
+    container_name: frontend_client
+    build:
+      context: ../debt_payment_frontend  
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000 
+      - NODE_ENV=production
+    networks:
+      - debt-network
+    depends_on:
+      - apigateway
+
+volumes:
+  postgres_data:
+    driver: local

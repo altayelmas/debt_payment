@@ -1,0 +1,8 @@
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.csproj.AssemblyReference.cache
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.AssemblyInfoInputs.cache
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.AssemblyInfo.cs
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.csproj.CoreCompileInputs.cache
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment_backend\obj\Debug\net8.0\debt_payment_backend.sourcelink.json
