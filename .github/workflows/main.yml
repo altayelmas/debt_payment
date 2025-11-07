@@ -19,13 +19,13 @@ jobs:
         dotnet-version: '8.0.x'
     
     - name: Restore Project
-      run: ./debt_payment_backend.sln
+      run: ./debt_payment_backend/debt_payment_backend.sln
     
     - name: Build Project
-      run: dotnet build ./debt_payment_backend.sln --no-restore
+      run: dotnet build ./debt_payment_backend/debt_payment_backend.sln --no-restore
     
     - name: Run Tests
-      run: dotnet test ./debt_payment_backend.Tests/debt_payment_backend.Tests.csproj --no-build --verbosity normal
+      run: dotnet test ./debt_payment_backend/debt_payment_backend.Tests/debt_payment_backend.Tests.csproj --no-build --verbosity normal
 
   build-docker:
     needs: test
