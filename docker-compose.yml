@@ -20,9 +20,10 @@ services:
       - debt-network
   
   identityservice:
+    image: altayelmas/identityservice
     container_name: identity_service
     build:
-      context: .
+      context: ./debt_payment_backend
       dockerfile: IdentityService/Dockerfile
     restart: always
     ports:
@@ -40,9 +41,10 @@ services:
       - db
     
   debtservice:
+    image: altayelmas/debtservice
     container_name: debt_service
     build:
-      context: .
+      context: ./debt_payment_backend
       dockerfile: DebtService/Dockerfile
     restart: always
     ports:
@@ -60,9 +62,10 @@ services:
       - db
     
   calculationservice:
+    image: altayelmas/calculationservice
     container_name: calculation_service
     build:
-      context: .
+      context: ./debt_payment_backend
       dockerfile: CalculationService/Dockerfile
     restart: always
     ports:
@@ -80,9 +83,10 @@ services:
       - debtservice
 
   apigateway:
+    image: altayelmas/apigateway
     container_name: api_gateway
     build:
-      context: .
+      context: ./debt_payment_backend
       dockerfile: ApiGateway/Dockerfile
     restart: always
     ports:
@@ -104,9 +108,10 @@ services:
       - calculationservice
 
   frontend:
+    image: altayelmas/frontend
     container_name: frontend_client
     build:
-      context: ../debt_payment_frontend  
+      context: ./debt_payment_frontend
       dockerfile: Dockerfile
     restart: always
     ports:
