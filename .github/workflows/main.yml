@@ -118,7 +118,6 @@ jobs:
 
       - name: Build the relevant service and push it as a ‘snapshot’.
         run: |
-          # Manuel tetikleme menüsünden (inputs) gelen değişkeni kullanır
           SERVICE_NAME=${{ inputs.service }}
           IMAGE_TAG="snapshot"
           DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
