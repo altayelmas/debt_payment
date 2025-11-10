@@ -1,4 +1,4 @@
-name: .NET Test ve Docker Build
+name: .NET Test and Docker Build
 
 on:
   push:
@@ -119,7 +119,7 @@ jobs:
       - name: Build the relevant service and push it as a ‘snapshot’.
         run: |
           SERVICE_NAME=${{ inputs.service }}
-          IMAGE_TAG="snapshot"
+          IMAGE_TAG="snapshot-${{ steps.get_sha.outputs.sha }}"
           DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           
           echo "Building $SERVICE_NAME with tag $IMAGE_TAG from main branch"
