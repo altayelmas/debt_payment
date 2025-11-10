@@ -20,7 +20,7 @@ services:
       - debt-network
   
   identityservice:
-    image: altayelmas/identityservice
+    image: ${DOCKERHUB_USERNAME}/identityservice:${IMAGE_TAG:-latest}
     container_name: identity_service
     build:
       context: ./debt_payment_backend
@@ -41,7 +41,7 @@ services:
       - db
     
   debtservice:
-    image: altayelmas/debtservice
+    image: ${DOCKERHUB_USERNAME}/debtservice:${IMAGE_TAG:-latest}
     container_name: debt_service
     build:
       context: ./debt_payment_backend
@@ -62,7 +62,7 @@ services:
       - db
     
   calculationservice:
-    image: altayelmas/calculationservice
+    image: ${DOCKERHUB_USERNAME}/calculationservice:${IMAGE_TAG:-latest}
     container_name: calculation_service
     build:
       context: ./debt_payment_backend
@@ -83,7 +83,7 @@ services:
       - debtservice
 
   apigateway:
-    image: altayelmas/apigateway
+    image: ${DOCKERHUB_USERNAME}/apigateway:${IMAGE_TAG:-latest}
     container_name: api_gateway
     build:
       context: ./debt_payment_backend
@@ -108,7 +108,7 @@ services:
       - calculationservice
 
   frontend:
-    image: altayelmas/frontend
+    image: ${DOCKERHUB_USERNAME}/frontend:${IMAGE_TAG:-latest}
     container_name: frontend_client
     build:
       context: ./debt_payment_frontend
