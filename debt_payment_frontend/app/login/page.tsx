@@ -7,22 +7,55 @@ import {useRouter} from "next/navigation";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { Eye, EyeOff} from 'lucide-react';
+import {Eye, EyeOff, Loader2} from 'lucide-react';
+
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Button} from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {Input} from "@/components/ui/input";
 
 export const dynamic = 'force-dynamic';
 
-type LoginFormInputs = {
-    email: string;
-    password: string;
-};
+const loginFormSchema = z.object({
+    email: z.string()
+        .min(1, {message: "This field cannot be blank"})
+        .email({message: "Invalid email address."}),
+    password: z.string()
+        .min(1, {message: "This field cannot be blank"}),
+});
+
+type LoginFormInputs = z.infer<typeof loginFormSchema>;
 
 export default function LoginPage() {
-    const { register, handleSubmit, formState: {errors} } = useForm<LoginFormInputs>();
     const [loading, setLoading] = useState(false);
-    const { login, isAuthenticated } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const {login, isAuthenticated} = useAuth();
     const router = useRouter();
 
-    const [showPassword, setShowPassword] = useState(false);
+    const form = useForm<LoginFormInputs>({
+        resolver: zodResolver(loginFormSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -56,63 +89,99 @@ export default function LoginPage() {
 
     if (isAuthenticated) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-100">
-                <p className="text-lg">Redirecting to dashboard...</p>
+            <div className="flex items-center justify-center min-h-screen bg-background">
+                <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
+                <p className="text-lg text-muted-foreground">Redirecting to dashboard...</p>
             </div>
         );
     }
 
     return (
-        <div className={"flex items-center justify-center min-h-screen bg-gray-100"}>
-            <div className={"p-8 bg-white rounded-lg shadow-md w-full max-w-md"}>
-                <h2 className={"text-2xl font-bold text-center mb-6 text-gray-900"}>
-                    Login
-                </h2>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className={"mb-4"}>
-                        <label className={"block text-gray-700 mb-2"} htmlFor={"email"}>Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            className={"w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"}
-                            {...register('email', { required: 'This field cannot be blank' })}
-                        />
-                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-                    </div>
-                    <div className={"mb-6"}>
-                        <label className={"block text-gray-700 mb-2"} htmlFor={"password"}>Password</label>
-                        <div className={"relative"}>
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                id="password"
-                                className={"w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"}
-                                {...register('password', {required: 'This field cannot be blank'})}
+        <div className={"flex items-center justify-center min-h-screen bg-background p-4"}>
+            <Card className={"w-full max-w-md"}>
+                <CardHeader className="text-center">
+                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
+                    <CardDescription>Enter your credentials to access your account.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                placeholder="name@example.com"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
                             />
-                            <button
-                                type={"button"}
-                                onMouseDown={() => setShowPassword(true)}
-                                onMouseUp={()=> setShowPassword(false)}
-                                onMouseLeave={()=> setShowPassword(false)}
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <div className="relative">
+                                            <FormControl>
+                                                <Input
+                                                    type={showPassword ? "text" : "password"}
+                                                    placeholder="••••••••"
+                                                    {...field}
+                                                    autoComplete="current-password"
+                                                />
+                                            </FormControl>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                className="absolute inset-y-0 right-0 h-full aspect-square"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-4 w-4" aria-hidden="true"/>
+                                                ) : (
+                                                    <Eye className="h-4 w-4" aria-hidden="true"/>
+                                                )}
+                                                <span className="sr-only">
+                                                    {showPassword ? "Hide password" : "Show password"}
+                                                </span>
+                                            </Button>
+                                        </div>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full"
                             >
-                                {showPassword ? <EyeOff /> : <Eye />}
-                            </button>
-                        </div>
-                        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={"w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-colors"}
-                    >
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
-                <p className={"text-center mt-4 text-sm text-gray-700"}>
-                    Don&#39;t have an account?
-                    <Link href={"/register"} className={"text-blue-600 hover:underline ml-1"}>Register</Link>
-                </p>
-            </div>
+                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                                {loading ? 'Logging in...' : 'Login'}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+                <CardFooter>
+                    <p className="text-center text-sm text-muted-foreground w-full">
+                        Don&#39;t have an account?
+                        <Link href={"/register"} className="text-primary hover:underline ml-1 font-semibold">
+                            Register
+                        </Link>
+                    </p>
+                </CardFooter>
+            </Card>
         </div>
     );
 }
