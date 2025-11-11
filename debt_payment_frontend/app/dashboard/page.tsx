@@ -193,6 +193,51 @@ export default function DashboardPage() {
                 <Navbar/>
                 <main className="container mx-auto p-4 md:p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        <Card className="lg:col-span-3">
+                            <CardHeader>
+                                <CardTitle className="text-xl">
+                                    Overview
+                                </CardTitle>
+                                <CardDescription>
+                                    A financial summary of all your debts.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid gap-4 sm:grid-cols-3">
+                                <div className="p-4 bg-secondary rounded-lg">
+                                    <span className="text-sm text-muted-foreground block uppercase">Total Balance</span>
+                                    {loadingDebts ? (
+                                        <Skeleton className="h-8 w-[150px] mt-1"/>
+                                    ) : (
+                                        <span className="text-2xl font-semibold">
+                                        {formatCurrency(pagedData?.totalBalance || 0)}
+                                    </span>
+                                    )}
+                                </div>
+
+                                <div className="p-4 bg-secondary rounded-lg">
+                                    <span className="text-sm text-muted-foreground block uppercase">Total Min. Monthly Payment</span>
+                                    {loadingDebts ? (
+                                        <Skeleton className="h-8 w-[150px] mt-1"/>
+                                    ) : (
+                                        <span className="text-2xl font-semibold">
+                                        {formatCurrency(pagedData?.totalMonthlyMinPayment || 0)}
+                                    </span>
+                                    )}
+                                </div>
+
+                                <div className="p-4 bg-secondary rounded-lg">
+                                    <span
+                                        className="text-sm text-muted-foreground block uppercase">Total Debt Amount</span>
+                                    {loadingDebts ? (
+                                        <Skeleton className="h-8 w-[50px] mt-1"/>
+                                    ) : (
+                                        <span className="text-2xl font-semibold">
+                                        {pagedData?.totalCount || 0}
+                                    </span>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
                         <Card className="lg:col-span-3 flex flex-col">
                             <CardHeader>
                                 <div className={"flex justify-between items-center gap-4"}>
@@ -280,7 +325,6 @@ export default function DashboardPage() {
                                         </DialogContent>
                                     </Dialog>
                                 </div>
-                                <CardDescription>Total debts: {pagedData?.totalCount || 0}</CardDescription>
                             </CardHeader>
                             <CardContent className="flex-grow">
                                 <div className="h-[320px] overflow-y-auto pr-2 space-y-3">
@@ -298,7 +342,8 @@ export default function DashboardPage() {
                                                         <Card key={debt.debtId} className="shadow-sm">
                                                             <div className="p-4">
                                                                 <div className="flex justify-between items-start gap-4">
-                                                                    <h3 className="text-lg font-semibold leading-tight" title={debt.name}>
+                                                                    <h3 className="text-lg font-semibold leading-tight"
+                                                                        title={debt.name}>
                                                                         {debt.name}
                                                                     </h3>
 
@@ -322,20 +367,24 @@ export default function DashboardPage() {
 
                                                                 <div className="flex flex-wrap gap-x-6 gap-y-1 pt-2">
                                                                     <div>
-                                                                        <span className="text-xs text-muted-foreground block uppercase">Balance</span>
+                                                                        <span
+                                                                            className="text-xs text-muted-foreground block uppercase">Balance</span>
                                                                         <span className="text-sm font-medium">
                                 {formatCurrency(debt.currentBalance)}
                             </span>
                                                                     </div>
                                                                     <div>
-                                                                        <span className="text-xs text-muted-foreground block uppercase">Min. Payment</span>
+                                                                        <span
+                                                                            className="text-xs text-muted-foreground block uppercase">Min. Payment</span>
                                                                         <span className="text-sm font-medium">
                                 {formatCurrency(debt.minPayment)}
                             </span>
                                                                     </div>
                                                                     <div>
-                                                                        <span className="text-xs text-muted-foreground block uppercase mb-1">Interest</span>
-                                                                        <Badge variant="secondary">%{debt.interestRate}</Badge>
+                                                                        <span
+                                                                            className="text-xs text-muted-foreground block uppercase mb-1">Interest</span>
+                                                                        <Badge
+                                                                            variant="secondary">%{debt.interestRate}</Badge>
                                                                     </div>
                                                                 </div>
                                                             </div>
