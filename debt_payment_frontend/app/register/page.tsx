@@ -90,10 +90,21 @@ export default function RegisterPage() {
         } catch (error: any) {
             console.error('Register error:', error);
             let errorMessage = 'Register failed..';
-            if (error.response?.data && Array.isArray(error.response.data)) {
-                errorMessage = error.response.data.map((err: any) => err.description).join(' ');
-            } else if (error.response?.data?.Errors) {
-                errorMessage = error.response.data.Errors.join(' ');
+            const data = error.response?.data;
+
+            if (data && Array.isArray(data)) {
+                if (data.length > 0 && typeof data[0] === 'string') {
+                    errorMessage = data.join(' ');
+                }
+                else if (data.length > 0 && typeof data[0] === 'object' && data[0].description) {
+                    errorMessage = data.map((err: any) => err.description).join(' ');
+                }
+            }
+            else if (data?.Errors && Array.isArray(data.Errors)) {
+                errorMessage = data.Errors.join(' ');
+            }
+            else if (typeof data === 'string') {
+                errorMessage = data;
             }
             toast.error(errorMessage);
         } finally {
