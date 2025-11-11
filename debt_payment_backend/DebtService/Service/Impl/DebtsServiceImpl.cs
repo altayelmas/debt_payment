@@ -131,13 +131,24 @@ namespace debt_payment_backend.DebtService.Service.Impl
 
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+            decimal totalBalance = 0;
+            decimal totalMonthlyMinPayment = 0;
+
+            foreach (var debt in debts) {
+                totalBalance += debt.CurrentBalance;
+                totalMonthlyMinPayment += debt.MinPayment;
+            }
+
+
             return new PaginationDtos<DebtDto>
             {
                 Items = debtDtos,
                 TotalCount = totalCount,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                TotalBalance = totalBalance,
+                TotalMonthlyMinPayment = totalMonthlyMinPayment
             };
         }
     }

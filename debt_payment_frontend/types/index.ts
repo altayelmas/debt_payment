@@ -28,4 +28,6 @@ export interface PagedResult<T> {
     currentPage: number;
     pageSize: number;
     totalPages: number;
+    totalBalance: number;
+    totalMonthlyMinPayment: number;
 }

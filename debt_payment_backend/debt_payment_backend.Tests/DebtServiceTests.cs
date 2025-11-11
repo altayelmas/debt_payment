@@ -46,6 +46,7 @@ namespace debt_payment_backend.Tests
             Assert.Equal(2, result.TotalCount);
             Assert.Equal(2, result.Items.Count());
             Assert.Equal("Debt 1", result.Items.First().Name);
+            Assert.Equal(300, result.TotalBalance);
         }
 
         [Fact]
@@ -65,6 +66,8 @@ namespace debt_payment_backend.Tests
             Assert.NotNull(result);
             Assert.Equal(0, result.TotalCount);
             Assert.Empty(result.Items);
+            Assert.Equal(0, result.TotalBalance);
+            Assert.Equal(0, result.TotalMonthlyMinPayment);
         }
 
         [Fact]

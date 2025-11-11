@@ -13,7 +13,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 
 import {Button} from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import {Label} from "@/components/ui/label";
 import {
     Card,
     CardContent,
@@ -38,14 +38,29 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {Badge} from "@/components/ui/badge";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger
+} from "@/components/ui/tooltip";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Loader2, Trash2} from "lucide-react";
+
 const MAX_CURRENCY_VALUE = 999999999999.99;
 const MAX_INTEREST_RATE = 100;
 
 const debtFormSchema = z.object({
     name: z.string().min(1, {message: "This field is required"}),
-    currentBalance: z.coerce.number() // 'valueAsNumber' yerine 'coerce.number()'
+    currentBalance: z.coerce.number()
         .min(0.01, {message: "Must be at least 0.01"})
         .max(MAX_CURRENCY_VALUE, {message: `Value cannot exceed ${MAX_CURRENCY_VALUE}`}),
     interestRate: z.coerce.number()
@@ -74,6 +89,8 @@ export default function DashboardPage() {
     const [loadingDebts, setLoadingDebts] = useState(true);
     const [calculating, setCalculating] = useState(false);
     const [extraPayment, setExtraPayment] = useState('0');
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const router = useRouter();
     const {isAuthenticated} = useAuth();
@@ -118,6 +135,7 @@ export default function DashboardPage() {
                 fetchDebts(1);
             }
             form.reset();
+            setIsModalOpen(false);
         } catch (error) {
             toast.error('An error occurred while adding the debt.');
         }
@@ -175,80 +193,93 @@ export default function DashboardPage() {
                 <Navbar/>
                 <main className="container mx-auto p-4 md:p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                        <Card className="lg:col-span-1">
+                        <Card className="lg:col-span-3 flex flex-col">
                             <CardHeader>
-                                <CardTitle className="text-2xl">Add new debt</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onAddDebt)} className="space-y-4">
+                                <div className={"flex justify-between items-center gap-4"}>
+                                    <CardTitle className="text-2xl">Current Debts</CardTitle>
 
-                                        <FormField
-                                            control={form.control}
-                                            name="name"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Debt Name</FormLabel>
-                                                    <FormControl>
-                                                        <Input placeholder="E.g. Credit Card" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
+                                    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button>+ Add Debt</Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[425px]">
+                                            <DialogHeader>
+                                                <DialogTitle>Add new debt</DialogTitle>
+                                            </DialogHeader>
+                                            <div className="pt-4">
+                                                <Form {...form}>
+                                                    <form onSubmit={form.handleSubmit(onAddDebt)} className="space-y-4">
 
-                                        <FormField
-                                            control={form.control}
-                                            name="currentBalance"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Current Balance (TL)</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" min="0" step="0.01" placeholder="1500" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="name"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Debt Name</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input
+                                                                            placeholder="E.g. Credit Card" {...field} />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
 
-                                        <FormField
-                                            control={form.control}
-                                            name="interestRate"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Annual Interest Rate (%)</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" min="0" step="0.01" placeholder="24.5" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="currentBalance"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Current Balance (TL)</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input type="number" min="0" step="0.01"
+                                                                               placeholder="1500" {...field} />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
 
-                                        <FormField
-                                            control={form.control}
-                                            name="minPayment"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormLabel>Min. Monthly Payment (TL)</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="number" min="0" step="0.01" placeholder="150" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage/>
-                                                </FormItem>
-                                            )}
-                                        />
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="interestRate"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Annual Interest Rate (%)</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input type="number" min="0" step="0.01"
+                                                                               placeholder="24.5" {...field} />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
 
-                                        <Button type="submit" className="w-full">
-                                            Add Debt
-                                        </Button>
-                                    </form>
-                                </Form>
-                            </CardContent>
-                        </Card>
-                        <Card className="lg:col-span-2 flex flex-col">
-                            <CardHeader>
-                                <CardTitle className="text-2xl">Current Debts</CardTitle>
+                                                        <FormField
+                                                            control={form.control}
+                                                            name="minPayment"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Min. Monthly Payment (TL)</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input type="number" min="0" step="0.01"
+                                                                               placeholder="150" {...field} />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+
+                                                        <Button type="submit" className="w-full">
+                                                            {form.formState.isSubmitting ? <Loader2
+                                                                className="mr-2 h-4 w-4 animate-spin"/> : "Add Debt"}
+                                                        </Button>
+                                                    </form>
+                                                </Form>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                                 <CardDescription>Total debts: {pagedData?.totalCount || 0}</CardDescription>
                             </CardHeader>
                             <CardContent className="flex-grow">
@@ -261,31 +292,59 @@ export default function DashboardPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            {pagedData && pagedData.items.length > 0 ? (
-                                                pagedData.items.map(debt => (
-                                                    <div key={debt.debtId}
-                                                         className="p-3 border rounded-md flex justify-between items-center flex-wrap">
-                                                        <div>
-                                                            <p className="font-semibold text-gray-700">{debt.name}</p>
-                                                            <p className="text-sm text-gray-600">
-                                                                Balance: {formatCurrency(debt.currentBalance)} |
-                                                                Interest: %{debt.interestRate} |
-                                                                Min. Payment: {formatCurrency(debt.minPayment)}
-                                                            </p>
-                                                        </div>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="text-red-500 hover:text-red-700"
-                                                            onClick={() => handleDeleteDebt(debt.debtId)}>
-                                                            <Trash2 className="h-4 w-4 mr-1"/>
-                                                            Delete
-                                                        </Button>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <p className="text-gray-500">You have no outstanding debt.</p>
-                                            )}
+                                            <TooltipProvider>
+                                                {pagedData && pagedData.items.length > 0 ? (
+                                                    pagedData.items.map(debt => (
+                                                        <Card key={debt.debtId} className="shadow-sm">
+                                                            <div className="p-4">
+                                                                <div className="flex justify-between items-start gap-4">
+                                                                    <h3 className="text-lg font-semibold leading-tight" title={debt.name}>
+                                                                        {debt.name}
+                                                                    </h3>
+
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <Button
+                                                                                variant="ghost"
+                                                                                size="icon"
+                                                                                className="text-muted-foreground hover:text-destructive flex-shrink-0 -mt-2 -mr-1"
+                                                                                onClick={() => handleDeleteDebt(debt.debtId)}>
+                                                                                <Trash2 className="h-5 w-5"/>
+                                                                                <span className="sr-only">Delete</span>
+                                                                            </Button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            <p>Delete debt</p>
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </div>
+
+
+                                                                <div className="flex flex-wrap gap-x-6 gap-y-1 pt-2">
+                                                                    <div>
+                                                                        <span className="text-xs text-muted-foreground block uppercase">Balance</span>
+                                                                        <span className="text-sm font-medium">
+                                {formatCurrency(debt.currentBalance)}
+                            </span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span className="text-xs text-muted-foreground block uppercase">Min. Payment</span>
+                                                                        <span className="text-sm font-medium">
+                                {formatCurrency(debt.minPayment)}
+                            </span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <span className="text-xs text-muted-foreground block uppercase mb-1">Interest</span>
+                                                                        <Badge variant="secondary">%{debt.interestRate}</Badge>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </Card>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-gray-500">You have no outstanding debt.</p>
+                                                )}
+                                            </TooltipProvider>
                                         </>
                                     )}
                                 </div>
@@ -332,7 +391,8 @@ export default function DashboardPage() {
                         <Card className="lg:col-span-3">
                             <CardHeader>
                                 <CardTitle className="text-2xl">Calculation</CardTitle>
-                                <CardDescription>Enter an extra budget to speed up your debt repayment.</CardDescription>
+                                <CardDescription>Enter an extra budget to speed up your debt
+                                    repayment.</CardDescription>
                             </CardHeader>
                             <CardContent className="flex flex-col sm:flex-row sm:items-end gap-4">
                                 <div className="flex-1 max-w-xs">
