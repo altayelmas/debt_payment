@@ -52,8 +52,19 @@ import {
     TooltipProvider,
     TooltipTrigger
 } from "@/components/ui/tooltip";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {Skeleton} from "@/components/ui/skeleton";
-import {Loader2, Trash2} from "lucide-react";
+import {Loader2, Pencil, Trash2, Inbox} from "lucide-react";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 const MAX_INTEREST_RATE = 100;
@@ -81,6 +92,23 @@ const debtFormSchema = z.object({
 
 type DebtFormInputs = z.infer<typeof debtFormSchema>;
 
+const calcFormSchema = z.object({
+    extraPayment: z.coerce.number()
+        .min(0, {message: "Cannot be negative"})
+        .max(MAX_CURRENCY_VALUE, {message: `Value cannot exceed ${MAX_CURRENCY_VALUE}`})
+        .optional()
+        .default(0 as number),
+});
+
+type CalcFormInputs = z.infer<typeof calcFormSchema>;
+
+const defaultFormValues = {
+    name: "",
+    currentBalance: undefined,
+    interestRate: undefined,
+    minPayment: undefined,
+};
+
 const PAGE_SIZE = 5;
 
 export default function DashboardPage() {
@@ -88,21 +116,21 @@ export default function DashboardPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [loadingDebts, setLoadingDebts] = useState(true);
     const [calculating, setCalculating] = useState(false);
-    const [extraPayment, setExtraPayment] = useState('0');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
 
     const router = useRouter();
     const {isAuthenticated} = useAuth();
 
     const form = useForm<DebtFormInputs>({
         resolver: zodResolver(debtFormSchema),
-        defaultValues: {
-            name: "",
-            currentBalance: undefined,
-            interestRate: undefined,
-            minPayment: undefined,
-        }
+        defaultValues: defaultFormValues
+    });
+
+    const calcForm = useForm<CalcFormInputs>({
+        resolver: zodResolver(calcFormSchema),
+        defaultValues: {extraPayment: 0}
     });
 
     useEffect(() => {
@@ -125,25 +153,40 @@ export default function DashboardPage() {
         }
     };
 
-    const onAddDebt = async (data: DebtFormInputs) => {
+    const onSubmitDebt = async (data: DebtFormInputs) => {
         try {
-            await api.post('/api/Debt', data);
-            toast.success('The debt has been successfully added.');
-            if (currentPage !== 1) {
-                setCurrentPage(1);
+            if (editingDebt) {
+                await api.put(`/api/Debt/${editingDebt.debtId}`, data);
+                toast.success('The debt has been successfully updated.');
             } else {
-                fetchDebts(1);
+                await api.post('/api/Debt', data);
+                toast.success('The debt has been successfully added.');
             }
-            form.reset();
+
+            form.reset(defaultFormValues);
             setIsModalOpen(false);
+            setEditingDebt(null);
+
+            if (editingDebt) {
+                fetchDebts(currentPage);
+            } else {
+                if (currentPage !== 1) {
+                    setCurrentPage(1);
+                } else {
+                    fetchDebts(1);
+                }
+            }
+
         } catch (error) {
-            toast.error('An error occurred while adding the debt.');
+            if (editingDebt) {
+                toast.error('An error occurred while updating the debt.');
+            } else {
+                toast.error('An error occurred while adding the debt.');
+            }
         }
     };
 
     const handleDeleteDebt = async (id: number) => {
-        if (!confirm('Are you sure you want to delete this debt?')) return;
-
         try {
             await api.delete(`/api/Debt/${id}`);
             toast.success('Debt deleted.');
@@ -157,10 +200,11 @@ export default function DashboardPage() {
         }
     };
 
-    const handleCalculate = async () => {
+    const onCalculateSubmit = async (data: CalcFormInputs) => {
         setCalculating(true);
         try {
-            const extraPaymentValue = parseFloat(extraPayment) || 0;
+            const extraPaymentValue = data.extraPayment || 0;
+
             const requestData = {extraMonthlyPayment: extraPaymentValue};
             const response = await api.post<CalculationResult>('/api/calculation/calculate', requestData);
             const payloadToStore = {
@@ -243,17 +287,30 @@ export default function DashboardPage() {
                                 <div className={"flex justify-between items-center gap-4"}>
                                     <CardTitle className="text-2xl">Current Debts</CardTitle>
 
-                                    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                                        <DialogTrigger asChild>
+                                    <Dialog
+                                        open={isModalOpen}
+                                        onOpenChange={(open) => {
+                                            setIsModalOpen(open);
+                                            if (!open) {
+                                                setEditingDebt(null);
+                                                form.reset(defaultFormValues);
+                                            }
+                                        }}
+                                    >
+                                        <DialogTrigger asChild onClick={() => {
+                                            setEditingDebt(null)
+                                            form.reset(defaultFormValues);
+                                        }}>
                                             <Button>+ Add Debt</Button>
                                         </DialogTrigger>
                                         <DialogContent className="sm:max-w-[425px]">
                                             <DialogHeader>
-                                                <DialogTitle>Add new debt</DialogTitle>
+                                                <DialogTitle>{editingDebt ? 'Edit Debt' : 'Add new debt'}</DialogTitle>
                                             </DialogHeader>
                                             <div className="pt-4">
                                                 <Form {...form}>
-                                                    <form onSubmit={form.handleSubmit(onAddDebt)} className="space-y-4">
+                                                    <form onSubmit={form.handleSubmit(onSubmitDebt)}
+                                                          className="space-y-4">
 
                                                         <FormField
                                                             control={form.control}
@@ -317,7 +374,7 @@ export default function DashboardPage() {
 
                                                         <Button type="submit" className="w-full">
                                                             {form.formState.isSubmitting ? <Loader2
-                                                                className="mr-2 h-4 w-4 animate-spin"/> : "Add Debt"}
+                                                                className="mr-2 h-4 w-4 animate-spin"/> : (editingDebt ? 'Save Changes' : 'Add Debt')}
                                                         </Button>
                                                     </form>
                                                 </Form>
@@ -347,38 +404,85 @@ export default function DashboardPage() {
                                                                         {debt.name}
                                                                     </h3>
 
-                                                                    <Tooltip>
-                                                                        <TooltipTrigger asChild>
-                                                                            <Button
-                                                                                variant="ghost"
-                                                                                size="icon"
-                                                                                className="text-muted-foreground hover:text-destructive flex-shrink-0 -mt-2 -mr-1"
-                                                                                onClick={() => handleDeleteDebt(debt.debtId)}>
-                                                                                <Trash2 className="h-5 w-5"/>
-                                                                                <span className="sr-only">Delete</span>
-                                                                            </Button>
-                                                                        </TooltipTrigger>
-                                                                        <TooltipContent>
-                                                                            <p>Delete debt</p>
-                                                                        </TooltipContent>
-                                                                    </Tooltip>
-                                                                </div>
 
+                                                                    <div className="flex-shrink-0 -mt-2 -mr-1">
+                                                                        <Tooltip>
+                                                                            <TooltipTrigger asChild>
+                                                                                <Button
+                                                                                    variant="ghost"
+                                                                                    size="icon"
+                                                                                    className="text-muted-foreground hover:text-blue-600"
+                                                                                    onClick={() => {
+                                                                                        setEditingDebt(debt);
+                                                                                        form.reset(debt);
+                                                                                        setIsModalOpen(true);
+                                                                                    }}>
+                                                                                    <Pencil className="h-5 w-5"/>
+                                                                                    <span
+                                                                                        className="sr-only">Edit</span>
+                                                                                </Button>
+                                                                            </TooltipTrigger>
+                                                                            <TooltipContent>
+                                                                                <p>Edit debt</p>
+                                                                            </TooltipContent>
+                                                                        </Tooltip>
+                                                                        <AlertDialog>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <AlertDialogTrigger asChild>
+                                                                                        <Button
+                                                                                            variant="ghost"
+                                                                                            size="icon"
+                                                                                            className="text-muted-foreground hover:text-destructive"
+                                                                                        >
+                                                                                            <Trash2
+                                                                                                className="h-5 w-5"/>
+                                                                                            <span
+                                                                                                className="sr-only">Delete</span>
+                                                                                        </Button>
+                                                                                    </AlertDialogTrigger>
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent>
+                                                                                    <p>Delete debt</p>
+                                                                                </TooltipContent>
+                                                                            </Tooltip>
+                                                                            <AlertDialogContent>
+                                                                                <AlertDialogHeader>
+                                                                                    <AlertDialogTitle>Are you
+                                                                                        sure?</AlertDialogTitle>
+                                                                                    <AlertDialogDescription>
+                                                                                        This action cannot be undone.
+                                                                                        You will permanently
+                                                                                        delete <strong
+                                                                                        className="px-1">{debt.name}</strong>.
+                                                                                    </AlertDialogDescription>
+                                                                                </AlertDialogHeader>
+                                                                                <AlertDialogFooter>
+                                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                                    <AlertDialogAction
+                                                                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                                                        onClick={() => handleDeleteDebt(debt.debtId)}
+                                                                                    >
+                                                                                        Delete
+                                                                                    </AlertDialogAction>
+                                                                                </AlertDialogFooter>
+                                                                            </AlertDialogContent>
+                                                                        </AlertDialog>
+                                                                    </div>
+                                                                </div>
 
                                                                 <div className="flex flex-wrap gap-x-6 gap-y-1 pt-2">
                                                                     <div>
                                                                         <span
                                                                             className="text-xs text-muted-foreground block uppercase">Balance</span>
-                                                                        <span className="text-sm font-medium">
-                                {formatCurrency(debt.currentBalance)}
-                            </span>
+                                                                        <span
+                                                                            className="text-sm font-medium">{formatCurrency(debt.currentBalance)}</span>
                                                                     </div>
                                                                     <div>
                                                                         <span
                                                                             className="text-xs text-muted-foreground block uppercase">Min. Payment</span>
-                                                                        <span className="text-sm font-medium">
-                                {formatCurrency(debt.minPayment)}
-                            </span>
+                                                                        <span
+                                                                            className="text-sm font-medium">{formatCurrency(debt.minPayment)}</span>
                                                                     </div>
                                                                     <div>
                                                                         <span
@@ -391,7 +495,16 @@ export default function DashboardPage() {
                                                         </Card>
                                                     ))
                                                 ) : (
-                                                    <p className="text-gray-500">You have no outstanding debt.</p>
+                                                    <div
+                                                        className="flex flex-col items-center justify-center gap-3 text-center py-16">
+                                                        <Inbox className="h-16 w-16 text-muted-foreground"/>
+                                                        <h3 className="text-xl font-semibold text-foreground">
+                                                            No debts added yet
+                                                        </h3>
+                                                        <p className="text-muted-foreground">
+                                                            Click the + Add Debt button above to get started.
+                                                        </p>
+                                                    </div>
                                                 )}
                                             </TooltipProvider>
                                         </>
@@ -438,47 +551,56 @@ export default function DashboardPage() {
                         </Card>
 
                         <Card className="lg:col-span-3">
-                            <CardHeader>
-                                <CardTitle className="text-2xl">Calculation</CardTitle>
-                                <CardDescription>Enter an extra budget to speed up your debt
-                                    repayment.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex flex-col sm:flex-row sm:items-end gap-4">
-                                <div className="flex-1 max-w-xs">
-                                    <Label>Monthly Extra Budget (TL)</Label>
-                                    <Input
-                                        type="number"
-                                        step="50"
-                                        min={"0"}
-                                        max={MAX_CURRENCY_VALUE}
-                                        value={extraPayment}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (value === '' || (parseFloat(value) >= 0 && parseFloat(value) <= MAX_CURRENCY_VALUE)) {
-                                                setExtraPayment(value);
-                                            }
-                                        }}
-                                        className="mt-1"
-                                        placeholder="Ex: 500"
-                                    />
-                                </div>
-                                <Button
-                                    size="lg"
-                                    onClick={handleCalculate}
-                                    disabled={calculating || !pagedData || pagedData.totalCount === 0}
-                                    className="text-lg font-semibold"
-                                >
-                                    {calculating && <Loader2 className="mr-2 h-5 w-5 animate-spin"/>}
-                                    {calculating ? 'Calculating...' : 'Calculate'}
-                                </Button>
-                            </CardContent>
-                            {(!pagedData || pagedData.totalCount === 0) && !loadingDebts && (
-                                <CardFooter>
-                                    <p className="text-sm text-red-500">
-                                        To perform the calculation, you must first add the debt.
-                                    </p>
-                                </CardFooter>
-                            )}
+                            <Form {...calcForm}>
+                                <form onSubmit={calcForm.handleSubmit(onCalculateSubmit)}>
+                                    <CardHeader>
+                                        <CardTitle className="text-2xl">Calculation</CardTitle>
+                                        <CardDescription>Enter an extra budget to speed up your debt
+                                            repayment.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="flex flex-col sm:flex-row sm:items-end gap-4">
+                                        <FormField
+                                            control={calcForm.control}
+                                            name="extraPayment"
+                                            render={({field}) => (
+                                                <FormItem className="flex-1 max-w-xs">
+                                                    <FormLabel>Monthly Extra Budget (TL)</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            step="50"
+                                                            min="0"
+                                                            max={MAX_CURRENCY_VALUE}
+                                                            placeholder="0"
+                                                            className="mt-1"
+                                                            {...field}
+                                                            value={field.value ?? ''}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={calculating || !pagedData || pagedData.totalCount === 0}
+                                            className="text-lg font-semibold"
+                                        >
+                                            {calculating && <Loader2 className="mr-2 h-5 w-5 animate-spin"/>}
+                                            {calculating ? 'Calculating...' : 'Calculate'}
+                                        </Button>
+                                    </CardContent>
+                                    {(!pagedData || pagedData.totalCount === 0) && !loadingDebts && (
+                                        <CardFooter>
+                                            <p className="text-sm text-red-500">
+                                                To perform the calculation, you must first add the debt.
+                                            </p>
+                                        </CardFooter>
+                                    )}
+                                </form>
+                            </Form>
                         </Card>
                     </div>
                 </main>
