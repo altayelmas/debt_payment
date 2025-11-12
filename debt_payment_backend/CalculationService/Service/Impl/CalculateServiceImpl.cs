@@ -18,7 +18,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CalculationRepository _calculationRepository;
         private const int MAX_SIMULATION_MONTHS = 1200;
-        public CalculateServiceImpl(IHttpClientFactory httpClientFactory, 
+        public CalculateServiceImpl(IHttpClientFactory httpClientFactory,
         IHttpContextAccessor httpContextAccessor, CalculationRepository calculationRepository)
         {
             _httpClientFactory = httpClientFactory;
@@ -104,7 +104,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
 
             return report.CalculationId;
         }
-        
+
         private StrategyResultDto SimulatePayment(List<DebtDto> userDebts,
             decimal extraMonthlyPayment,
             Func<List<DebtSimulationModel>, IOrderedEnumerable<DebtSimulationModel>> strategyOrder)
@@ -137,7 +137,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     );
                 }
                 decimal monthBeginningBalance = activeDebts.Sum(d => d.CurrentBalance);
-                
+
                 decimal monthlyNewInterest = 0;
                 decimal extraPaymentSnowball = extraMonthlyPayment;
 
@@ -230,16 +230,45 @@ namespace debt_payment_backend.CalculationService.Service.Impl
 
             var reportData = JsonSerializer.Deserialize<CalculationResultDto>(calculationReport.ReportDataJson);
 
-            return reportData;              
+            return reportData;
         }
-    }
-    public class DebtSimulationModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public decimal CurrentBalance { get; set; }
-        public decimal InterestRate { get; set; }
-        public decimal MinPayment { get; set; }
-        public decimal OriginalBalance { get; set; }
+
+        public async Task<List<CalculationHistoryDto>> GetCalculationHistory(string userId)
+        {
+            var reports = await _calculationRepository.GetCalculationsByUserId(userId);
+            var historyList = new List<CalculationHistoryDto>();
+
+            foreach (var report in reports)
+            {
+                var reportData = JsonSerializer.Deserialize<CalculationResultDto>(report.ReportDataJson);
+                if (reportData == null) continue;
+
+                var recommendedResult = reportData.Recommendation.Contains("Avalanche")
+                    ? reportData.AvalancheResult
+                    : reportData.SnowballResult;
+
+                var savedInterest = Math.Abs(reportData.SnowballResult.TotalInterestPaid - reportData.AvalancheResult.TotalInterestPaid);
+
+                historyList.Add(new CalculationHistoryDto
+                {
+                    ReportId = report.CalculationId,
+                    CreatedAt = report.CreatedAt,
+                    TotalDebt = reportData.BeginningDebt,
+                    ExtraPayment = reportData.ExtraPayment,
+                    RecommendedPayOffDate = recommendedResult.PayOffDate,
+                    RecommendedInterestSaved = savedInterest
+                });
+            }
+            return historyList;
+        }
+        public class DebtSimulationModel
+        {
+            public int Id { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public decimal CurrentBalance { get; set; }
+            public decimal InterestRate { get; set; }
+            public decimal MinPayment { get; set; }
+            public decimal OriginalBalance { get; set; }
+        }
     }
 }

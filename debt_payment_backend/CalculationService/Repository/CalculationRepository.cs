@@ -11,5 +11,7 @@ namespace CalculationService.Repository
         Task<CalculationReport?> GetCalculationReportByIdAndUserIdAsync(string userId, Guid reportId);
         Task<bool> SaveChangesAsync();
         Task<CalculationReport> AddCalculationReportAsync(CalculationReport calculationReport);
+        Task<List<CalculationReport>> GetCalculationsByUserId(string userId);
+
     }
 }

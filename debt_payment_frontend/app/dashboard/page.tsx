@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
-import {CalculationResult, Debt, PagedResult} from '@/types';
+import {CalculationHistoryDto, CalculationResult, Debt, PagedResult} from '@/types';
 import toast from 'react-hot-toast';
 import {useForm} from 'react-hook-form';
 import {useRouter} from 'next/navigation';
@@ -65,6 +65,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Loader2, Pencil, Trash2, Inbox} from "lucide-react";
+import Link from 'next/link';
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 const MAX_INTEREST_RATE = 100;
@@ -120,6 +121,9 @@ export default function DashboardPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
 
+    const [history, setHistory] = useState<CalculationHistoryDto[] | null>(null);
+    const [loadingHistory, setLoadingHistory] = useState(true);
+
     const router = useRouter();
     const {isAuthenticated} = useAuth();
 
@@ -139,6 +143,12 @@ export default function DashboardPage() {
         }
     }, [isAuthenticated, currentPage]);
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchHistory();
+        }
+    }, [isAuthenticated]);
+
     const fetchDebts = async (pageNumber: number) => {
         setLoadingDebts(true);
         try {
@@ -150,6 +160,18 @@ export default function DashboardPage() {
             toast.error('Debts could not be loaded.');
         } finally {
             setLoadingDebts(false);
+        }
+    };
+
+    const fetchHistory = async () => {
+        setLoadingHistory(true);
+        try {
+            const response = await api.get<CalculationHistoryDto[]>('/api/calculation/history');
+            setHistory(response.data);
+        } catch (error) {
+            toast.error('Could not load calculation history.');
+        } finally {
+            setLoadingHistory(false);
         }
     };
 
@@ -603,6 +625,60 @@ export default function DashboardPage() {
                                     )}
                                 </form>
                             </Form>
+                        </Card>
+                        <Card className="lg:col-span-3">
+                            <CardHeader>
+                                <CardTitle className="text-2xl">Calculation History</CardTitle>
+                                <CardDescription>
+                                    Your 10 most recent calculation scenarios.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {loadingHistory ? (
+                                    <div className="space-y-3">
+                                        <Skeleton className="h-[60px] w-full rounded-md"/>
+                                        <Skeleton className="h-[60px] w-full rounded-md"/>
+                                    </div>
+                                ) : !history || history.length === 0 ? (
+                                    <p className="text-muted-foreground">You have no saved calculations yet.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {history.map(report => (
+                                            <Link
+                                                key={report.reportId}
+                                                href={`/results/${report.reportId}`}
+                                                className="block p-4 border rounded-lg hover:bg-muted transition-colors"
+                                            >
+                                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                                                    <span className="font-semibold text-blue-600">
+                                                        {new Date(report.createdAt).toLocaleString('tr-TR', {
+                                                            day: '2-digit',
+                                                            month: 'long',
+                                                            year: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </span>
+                                                    <span className="text-sm font-semibold text-foreground">
+                                                        {report.recommendedPayOffDate}
+                                                    </span>
+                                                </div>
+                                                <div className="text-sm text-muted-foreground mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                    <div>
+                                                        Total Debt: <strong className="text-foreground">{formatCurrency(report.totalDebt)}</strong>
+                                                    </div>
+                                                    <div>
+                                                        Extra Payment: <strong className="text-foreground">{formatCurrency(report.extraPayment)}</strong>
+                                                    </div>
+                                                    <div>
+                                                        Saved: <strong className="text-green-600">{formatCurrency(report.recommendedInterestSaved)}</strong>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
                         </Card>
                     </div>
                 </main>

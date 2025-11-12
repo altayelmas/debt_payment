@@ -41,3 +41,12 @@ export interface MonthlyPaymentDetail {
     principalPaid: number;
     endingBalance: number;
 }
+
+export interface CalculationHistoryDto {
+    reportId: string;
+    createdAt: string;
+    totalDebt: number;
+    extraPayment: number;
+    recommendedPayOffDate: string;
+    recommendedInterestSaved: number;
+}

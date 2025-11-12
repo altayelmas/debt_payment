@@ -35,6 +35,10 @@ namespace debt_payment_backend.CalculationService.Controller
             try
             {
                 var userId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
                 var result = await _calculationService.CalculateAsync(request, userId);
 
                 if (result == null)
@@ -65,6 +69,10 @@ namespace debt_payment_backend.CalculationService.Controller
         public async Task<IActionResult> GetReportById([FromRoute] Guid reportId)
         {
             var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
 
             var report = await _calculationService.GetCalculationResultById(userId, reportId);
             if (report == null)
@@ -72,8 +80,21 @@ namespace debt_payment_backend.CalculationService.Controller
                 return NotFound("Calculation report not found or you do not have permission.");
             }
             return Ok(report);
-           
-            
+
+
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetCalculationHistory()
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+            var calculationHistory = await _calculationService.GetCalculationHistory(userId);
+
+            return Ok(calculationHistory);
         }
     }
 }

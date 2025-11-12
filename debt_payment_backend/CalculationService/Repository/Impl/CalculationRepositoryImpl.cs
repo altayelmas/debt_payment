@@ -29,6 +29,16 @@ namespace CalculationService.Repository.Impl
             && c.UserId == userId);
         }
 
+        public async Task<List<CalculationReport>> GetCalculationsByUserId(string userId)
+        {
+            return await _context.CalculationReports
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(10)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
         public async Task<bool> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
