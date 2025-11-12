@@ -131,14 +131,15 @@ namespace debt_payment_backend.DebtService.Service.Impl
 
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+            var allDebts = await _debtRepository.GetAllDebtsByUserIdAsync(userId);
+
             decimal totalBalance = 0;
             decimal totalMonthlyMinPayment = 0;
 
-            foreach (var debt in debts) {
+            foreach (var debt in allDebts) {
                 totalBalance += debt.CurrentBalance;
                 totalMonthlyMinPayment += debt.MinPayment;
             }
-
 
             return new PaginationDtos<DebtDto>
             {
