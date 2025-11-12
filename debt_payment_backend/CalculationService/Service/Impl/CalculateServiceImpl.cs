@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CalculationService.Model.Dto;
@@ -53,6 +55,13 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             {
                 throw new InvalidOperationException("No debts found to calculate.");
             }
+            string scenarioHash = CreateScenarioHash(userId, request.ExtraMonthlyPayment, userDebts);
+            var existingReport = await _calculationRepository.GetReportByHashAsync(scenarioHash);
+
+            if (existingReport != null)
+            {
+                return existingReport.CalculationId;
+            }
 
             var snowballResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForSnowball);
             var avalancheResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForAvalanche);
@@ -96,13 +105,34 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 CalculationId = Guid.NewGuid(),
                 UserId = userId,
                 CreatedAt = DateTime.UtcNow,
-                ReportDataJson = JsonSerializer.Serialize(resultDto)
+                ReportDataJson = JsonSerializer.Serialize(resultDto),
+                ScenarioHash = scenarioHash
             };
 
             await _calculationRepository.AddCalculationReportAsync(report);
             await _calculationRepository.SaveChangesAsync();
 
             return report.CalculationId;
+        }
+
+        private string CreateScenarioHash(string userId, decimal extraPayment, List<DebtDto> debts)
+        {
+            var orderedDebts = debts.OrderBy(d => d.DebtId);
+            
+            var signatureBuilder = new StringBuilder();
+            signatureBuilder.Append($"USER:{userId};");
+            signatureBuilder.Append($"EXTRA:{extraPayment.ToString("G")};");
+            
+            foreach (var debt in orderedDebts)
+            {
+                signatureBuilder.Append($"DEBT:{debt.CurrentBalance.ToString("G")}:{debt.InterestRate.ToString("G")}:{debt.MinPayment.ToString("G")}|");
+            }
+
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(signatureBuilder.ToString());
+            var hashBytes = sha256.ComputeHash(bytes);
+            
+            return Convert.ToBase64String(hashBytes);
         }
 
         private StrategyResultDto SimulatePayment(List<DebtDto> userDebts,

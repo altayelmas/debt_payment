@@ -43,5 +43,12 @@ namespace CalculationService.Repository.Impl
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<CalculationReport?> GetReportByHashAsync(string hash)
+        {
+            return await _context.CalculationReports
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.ScenarioHash == hash);
+        }
     }
 }
