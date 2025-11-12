@@ -11,9 +11,24 @@ import toast from 'react-hot-toast';
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { buttonVariants } from "@/components/ui/button";
+import {Button, buttonVariants} from "@/components/ui/button";
 import { ArrowLeft, Lightbulb, Loader2 } from "lucide-react";
 import { Badge } from '@/components/ui/badge';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table";
 
 const formatCurrency = (value: number) =>
     (value || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
@@ -30,7 +45,7 @@ function ResultCard({ result, isSnowball, isRecommended }: {
         : "Mathematically the most efficient: Minimizes total interest.";
 
     return (
-        <Card className={`border-t-4 ${borderColor} relative`}>
+        <Card className={`border-t-4 ${borderColor} relative flex flex-col`}>
             {isRecommended && (
                 <Badge className="absolute -top-3 right-4">Recommended</Badge>
             )}
@@ -39,7 +54,7 @@ function ResultCard({ result, isSnowball, isRecommended }: {
                     {result.strategyName}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-lg">
+            <CardContent className="space-y-4 text-lg flex-grow">
                 <div className="flex justify-between items-baseline">
                     <span className="text-base text-muted-foreground">End Date</span>
                     <span className="font-semibold">{result.payOffDate}</span>
@@ -53,8 +68,55 @@ function ResultCard({ result, isSnowball, isRecommended }: {
                     <span className="font-semibold">{formatCurrency(result.totalPaid)}</span>
                 </div>
             </CardContent>
+
             <CardFooter>
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <div className="flex flex-col items-start gap-4 w-full">
+                    <p className="text-sm text-muted-foreground">{description}</p>
+
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                View Monthly Plan
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-3xl">
+                            <DialogHeader>
+                                <DialogTitle>{result.strategyName} - Payment Plan</DialogTitle>
+                            </DialogHeader>
+
+                            <div className="max-h-[60vh] overflow-y-auto pr-4">
+                                <Table>
+                                    <TableHeader className="sticky top-0 bg-background">
+                                        <TableRow>
+                                            <TableHead className="w-[60px]">Month</TableHead>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead className="text-right">Interest Paid</TableHead>
+                                            <TableHead className="text-right">Principal Paid</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {result.paymentSchedule.map((month) => (
+                                            <TableRow key={month.month}>
+                                                <TableCell className="font-medium">{month.month}</TableCell>
+                                                <TableCell>{month.monthYear}</TableCell>
+                                                <TableCell className="text-right text-red-600">
+                                                    {formatCurrency(month.interestPaid)}
+                                                </TableCell>
+                                                <TableCell className="text-right text-green-600">
+                                                    {formatCurrency(month.principalPaid)}
+                                                </TableCell>
+                                                <TableCell className="text-right font-medium">
+                                                    {formatCurrency(month.endingBalance)}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </CardFooter>
         </Card>
     );

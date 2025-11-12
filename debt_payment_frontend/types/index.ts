@@ -13,6 +13,7 @@ export interface StrategyResult {
     totalMonths: number;
     totalPaid: number;
     payOffDate: string;
+    paymentSchedule: MonthlyPaymentDetail[];
 }
 
 export interface CalculationResult {
@@ -20,6 +21,7 @@ export interface CalculationResult {
     snowballResult: StrategyResult;
     avalancheResult: StrategyResult;
     recommendation: string;
+    extraPayment: number;
 }
 
 export interface PagedResult<T> {
@@ -30,4 +32,12 @@ export interface PagedResult<T> {
     totalPages: number;
     totalBalance: number;
     totalMonthlyMinPayment: number;
+}
+
+export interface MonthlyPaymentDetail {
+    month: number;
+    monthYear: string;
+    interestPaid: number;
+    principalPaid: number;
+    endingBalance: number;
 }

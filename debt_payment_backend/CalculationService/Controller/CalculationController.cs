@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using debt_payment_backend.CalculationService.Model.Dto;
 using debt_payment_backend.CalculationService.Service;
@@ -16,9 +17,11 @@ namespace debt_payment_backend.CalculationService.Controller
     public class CalculationController : ControllerBase
     {
         private readonly CalculateService _calculationService;
-        public CalculationController(CalculateService calculationService)
+        private readonly ILogger<CalculationController> _logger;
+        public CalculationController(CalculateService calculationService, ILogger<CalculationController> logger)
         {
             _calculationService = calculationService;
+            _logger = logger;
         }
 
         private string GetUserIdFromToken()
@@ -27,7 +30,7 @@ namespace debt_payment_backend.CalculationService.Controller
         }
 
         [HttpPost("calculate")]
-        public async Task<ActionResult<CalculationResultDto>> Calculate([FromBody] CalculationRequestDto request)
+        public async Task<IActionResult> Calculate([FromBody] CalculationRequestDto request)
         {
             try
             {
@@ -39,18 +42,38 @@ namespace debt_payment_backend.CalculationService.Controller
                     return BadRequest("No debts are found for the calculation.");
                 }
 
-                return Ok(result);
-            } catch (InvalidOperationException e)
+                return Ok(new { reportId = result });
+            }
+            catch (InvalidOperationException e)
             {
                 return BadRequest(e.Message);
-            } catch (OverflowException e)
+            }
+            catch (OverflowException e)
             {
                 return BadRequest("The payment amount has grown too large to calculate the balance because it does not cover the monthly interest. Please increase the payment amount.");
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
+                var userIdForLog = User?.Claims?.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "unknown";
+                _logger.LogError(e, "Unknown error during calculation. User: {UserId}", userIdForLog);
                 return StatusCode(500, "A server-side error occurred during calculation.");
             }
+
+        }
+
+        [HttpGet("{reportId}")]
+        public async Task<IActionResult> GetReportById([FromRoute] Guid reportId)
+        {
+            var userId = GetUserIdFromToken();
+
+            var report = await _calculationService.GetCalculationResultById(userId, reportId);
+            if (report == null)
+            {
+                return NotFound("Calculation report not found or you do not have permission.");
+            }
+            return Ok(report);
            
+            
         }
     }
 }

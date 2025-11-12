@@ -11,5 +11,6 @@ namespace debt_payment_backend.CalculationService.Model.Dto
         public StrategyResultDto SnowballResult { get; set; } = null!;
         public StrategyResultDto AvalancheResult { get; set; } = null!;
         public string Recommendation { get; set; } = string.Empty;
+        public decimal ExtraPayment { get; set; }
     }
 }

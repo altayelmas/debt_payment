@@ -1,7 +1,11 @@
 using System.Text;
+using CalculationService.Data;
+using CalculationService.Repository;
+using CalculationService.Repository.Impl;
 using debt_payment_backend.CalculationService.Service;
 using debt_payment_backend.CalculationService.Service.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -21,6 +25,12 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
+});
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddHttpClient("DebtServiceClient", client =>
@@ -56,6 +66,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<CalculateService, CalculateServiceImpl>();
+builder.Services.AddScoped<CalculationRepository, CalculationRepositoryImpl>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -88,6 +99,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+app.ApplyCalculationMigrations();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

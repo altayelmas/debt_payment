@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Model.Dto;
+using CalculationService.Model.Entity;
+using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
 
 namespace debt_payment_backend.CalculationService.Service.Impl
@@ -12,14 +16,16 @@ namespace debt_payment_backend.CalculationService.Service.Impl
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly CalculationRepository _calculationRepository;
         private const int MAX_SIMULATION_MONTHS = 1200;
         public CalculateServiceImpl(IHttpClientFactory httpClientFactory, 
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor, CalculationRepository calculationRepository)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
+            _calculationRepository = calculationRepository;
         }
-        public async Task<CalculationResultDto> CalculateAsync(CalculationRequestDto request, string userId)
+        public async Task<Guid> CalculateAsync(CalculationRequestDto request, string userId)
         {
             var httpClient = _httpClientFactory.CreateClient("DebtServiceClient");
 
@@ -45,18 +51,8 @@ namespace debt_payment_backend.CalculationService.Service.Impl
 
             if (userDebts == null || !userDebts.Any())
             {
-                return null;
+                throw new InvalidOperationException("No debts found to calculate.");
             }
-
-             var simulationDebts = userDebts.Select(dto => new DebtSimulationModel
-            {
-                Id = dto.DebtId,
-                Name = dto.Name,
-                CurrentBalance = dto.CurrentBalance,
-                InterestRate = dto.InterestRate / 100,
-                MinPayment = dto.MinPayment,
-                OriginalBalance = dto.CurrentBalance
-            }).ToList();
 
             var snowballResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForSnowball);
             var avalancheResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForAvalanche);
@@ -86,13 +82,27 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 beginningDebt += debt.CurrentBalance;
             }
 
-            return new CalculationResultDto
+            var resultDto = new CalculationResultDto
             {
                 BeginningDebt = beginningDebt,
                 SnowballResult = snowballResult,
                 AvalancheResult = avalancheResult,
-                Recommendation = recommendation
+                Recommendation = recommendation,
+                ExtraPayment = request.ExtraMonthlyPayment
             };
+
+            var report = new CalculationReport
+            {
+                CalculationId = Guid.NewGuid(),
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow,
+                ReportDataJson = JsonSerializer.Serialize(resultDto)
+            };
+
+            await _calculationRepository.AddCalculationReportAsync(report);
+            await _calculationRepository.SaveChangesAsync();
+
+            return report.CalculationId;
         }
         
         private StrategyResultDto SimulatePayment(List<DebtDto> userDebts,
@@ -113,6 +123,8 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             int months = 0;
             decimal totalOriginalPayment = activeDebts.Sum(d => d.OriginalBalance);
 
+            var paymentSchedule = new List<MonthlyPaymentDetailDto>();
+
             while (activeDebts.Any())
             {
                 months++;
@@ -124,6 +136,8 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                         "or it takes more than 100 years. Please increase your payment amounts."
                     );
                 }
+                decimal monthBeginningBalance = activeDebts.Sum(d => d.CurrentBalance);
+                
                 decimal monthlyNewInterest = 0;
                 decimal extraPaymentSnowball = extraMonthlyPayment;
 
@@ -134,7 +148,6 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     monthlyNewInterest += monthlyInterest;
                 }
                 totalInterestPaid += monthlyNewInterest;
-
                 List<DebtSimulationModel> paidOffThisMonth = new List<DebtSimulationModel>();
 
                 foreach (var debt in activeDebts)
@@ -172,6 +185,18 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     }
                 }
                 activeDebts.RemoveAll(d => paidOffThisMonth.Contains(d));
+                decimal monthEndingBalance = activeDebts.Sum(d => d.CurrentBalance);
+                decimal principalPaid = monthBeginningBalance + monthlyNewInterest - monthEndingBalance;
+                var currentMonthDate = DateTime.Now.AddMonths(months);
+
+                paymentSchedule.Add(new MonthlyPaymentDetailDto
+                {
+                    Month = months,
+                    MonthYear = currentMonthDate.ToString("MMMM yyyy"),
+                    InterestPaid = Math.Round(monthlyNewInterest, 2),
+                    PrincipalPaid = Math.Round(principalPaid, 2),
+                    EndingBalance = Math.Round(monthEndingBalance, 2)
+                });
             }
             var payoffDate = DateTime.Now.AddMonths(months);
 
@@ -181,7 +206,8 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 TotalInterestPaid = Math.Round(totalInterestPaid, 2),
                 TotalMonths = months,
                 TotalPaid = Math.Round(totalOriginalPayment + totalInterestPaid, 2),
-                PayOffDate = $"{payoffDate.ToString("MMMM yyyy")} ({months} Months)"
+                PayOffDate = $"{payoffDate.ToString("MMMM yyyy")} ({months} Months)",
+                PaymentSchedule = paymentSchedule
             };
         }
 
@@ -192,6 +218,19 @@ namespace debt_payment_backend.CalculationService.Service.Impl
         private IOrderedEnumerable<DebtSimulationModel> OrderForAvalanche(List<DebtSimulationModel> debts)
         {
             return debts.OrderByDescending(d => d.InterestRate);
+        }
+
+        public async Task<CalculationResultDto> GetCalculationResultById(string userId, Guid reportId)
+        {
+            var calculationReport = await _calculationRepository.GetCalculationReportByIdAndUserIdAsync(userId, reportId);
+            if (calculationReport == null)
+            {
+                return null;
+            }
+
+            var reportData = JsonSerializer.Deserialize<CalculationResultDto>(calculationReport.ReportDataJson);
+
+            return reportData;              
         }
     }
     public class DebtSimulationModel

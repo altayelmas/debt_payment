@@ -73,6 +73,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Database=calculation_db;Username=postgres;Password=postgres
       - ServiceEndpoints__DebtService=http://debtservice:8080 
       - Jwt__Key=ewffes4gfa54e4gae5g41aea4sd68as4f61g354aef343D4fsf343a4fad47ga984654sdfa4g6s4
       - Jwt__Issuer=DebtCalculatorApi
@@ -81,6 +82,7 @@ services:
       - debt-network
     depends_on:
       - debtservice
+      - db
 
   apigateway:
     image: ${DOCKERHUB_USERNAME}/apigateway:${IMAGE_TAG:-latest}

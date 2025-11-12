@@ -204,17 +204,19 @@ export default function DashboardPage() {
         setCalculating(true);
         try {
             const extraPaymentValue = data.extraPayment || 0;
-
             const requestData = {extraMonthlyPayment: extraPaymentValue};
-            const response = await api.post<CalculationResult>('/api/calculation/calculate', requestData);
-            const payloadToStore = {
-                resultData: response.data,
-                extraPayment: extraPaymentValue
+
+            const response = await api.post<{ reportId: string }>('/api/calculation/calculate', requestData);
+
+            const { reportId } = response.data;
+            if (reportId) {
+                router.push(`/results/${reportId}`);
+            } else {
+                throw new Error("Report ID was not returned from the server.");
             }
-            localStorage.setItem('calculationResult', JSON.stringify(payloadToStore));
-            router.push('/results');
+
         } catch (error: any) {
-            const errorMessage = error.response?.data || 'The calculation could not be performed. Please check your debts.';
+            const errorMessage = error.response?.data?.message || error.response?.data || 'The calculation could not be performed. Please check your debts.';
             toast.error(errorMessage);
         } finally {
             setCalculating(false);
