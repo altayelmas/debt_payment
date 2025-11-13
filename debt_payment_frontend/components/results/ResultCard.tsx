@@ -34,7 +34,8 @@ import {
     CartesianGrid,
     Tooltip as RechartsTooltip,
     Legend,
-    ResponsiveContainer
+    ResponsiveContainer,
+    ReferenceLine
 } from 'recharts';
 
 interface ResultCardProps {
@@ -45,13 +46,32 @@ interface ResultCardProps {
 
 export default function ResultCard({result, isSnowball, isRecommended}: ResultCardProps) {
     console.log(`[${result.strategyName}] Milestones Verisi:`, result.milestones);
-    
+
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
     const titleColor = isRecommended ? 'text-blue-600' : (isSnowball ? 'text-green-600' : 'text-red-600');
     const description = isSnowball
         ? "Motivation-based: It delivers quick wins by eliminating even the smallest debts."
         : "Mathematically the most efficient: Minimizes total interest.";
 
+    const milestoneMonths = new Set(result.milestones.map(m => m.month));
+
+    const CustomMilestoneDot = (props: any) => {
+        const { cx, cy, payload } = props;
+
+        if (milestoneMonths.has(payload.month)) {
+            return (
+                <circle
+                    cx={cx}
+                    cy={cy}
+                    r={6}
+                    stroke="#ff8c00"
+                    strokeWidth={2}
+                    fill="white"
+                />
+            );
+        }
+        return null;
+    };
     return (
         <Card className={`border-t-4 ${borderColor} relative flex flex-col`}>
             {isRecommended && (
@@ -87,101 +107,116 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                 View Monthly Plan
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-4xl">
+                        <DialogContent className="sm:max-w-4xl flex flex-col max-h-[90vh]">
                             <DialogHeader>
                                 <DialogTitle>{result.strategyName} - Payment Plan</DialogTitle>
                             </DialogHeader>
-                            {result.milestones && result.milestones.length > 0 && (
-                                <div className="mb-4 p-4 border rounded-lg bg-muted/50">
-                                    <h4 className="font-semibold mb-2">Key Milestones</h4>
-                                    <ul className="space-y-1 list-disc list-inside text-sm">
-                                        {result.milestones.map((milestone) => (
-                                            <li key={milestone.month}>
-                                                <strong>Month {milestone.month} ({milestone.monthYear}):</strong>
-                                                <span className="text-green-600 font-medium ml-1">
+                            <div className={"overflow-y-auto pr-4"}>
+                                {result.milestones && result.milestones.length > 0 && (
+                                    <div className="mb-4 p-4 border rounded-lg bg-muted/50">
+                                        <h4 className="font-semibold mb-2">Key Milestones</h4>
+                                        <ul className="space-y-1 list-disc list-inside text-sm">
+                                            {result.milestones.map((milestone) => (
+                                                <li key={milestone.month}>
+                                                    <strong>Month {milestone.month} ({milestone.monthYear}):</strong>
+                                                    <span className="text-green-600 font-medium ml-1">
                                                     &#34;{milestone.debtName}&#34; debt paid off!
                                                 </span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                            <Tabs defaultValue="chart" className="w-full">
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="chart">Chart</TabsTrigger>
-                                    <TabsTrigger value="table">Monthly Breakdown</TabsTrigger>
-                                </TabsList>
-
-                                <TabsContent value="chart">
-                                    <div className="h-[450px] w-full pt-4">
-                                        <p className="text-sm text-muted-foreground mb-4">
-                                            This chart shows how your total debt balance decreases over time.
-                                        </p>
-
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart
-                                                data={result.paymentSchedule}
-                                                margin={{top: 5, right: 30, left: 20, bottom: 5}}
-                                            >
-                                                <CartesianGrid strokeDasharray="3 3"/>
-                                                <XAxis
-                                                    dataKey="month"
-                                                    label={{value: 'Month', position: 'insideBottomRight', offset: -10}}
-                                                />
-                                                <YAxis
-                                                    tickFormatter={(value) => formatCurrency(value)}
-                                                    width={130}
-                                                />
-                                                <RechartsTooltip
-                                                    formatter={(value: number) => [formatCurrency(value), "Ending Balance"]}
-                                                />
-                                                <Legend/>
-                                                <Line
-                                                    type="monotone"
-                                                    dataKey="endingBalance"
-                                                    name="Ending Balance"
-                                                    stroke="#0989FF"
-                                                    strokeWidth={2}
-                                                    dot={false}
-                                                />
-                                            </LineChart>
-                                        </ResponsiveContainer>
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
-                                </TabsContent>
+                                )}
+                                <Tabs defaultValue="chart" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="chart">Chart</TabsTrigger>
+                                        <TabsTrigger value="table">Monthly Breakdown</TabsTrigger>
+                                    </TabsList>
 
-                                <TabsContent value="table">
-                                    <div className="max-h-[60vh] overflow-y-auto pr-4 mt-4">
-                                        <Table>
-                                            <TableHeader className="sticky top-0 bg-background">
-                                                <TableRow>
-                                                    <TableHead className="w-[60px]">Month</TableHead>
-                                                    <TableHead>Date</TableHead>
-                                                    <TableHead className="text-right">Interest Paid</TableHead>
-                                                    <TableHead className="text-right">Principal Paid</TableHead>
-                                                    <TableHead className="text-right">Ending Balance</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {result.paymentSchedule.map((month) => (
-                                                    <TableRow key={month.month}>
-                                                        <TableCell className="font-medium">{month.month}</TableCell>
-                                                        <TableCell>{month.monthYear}</TableCell>
-                                                        <TableCell className="text-right text-red-600">
-                                                            {formatCurrency(month.interestPaid)}
-                                                        </TableCell>
-                                                        <TableCell className="text-right text-green-600">
-                                                            {formatCurrency(month.principalPaid)}
-                                                        </TableCell>
-                                                        <TableCell className="text-right font-medium">
-                                                            {formatCurrency(month.endingBalance)}
-                                                        </TableCell>
+                                    <TabsContent value="chart">
+                                        <div className="h-[450px] w-full pt-4">
+                                            <p className="text-sm text-muted-foreground mb-4">
+                                                This chart shows how your total debt balance decreases over time.
+                                            </p>
+
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart
+                                                    data={result.paymentSchedule}
+                                                    margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3"/>
+                                                    <XAxis
+                                                        dataKey="month"
+                                                        label={{
+                                                            value: 'Month',
+                                                            position: 'insideBottomRight',
+                                                            offset: -10
+                                                        }}
+                                                        interval={11}
+                                                    />
+                                                    <YAxis
+                                                        tickFormatter={(value) => formatCurrency(value)}
+                                                        width={130}
+                                                    />
+                                                    <RechartsTooltip
+                                                        labelFormatter={(label, payload) => {
+                                                            if (payload && payload.length > 0) {
+                                                                const monthYear = payload[0].payload.monthYear;
+                                                                return `Month ${label} (${monthYear})`;
+                                                            }
+                                                            return `Month ${label}`;
+                                                        }}
+                                                        formatter={(value: number) => [formatCurrency(value), "Ending Balance"]}
+                                                    />
+                                                    <Legend/>
+                                                    <Line
+                                                        type="monotone"
+                                                        dataKey="endingBalance"
+                                                        name="Ending Balance"
+                                                        stroke="#0989FF"
+                                                        strokeWidth={2}
+                                                        dot={<CustomMilestoneDot />}
+                                                        activeDot={{ r: 8, stroke: 'orange', fill: 'white' }}
+                                                    />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="table">
+                                        <div className="overflow-y-auto pr-4 mt-4">
+                                            <Table>
+                                                <TableHeader className="sticky top-0 bg-background">
+                                                    <TableRow>
+                                                        <TableHead className="w-[60px]">Month</TableHead>
+                                                        <TableHead>Date</TableHead>
+                                                        <TableHead className="text-right">Interest Paid</TableHead>
+                                                        <TableHead className="text-right">Principal Paid</TableHead>
+                                                        <TableHead className="text-right">Ending Balance</TableHead>
                                                     </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </TabsContent>
-                            </Tabs>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {result.paymentSchedule.map((month) => (
+                                                        <TableRow key={month.month}>
+                                                            <TableCell className="font-medium">{month.month}</TableCell>
+                                                            <TableCell>{month.monthYear}</TableCell>
+                                                            <TableCell className="text-right text-red-600">
+                                                                {formatCurrency(month.interestPaid)}
+                                                            </TableCell>
+                                                            <TableCell className="text-right text-green-600">
+                                                                {formatCurrency(month.principalPaid)}
+                                                            </TableCell>
+                                                            <TableCell className="text-right font-medium">
+                                                                {formatCurrency(month.endingBalance)}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
+                            </div>
                         </DialogContent>
                     </Dialog>
                 </div>
