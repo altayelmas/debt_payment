@@ -154,6 +154,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             decimal totalOriginalPayment = activeDebts.Sum(d => d.OriginalBalance);
 
             var paymentSchedule = new List<MonthlyPaymentDetailDto>();
+            var milestones = new List<DebtPayoffMilestoneDto>();
 
             while (activeDebts.Any())
             {
@@ -218,6 +219,20 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 decimal monthEndingBalance = activeDebts.Sum(d => d.CurrentBalance);
                 decimal principalPaid = monthBeginningBalance + monthlyNewInterest - monthEndingBalance;
                 var currentMonthDate = DateTime.Now.AddMonths(months);
+                Console.WriteLine($"[Ay {months}] Bu ay biten borç sayısı: {paidOffThisMonth.Count}");
+
+                if (paidOffThisMonth.Any())
+                {
+                    foreach (var paidDebt in paidOffThisMonth.Distinct())
+                    {
+                        milestones.Add(new DebtPayoffMilestoneDto
+                        {
+                            Month = months,
+                            MonthYear = currentMonthDate.ToString("MMMM yyyy"),
+                            DebtName = paidDebt.Name
+                        });
+                    }
+                }
 
                 paymentSchedule.Add(new MonthlyPaymentDetailDto
                 {
@@ -237,7 +252,8 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 TotalMonths = months,
                 TotalPaid = Math.Round(totalOriginalPayment + totalInterestPaid, 2),
                 PayOffDate = $"{payoffDate.ToString("MMMM yyyy")} ({months} Months)",
-                PaymentSchedule = paymentSchedule
+                PaymentSchedule = paymentSchedule,
+                Milestones = milestones
             };
         }
 

@@ -1,8 +1,8 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from '@/components/ui/badge';
-import { Button } from "@/components/ui/button";
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Badge} from '@/components/ui/badge';
+import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -24,8 +24,8 @@ import {
     TabsList,
     TabsTrigger
 } from "@/components/ui/tabs";
-import { StrategyResult } from '@/types';
-import { formatCurrency } from '@/lib/utils';
+import {StrategyResult} from '@/types';
+import {formatCurrency} from '@/lib/utils';
 import {
     LineChart,
     Line,
@@ -43,7 +43,9 @@ interface ResultCardProps {
     isRecommended: boolean;
 }
 
-export default function ResultCard({ result, isSnowball, isRecommended }: ResultCardProps) {
+export default function ResultCard({result, isSnowball, isRecommended}: ResultCardProps) {
+    console.log(`[${result.strategyName}] Milestones Verisi:`, result.milestones);
+    
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
     const titleColor = isRecommended ? 'text-blue-600' : (isSnowball ? 'text-green-600' : 'text-red-600');
     const description = isSnowball
@@ -89,7 +91,21 @@ export default function ResultCard({ result, isSnowball, isRecommended }: Result
                             <DialogHeader>
                                 <DialogTitle>{result.strategyName} - Payment Plan</DialogTitle>
                             </DialogHeader>
-
+                            {result.milestones && result.milestones.length > 0 && (
+                                <div className="mb-4 p-4 border rounded-lg bg-muted/50">
+                                    <h4 className="font-semibold mb-2">Key Milestones</h4>
+                                    <ul className="space-y-1 list-disc list-inside text-sm">
+                                        {result.milestones.map((milestone) => (
+                                            <li key={milestone.month}>
+                                                <strong>Month {milestone.month} ({milestone.monthYear}):</strong>
+                                                <span className="text-green-600 font-medium ml-1">
+                                                    &#34;{milestone.debtName}&#34; debt paid off!
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                             <Tabs defaultValue="chart" className="w-full">
                                 <TabsList className="grid w-full grid-cols-2">
                                     <TabsTrigger value="chart">Chart</TabsTrigger>
@@ -105,12 +121,12 @@ export default function ResultCard({ result, isSnowball, isRecommended }: Result
                                         <ResponsiveContainer width="100%" height="100%">
                                             <LineChart
                                                 data={result.paymentSchedule}
-                                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                                margin={{top: 5, right: 30, left: 20, bottom: 5}}
                                             >
-                                                <CartesianGrid strokeDasharray="3 3" />
+                                                <CartesianGrid strokeDasharray="3 3"/>
                                                 <XAxis
                                                     dataKey="month"
-                                                    label={{ value: 'Month', position: 'insideBottomRight', offset: -10 }}
+                                                    label={{value: 'Month', position: 'insideBottomRight', offset: -10}}
                                                 />
                                                 <YAxis
                                                     tickFormatter={(value) => formatCurrency(value)}
@@ -119,7 +135,7 @@ export default function ResultCard({ result, isSnowball, isRecommended }: Result
                                                 <RechartsTooltip
                                                     formatter={(value: number) => [formatCurrency(value), "Ending Balance"]}
                                                 />
-                                                <Legend />
+                                                <Legend/>
                                                 <Line
                                                     type="monotone"
                                                     dataKey="endingBalance"

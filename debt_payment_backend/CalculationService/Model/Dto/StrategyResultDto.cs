@@ -14,5 +14,6 @@ namespace debt_payment_backend.CalculationService.Model.Dto
         public decimal TotalPaid { get; set; }
         public string PayOffDate { get; set; } = string.Empty;
         public List<MonthlyPaymentDetailDto> PaymentSchedule { get; set; } = new();
+        public List<DebtPayoffMilestoneDto> Milestones { get; set; } = new();
     }
 }

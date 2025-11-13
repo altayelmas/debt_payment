@@ -14,6 +14,7 @@ export interface StrategyResult {
     totalPaid: number;
     payOffDate: string;
     paymentSchedule: MonthlyPaymentDetail[];
+    milestones: DebtPayoffMilestone[];
 }
 
 export interface CalculationResult {
@@ -49,4 +50,10 @@ export interface CalculationHistoryDto {
     extraPayment: number;
     recommendedPayOffDate: string;
     recommendedInterestSaved: number;
+}
+
+export interface DebtPayoffMilestone {
+    month: number;
+    monthYear: string;
+    debtName: string;
 }
