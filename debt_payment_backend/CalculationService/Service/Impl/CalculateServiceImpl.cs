@@ -219,7 +219,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 decimal monthEndingBalance = activeDebts.Sum(d => d.CurrentBalance);
                 decimal principalPaid = monthBeginningBalance + monthlyNewInterest - monthEndingBalance;
                 var currentMonthDate = DateTime.Now.AddMonths(months);
-                Console.WriteLine($"[Ay {months}] Bu ay biten borç sayısı: {paidOffThisMonth.Count}");
+                //Console.WriteLine($"[Month {months}] Debts paid off this month: {paidOffThisMonth.Count}");
 
                 if (paidOffThisMonth.Any())
                 {
