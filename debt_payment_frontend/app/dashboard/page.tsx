@@ -9,10 +9,10 @@ import toast from 'react-hot-toast';
 import {useRouter} from 'next/navigation';
 import {useAuth} from "@/context/AuthContext";
 
-import CalculationHistoryCard from "@/app/components/CalculationHistoryCard";
-import CalculationFormCard from "@/app/components/CalculationFormCard";
-import OverviewCard from "@/app/components/OverviewCard";
-import DebtsCard from "@/app/components/DebtsCard";
+import CalculationHistoryCard from "@/components/dashboard/CalculationHistoryCard";
+import CalculationFormCard from "@/components/dashboard/CalculationFormCard";
+import OverviewCard from "@/components/dashboard/OverviewCard";
+import DebtsCard from "@/components/dashboard/DebtsCard";
 
 
 const PAGE_SIZE = 5;

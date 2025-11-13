@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("debt_payment_backend.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e795f207094135aa08df93a3d647d44d09d0afe1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+702442669e5055d9a20b7da3654a1776db8da9ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("debt_payment_backend.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("debt_payment_backend.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

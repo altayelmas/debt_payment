@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
 using debt_payment_backend.CalculationService.Service.Impl;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ namespace debt_payment_backend.Tests
         private readonly Mock<IHttpContextAccessor> _mockContextAccessor;
         private readonly Mock<HttpMessageHandler> _mockHandler;
         private readonly HttpClient _httpClient;
+        private readonly Mock<CalculationRepository> _mockRepository;
 
         private readonly CalculateServiceImpl _sut;
 
@@ -37,9 +39,12 @@ namespace debt_payment_backend.Tests
 
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
 
+            _mockRepository = new Mock<CalculationRepository>();
+
             _sut = new CalculateServiceImpl(
                 _mockFactory.Object,
-                _mockContextAccessor.Object
+                _mockContextAccessor.Object,
+                _mockRepository.Object
             );
         }
 
