@@ -14,7 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { ArrowLeft, Lightbulb, Loader2 } from "lucide-react";
 
 import {formatCurrency} from "@/lib/utils";
-import ResultCard from "@/components/results/ResultCard";
+import ResultCard from "@/app/results/ResultCard";
 
 export default function ResultsPage({ params }: { params: { reportId: string } }) {
     const [report, setReport] = useState<CalculationResult | null>(null);

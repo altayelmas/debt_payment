@@ -22,8 +22,8 @@ import {
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox } from "lucide-react";
-import DebtFormModal from "@/components/dashboard/DebtFormModal";
-import DebtListItem from "@/components/dashboard/DebtListItem";
+import DebtFormModal from "@/app/dashboard/DebtFormModal";
+import DebtListItem from "@/app/dashboard/DebtListItem";
 
 const PAGE_SIZE = 5;
 
