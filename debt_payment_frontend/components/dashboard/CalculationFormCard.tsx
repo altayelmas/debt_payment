@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import api from '@/lib/api';
-import { CalculationResult } from '@/types';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from 'next-intl';
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
     Card,
     CardContent,
@@ -32,16 +31,6 @@ import { Loader2 } from "lucide-react";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 
-const calcFormSchema = z.object({
-    extraPayment: z.coerce.number()
-        .min(0, { message: "Cannot be negative" })
-        .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` })
-        .optional()
-        .default(0 as number),
-});
-
-type CalcFormInputs = z.infer<typeof calcFormSchema>;
-
 interface CalculationFormCardProps {
     isCalculationDisabled: boolean;
     onCalculationComplete: () => void;
@@ -51,8 +40,19 @@ export default function CalculationFormCard({
                                                 isCalculationDisabled,
                                                 onCalculationComplete
                                             }: CalculationFormCardProps) {
+    const t = useTranslations('DashboardPage.CalculationForm');
+    const tZod = useTranslations('DashboardPage.CalculationForm.zod');
 
-    // State'ler DashboardPage'den buraya taşındı
+    const calcFormSchema = z.object({
+        extraPayment: z.coerce.number()
+            .min(0, { message: "Cannot be negative" })
+            .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` })
+            .optional()
+            .default(0 as number),
+    });
+
+    type CalcFormInputs = z.infer<typeof calcFormSchema>;
+
     const [calculating, setCalculating] = useState(false);
     const router = useRouter();
 
@@ -75,11 +75,11 @@ export default function CalculationFormCard({
                 router.push(`/results/${reportId}`);
                 onCalculationComplete();
             } else {
-                throw new Error("Report ID was not returned from the server.");
+                throw new Error(t('toasts.noReportId'));
             }
 
         } catch (error: any) {
-            const errorMessage = error.response?.data?.message || error.response?.data || 'The calculation could not be performed. Please check your debts.';
+            const errorMessage = error.response?.data?.message || error.response?.data || t('toasts.defaultError');
             toast.error(errorMessage);
         } finally {
             setCalculating(false);
@@ -91,9 +91,8 @@ export default function CalculationFormCard({
             <Form {...calcForm}>
                 <form onSubmit={calcForm.handleSubmit(onCalculateSubmit)}>
                     <CardHeader>
-                        <CardTitle className="text-2xl">Calculation</CardTitle>
-                        <CardDescription>Enter an extra budget to speed up your debt
-                            repayment.</CardDescription>
+                        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+                        <CardDescription>{t('description')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col sm:flex-row sm:items-end gap-4">
                         <FormField
@@ -101,7 +100,7 @@ export default function CalculationFormCard({
                             name="extraPayment"
                             render={({ field }) => (
                                 <FormItem className="flex-1 max-w-xs">
-                                    <FormLabel>Monthly Extra Budget (TL)</FormLabel>
+                                    <FormLabel>{t('label')}</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -125,13 +124,13 @@ export default function CalculationFormCard({
                             className="text-lg font-semibold"
                         >
                             {calculating && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                            {calculating ? 'Calculating...' : 'Calculate'}
+                            {calculating ? t('buttonLoading') : t('button')}
                         </Button>
                     </CardContent>
                     {isCalculationDisabled && !isCalculationDisabled && (
                         <CardFooter>
                             <p className="text-sm text-red-500">
-                                To perform the calculation, you must first add the debt.
+                                {t('footerWarning')}
                             </p>
                         </CardFooter>
                     )}

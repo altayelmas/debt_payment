@@ -37,6 +37,7 @@ import {
     ResponsiveContainer,
     ReferenceLine
 } from 'recharts';
+import {useLocale} from "next-intl";
 
 interface ResultCardProps {
     result: StrategyResult;
@@ -45,6 +46,8 @@ interface ResultCardProps {
 }
 
 export default function ResultCard({result, isSnowball, isRecommended}: ResultCardProps) {
+    const locale = useLocale();
+
     console.log(`[${result.strategyName}] Milestones Verisi:`, result.milestones);
 
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
@@ -89,11 +92,11 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                 </div>
                 <div className="flex justify-between items-baseline">
                     <span className="text-base text-muted-foreground">Total Interest Paid</span>
-                    <span className="font-semibold">{formatCurrency(result.totalInterestPaid)}</span>
+                    <span className="font-semibold">{formatCurrency(result.totalInterestPaid, locale)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
                     <span className="text-base text-muted-foreground">Total Paid</span>
-                    <span className="font-semibold">{formatCurrency(result.totalPaid)}</span>
+                    <span className="font-semibold">{formatCurrency(result.totalPaid, locale)}</span>
                 </div>
             </CardContent>
 
@@ -155,7 +158,7 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                         interval={11}
                                                     />
                                                     <YAxis
-                                                        tickFormatter={(value) => formatCurrency(value)}
+                                                        tickFormatter={(value) => formatCurrency(value, locale)}
                                                         width={130}
                                                     />
                                                     <RechartsTooltip
@@ -166,7 +169,7 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                             }
                                                             return `Month ${label}`;
                                                         }}
-                                                        formatter={(value: number) => [formatCurrency(value), "Ending Balance"]}
+                                                        formatter={(value: number) => [formatCurrency(value, locale), "Ending Balance"]}
                                                     />
                                                     <Legend/>
                                                     <Line
@@ -201,13 +204,13 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                             <TableCell className="font-medium">{month.month}</TableCell>
                                                             <TableCell>{month.monthYear}</TableCell>
                                                             <TableCell className="text-right text-red-600">
-                                                                {formatCurrency(month.interestPaid)}
+                                                                {formatCurrency(month.interestPaid, locale)}
                                                             </TableCell>
                                                             <TableCell className="text-right text-green-600">
-                                                                {formatCurrency(month.principalPaid)}
+                                                                {formatCurrency(month.principalPaid, locale)}
                                                             </TableCell>
                                                             <TableCell className="text-right font-medium">
-                                                                {formatCurrency(month.endingBalance)}
+                                                                {formatCurrency(month.endingBalance, locale)}
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}

@@ -6,8 +6,9 @@ import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
 import {Debt, PagedResult} from '@/types';
 import toast from 'react-hot-toast';
-import {useRouter} from 'next/navigation';
+import {useRouter} from '@/i18n/navigation';
 import {useAuth} from "@/context/AuthContext";
+import {useTranslations} from 'next-intl';
 
 import CalculationHistoryCard from "@/components/dashboard/CalculationHistoryCard";
 import CalculationFormCard from "@/components/dashboard/CalculationFormCard";
@@ -18,6 +19,8 @@ import DebtsCard from "@/components/dashboard/DebtsCard";
 const PAGE_SIZE = 5;
 
 export default function DashboardPage() {
+    const t = useTranslations('DashboardPage.page');
+
     const [pagedData, setPagedData] = useState<PagedResult<Debt> | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [loadingDebts, setLoadingDebts] = useState(true);
@@ -42,7 +45,7 @@ export default function DashboardPage() {
             });
             setPagedData(response.data);
         } catch (error) {
-            toast.error('Debts could not be loaded.');
+            toast.error(t('toasts.loadError'));
         } finally {
             setLoadingDebts(false);
         }

@@ -15,8 +15,11 @@ import { ArrowLeft, Lightbulb, Loader2 } from "lucide-react";
 
 import {formatCurrency} from "@/lib/utils";
 import ResultCard from "@/components/results/ResultCard";
+import {useLocale} from "next-intl";
 
 export default function ResultsPage({ params }: { params: { reportId: string } }) {
+    const locale = useLocale();
+
     const [report, setReport] = useState<CalculationResult | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -89,9 +92,9 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
                         <p className="text-lg text-muted-foreground mt-2">Strategy Comparison</p>
 
                         <div className="text-lg mt-4 inline-block rounded-lg border bg-muted p-4 text-muted-foreground">
-                            <span className="font-semibold text-foreground">Monthly Extra Payment:</span> {formatCurrency(report.extraPayment)}
+                            <span className="font-semibold text-foreground">Monthly Extra Payment:</span> {formatCurrency(report.extraPayment, locale)}
                             <br/>
-                            <span className="font-semibold text-foreground">Initial Debt:</span> {formatCurrency(report.beginningDebt)}
+                            <span className="font-semibold text-foreground">Initial Debt:</span> {formatCurrency(report.beginningDebt, locale)}
                         </div>
                     </header>
 
@@ -102,7 +105,7 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
                             We recommend the <strong>{recommendedStrategy}</strong> method.
                             {interestSaved > 0 && monthsSaved > 0 && (
                                 <>
-                                    {' '}By choosing this, you&#39;ll save <strong>{formatCurrency(interestSaved)}</strong> in interest and pay off your debt <strong>{monthsSaved} months</strong> sooner.
+                                    {' '}By choosing this, you&#39;ll save <strong>{formatCurrency(interestSaved, locale)}</strong> in interest and pay off your debt <strong>{monthsSaved} months</strong> sooner.
                                 </>
                             )}
                         </AlertDescription>

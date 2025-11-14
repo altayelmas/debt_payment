@@ -30,30 +30,35 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {useTranslations} from "next-intl";
+import {LanguageSwitcher} from "@/components/LanguageSwitcher";
 
 export const dynamic = 'force-dynamic';
 
-const registerFormSchema = z.object({
-    email: z.string()
-        .min(1, {message: "Email field cannot be blank"})
-        .email({message: "Invalid email address."}),
-    password: z.string()
-        .min(1, {message: "Password cannot be blank"})
-        .regex(
-            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
-            {message: "Password is not strong enough."}
-        ),
-    confirmPassword: z.string()
-        .min(1, {message: "Please confirm your password"})
-})
-    .refine(data => data.password === data.confirmPassword, {
-        message: "Password does not match",
-        path: ["confirmPassword"],
-    });
-
-type RegisterFormInputs = z.infer<typeof registerFormSchema>;
-
 export default function RegisterPage() {
+    const t = useTranslations('RegisterPage');
+    const tZod = useTranslations('RegisterPage.zodErrors');
+
+    const registerFormSchema = z.object({
+        email: z.string()
+            .min(1, {message: "Email field cannot be blank"})
+            .email({message: "Invalid email address."}),
+        password: z.string()
+            .min(1, {message: "Password cannot be blank"})
+            .regex(
+                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
+                {message: "Password is not strong enough."}
+            ),
+        confirmPassword: z.string()
+            .min(1, {message: "Please confirm your password"})
+    })
+        .refine(data => data.password === data.confirmPassword, {
+            message: "Password does not match",
+            path: ["confirmPassword"],
+        });
+
+    type RegisterFormInputs = z.infer<typeof registerFormSchema>;
+
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const {isAuthenticated} = useAuth();
@@ -84,12 +89,12 @@ export default function RegisterPage() {
                 password: data.password,
             });
 
-            toast.success('Register successful! Please log in.');
+            toast.success(t('toasts.success'));
             router.push('/login');
 
         } catch (error: any) {
             console.error('Register error:', error);
-            let errorMessage = 'Register failed..';
+            let errorMessage = t('toasts.defaultError');
             const data = error.response?.data;
 
             if (data && Array.isArray(data)) {
@@ -116,7 +121,7 @@ export default function RegisterPage() {
         return (
             <div className="flex items-center justify-center min-h-screen bg-background">
                 <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
-                <p className="text-lg text-muted-foreground">Redirecting to dashboard...</p>
+                <p className="text-lg text-muted-foreground">{t('redirecting')}</p>
             </div>
         );
     }
@@ -125,8 +130,8 @@ export default function RegisterPage() {
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">Register</CardTitle>
-                    <CardDescription>Create your account to get started.</CardDescription>
+                    <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
+                    <CardDescription>{t('subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -136,11 +141,11 @@ export default function RegisterPage() {
                                 name="email"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t('form.emailLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
-                                                placeholder="name@example.com"
+                                                placeholder={t('form.emailPlaceholder')}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -153,12 +158,12 @@ export default function RegisterPage() {
                                 name="password"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>{t('form.passwordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
-                                                    placeholder="••••••••"
+                                                    placeholder={t('form.passwordPlaceholder')}
                                                     {...field}
                                                     autoComplete="new-password"
                                                 />
@@ -176,7 +181,7 @@ export default function RegisterPage() {
                                         </div>
                                         {!form.formState.errors.password && (
                                             <FormDescription className="text-xs">
-                                                Min. 8 Chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Symbol.
+                                                {t('form.passwordDescription')}
                                             </FormDescription>
                                         )}
                                         <FormMessage/>
@@ -188,12 +193,12 @@ export default function RegisterPage() {
                                 name="confirmPassword"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Confirm Password</FormLabel>
+                                        <FormLabel>{t('form.confirmPasswordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showConfirmPassword ? "text" : "password"}
-                                                    placeholder="••••••••"
+                                                    placeholder={t('form.passwordPlaceholder')}
                                                     {...field}
                                                     autoComplete="new-password"
                                                 />
@@ -219,18 +224,22 @@ export default function RegisterPage() {
                                 className="w-full"
                             >
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                                {loading ? 'Registering...' : 'Register'}
+                                {loading ? t('form.submitButtonLoading') : t('form.submitButton')}
                             </Button>
                         </form>
                     </Form>
                 </CardContent>
                 <CardFooter>
-                    <p className="text-center text-sm text-muted-foreground w-full">
-                        Already have an account?
-                        <Link href="/login" className="text-primary hover:underline ml-1 font-semibold">
-                            Login
-                        </Link>
-                    </p>
+                    <div className="flex justify-between items-center w-full">
+                        <LanguageSwitcher/>
+
+                        <p className="text-sm text-muted-foreground">
+                            {t('footer.haveAccount')}
+                            <Link href="/login" className="text-primary hover:underline ml-1 font-semibold">
+                                {t('footer.loginLink')}
+                            </Link>
+                        </p>
+                    </div>
                 </CardFooter>
             </Card>
         </div>

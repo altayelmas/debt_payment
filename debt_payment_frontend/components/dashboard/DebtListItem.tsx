@@ -4,6 +4,8 @@ import { useState } from 'react';
 import api from '@/lib/api';
 import { Debt } from '@/types';
 import toast from 'react-hot-toast';
+import { useTranslations, useLocale } from 'next-intl';
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +36,8 @@ interface DebtListItemProps {
 }
 
 export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: DebtListItemProps) {
+    const t = useTranslations('DashboardPage.DebtListItem');
+    const locale = useLocale();
 
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -69,11 +73,11 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                                         onClick={() => onEditClick(debt)}
                                     >
                                         <Pencil className="h-5 w-5" />
-                                        <span className="sr-only">Edit</span>
+                                        <span className="sr-only">{t('editLabel')}</span>
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Edit debt</p>
+                                    <p>{t('editTooltip')}</p>
                                 </TooltipContent>
                             </Tooltip>
 
@@ -92,22 +96,19 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                                                 ) : (
                                                     <Trash2 className="h-5 w-5" />
                                                 )}
-                                                <span className="sr-only">Delete</span>
+                                                <span className="sr-only">{t('deleteLabel')}</span>
                                             </Button>
                                         </AlertDialogTrigger>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Delete debt</p>
+                                        <p>{t('deleteTooltip')}</p>
                                     </TooltipContent>
                                 </Tooltip>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogTitle>{t('dialogTitle')}</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone.
-                                            You will permanently
-                                            delete <strong
-                                            className="px-1">{debt.name}</strong>.
+                                            {t('dialogDescription', {debtName: debt.name})}
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
@@ -116,7 +117,7 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                             onClick={handleDelete}
                                         >
-                                            Delete
+                                            {t('dialogConfirm')}
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
@@ -126,15 +127,15 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                     {/* Borç Detayları */}
                     <div className="flex flex-wrap gap-x-6 gap-y-1 pt-2">
                         <div>
-                            <span className="text-xs text-muted-foreground block uppercase">Balance</span>
-                            <span className="text-sm font-medium">{formatCurrency(debt.currentBalance)}</span>
+                            <span className="text-xs text-muted-foreground block uppercase">{t('details.balance')}</span>
+                            <span className="text-sm font-medium">{formatCurrency(debt.currentBalance, locale)}</span>
                         </div>
                         <div>
-                            <span className="text-xs text-muted-foreground block uppercase">Min. Payment</span>
-                            <span className="text-sm font-medium">{formatCurrency(debt.minPayment)}</span>
+                            <span className="text-xs text-muted-foreground block uppercase">{t('details.minPayment')}</span>
+                            <span className="text-sm font-medium">{formatCurrency(debt.minPayment, locale)}</span>
                         </div>
                         <div>
-                            <span className="text-xs text-muted-foreground block uppercase mb-1">Interest</span>
+                            <span className="text-xs text-muted-foreground block uppercase mb-1">{t('details.interest')}</span>
                             <Badge variant="secondary">%{debt.interestRate}</Badge>
                         </div>
                     </div>

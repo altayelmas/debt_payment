@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from 'next-intl';
+
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -28,29 +30,6 @@ import { Loader2 } from "lucide-react";
 const MAX_CURRENCY_VALUE = 999999999999.99;
 const MAX_INTEREST_RATE = 100;
 
-const debtFormSchema = z.object({
-    name: z.string().min(1, { message: "This field is required" }),
-    currentBalance: z.coerce.number()
-        .min(0.01, { message: "Must be at least 0.01" })
-        .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` }),
-    interestRate: z.coerce.number()
-        .min(0, { message: "Cannot be negative" })
-        .max(MAX_INTEREST_RATE, { message: `Value cannot exceed ${MAX_INTEREST_RATE}` }),
-    minPayment: z.coerce.number()
-        .min(0.01, { message: "Must be at least 0.01" })
-        .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` }),
-}).refine(data => {
-    if (data.currentBalance && data.minPayment > data.currentBalance) {
-        return false;
-    }
-    return true;
-}, {
-    message: "Min. payment cannot be greater than the balance",
-    path: ["minPayment"],
-});
-
-type DebtFormInputs = z.infer<typeof debtFormSchema>;
-
 const defaultFormValues = {
     name: "",
     currentBalance: undefined,
@@ -71,6 +50,31 @@ export default function DebtFormModal({
                                           editingDebt,
                                           onSaveComplete
                                       }: DebtFormModalProps) {
+    const t = useTranslations('DashboardPage.DebtFormModal');
+    const tZod = useTranslations('DashboardPage.DebtFormModal.zod');
+
+    const debtFormSchema = z.object({
+        name: z.string().min(1, { message: "This field is required" }),
+        currentBalance: z.coerce.number()
+            .min(0.01, { message: "Must be at least 0.01" })
+            .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` }),
+        interestRate: z.coerce.number()
+            .min(0, { message: "Cannot be negative" })
+            .max(MAX_INTEREST_RATE, { message: `Value cannot exceed ${MAX_INTEREST_RATE}` }),
+        minPayment: z.coerce.number()
+            .min(0.01, { message: "Must be at least 0.01" })
+            .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` }),
+    }).refine(data => {
+        if (data.currentBalance && data.minPayment > data.currentBalance) {
+            return false;
+        }
+        return true;
+    }, {
+        message: tZod("minPaymentGreater"),
+        path: ["minPayment"],
+    });
+
+    type DebtFormInputs = z.infer<typeof debtFormSchema>;
 
     const form = useForm<DebtFormInputs>({
         resolver: zodResolver(debtFormSchema),
@@ -93,10 +97,10 @@ export default function DebtFormModal({
 
             if (isEdit) {
                 await api.put(`/api/Debt/${editingDebt.debtId}`, data);
-                toast.success('The debt has been successfully updated.');
+                toast.success(t('toasts.updateSuccess'));
             } else {
                 await api.post('/api/Debt', data);
-                toast.success('The debt has been successfully added.');
+                toast.success(t('toasts.addSuccess'));
             }
 
             form.reset(defaultFormValues);
@@ -104,9 +108,9 @@ export default function DebtFormModal({
 
         } catch (error) {
             if (editingDebt) {
-                toast.error('An error occurred while updating the debt.');
+                toast.error(t('toasts.updateError'));
             } else {
-                toast.error('An error occurred while adding the debt.');
+                toast.error(t('toasts.addError'));
             }
         }
     };
@@ -118,7 +122,7 @@ export default function DebtFormModal({
         >
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{editingDebt ? 'Edit Debt' : 'Add new debt'}</DialogTitle>
+                    <DialogTitle>{editingDebt ? t('titleEdit') : t('titleAdd')}</DialogTitle>
                 </DialogHeader>
                 <div className="pt-4">
                     <Form {...form}>
@@ -133,7 +137,7 @@ export default function DebtFormModal({
                                     <FormItem>
                                         <FormLabel>Debt Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="E.g. Credit Card" {...field} />
+                                            <Input placeholder={t('labels.namePlaceholder')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -144,7 +148,7 @@ export default function DebtFormModal({
                                 name="currentBalance"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Current Balance (TL)</FormLabel>
+                                        <FormLabel>{t('labels.balance')}</FormLabel>
                                         <FormControl>
                                             <Input type="number" min="0" step="0.01" placeholder="1500" {...field} />
                                         </FormControl>
@@ -157,9 +161,9 @@ export default function DebtFormModal({
                                 name="interestRate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Annual Interest Rate (%)</FormLabel>
+                                        <FormLabel>{t('labels.interest')}</FormLabel>
                                         <FormControl>
-                                            <Input type="number" min="0" step="0.01" placeholder="24.5" {...field} />
+                                            <Input type="number" min="0" step="0.01" placeholder={t('labels.interestPlaceholder')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -172,7 +176,7 @@ export default function DebtFormModal({
                                     <FormItem>
                                         <FormLabel>Min. Monthly Payment (TL)</FormLabel>
                                         <FormControl>
-                                            <Input type="number" min="0" step="0.01" placeholder="150" {...field} />
+                                            <Input type="number" min="0" step="0.01" placeholder={t('labels.minPaymentPlaceholder')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -180,7 +184,7 @@ export default function DebtFormModal({
                             />
                             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                                 {form.formState.isSubmitting ? <Loader2
-                                    className="mr-2 h-4 w-4 animate-spin" /> : (editingDebt ? 'Save Changes' : 'Add Debt')}
+                                    className="mr-2 h-4 w-4 animate-spin" /> : (editingDebt ? t('buttonSave') : t('buttonAdd'))}
                             </Button>
                         </form>
                     </Form>

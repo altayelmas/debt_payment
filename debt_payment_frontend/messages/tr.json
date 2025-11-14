@@ -1,0 +1,170 @@
+{
+  "Navbar": {
+    "appTitle": "Borç Hesaplayıcı",
+    "logoutButton": "Çıkış Yap",
+    "languageLabel": "Dil değiştir",
+    "turkish": "Türkçe (TR)",
+    "english": "İngilizce (EN)"
+  },
+  "LoginPage": {
+    "title": "Giriş Yap",
+    "subtitle": "Hesabınıza erişmek için bilgilerinizi girin.",
+    "redirecting": "Gösterge paneline yönlendiriliyorsunuz...",
+    "form": {
+      "emailLabel": "E-posta",
+      "emailPlaceholder": "isim@ornek.com",
+      "passwordLabel": "Parola",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "Parolayı göster",
+      "hidePassword": "Parolayı gizle",
+      "submitButton": "Giriş Yap",
+      "submitButtonLoading": "Giriş yapılıyor..."
+    },
+    "zodErrors": {
+      "blank": "Bu alan boş bırakılamaz",
+      "invalidEmail": "Geçersiz e-posta adresi."
+    },
+    "toasts": {
+      "success": "Giriş başarılı, yönlendiriliyorsunuz...",
+      "defaultError": "Giriş başarısız oldu"
+    },
+    "footer": {
+      "noAccount": "Hesabınız yok mu?",
+      "registerLink": "Kayıt Ol"
+    }
+  },
+  "RegisterPage": {
+    "title": "Hesap Oluştur",
+    "subtitle": "Başlamak için hesabınızı oluşturun.",
+    "redirecting": "Gösterge paneline yönlendiriliyorsunuz...",
+    "form": {
+      "emailLabel": "E-posta",
+      "emailPlaceholder": "isim@ornek.com",
+      "passwordLabel": "Parola",
+      "passwordDescription": "Min. 8 Karakter, 1 Büyük Harf, 1 Küçük Harf, 1 Rakam, 1 Sembol.",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Parolayı Doğrula",
+      "submitButton": "Kayıt Ol",
+      "submitButtonLoading": "Kayıt olunuyor..."
+    },
+    "zodErrors": {
+      "emailBlank": "E-posta alanı boş bırakılamaz",
+      "emailInvalid": "Geçersiz e-posta adresi.",
+      "passwordBlank": "Parola boş bırakılamaz",
+      "passwordNotStrong": "Parola yeterince güçlü değil.",
+      "confirmPasswordBlank": "Lütfen parolanızı doğrulayın",
+      "passwordsNoMatch": "Parolalar eşleşmiyor"
+    },
+    "toasts": {
+      "success": "Kayıt başarılı! Lütfen giriş yapın.",
+      "defaultError": "Kayıt başarısız oldu.."
+    },
+    "footer": {
+      "haveAccount": "Zaten bir hesabınız var mı?",
+      "loginLink": "Giriş Yap"
+    }
+  },
+  "DashboardPage": {
+    "page": {
+      "toasts": {
+        "loadError": "Borçlar yüklenemedi."
+      }
+    },
+    "OverviewCard": {
+      "title": "Genel Bakış",
+      "description": "Tüm borçlarınızın finansal özeti.",
+      "totalBalance": "Toplam Bakiye",
+      "totalMinPayment": "Toplam Min. Aylık Ödeme",
+      "totalDebtCount": "Toplam Borç Adedi"
+    },
+    "DebtsCard": {
+      "title": "Mevcut Borçlar",
+      "addButton": "+ Borç Ekle",
+      "emptyTitle": "Henüz borç eklenmemiş",
+      "emptyDescription": "Başlamak için yukarıdaki + Borç Ekle butonuna tıklayın.",
+      "pagination": "Sayfa {currentPage} / {totalPages}",
+      "toasts": {
+        "loadError": "Borçlar yüklenemedi."
+      }
+    },
+    "DebtListItem": {
+      "editLabel": "Düzenle",
+      "editTooltip": "Borcu düzenle",
+      "deleteLabel": "Sil",
+      "deleteTooltip": "Borcu sil",
+      "dialogTitle": "Emin misiniz?",
+      "dialogDescription": "Bu işlem geri alınamaz. {debtName} adlı borcu kalıcı olarak sileceksiniz.",
+      "dialogCancel": "İptal",
+      "dialogConfirm": "Sil",
+      "details": {
+        "balance": "Bakiye",
+        "minPayment": "Min. Ödeme",
+        "interest": "Faiz"
+      },
+      "toasts": {
+        "deleteSuccess": "Borç silindi.",
+        "deleteError": "Borç silinemedi."
+      }
+    },
+    "DebtFormModal": {
+      "titleEdit": "Borcu Düzenle",
+      "titleAdd": "Yeni Borç Ekle",
+      "buttonSave": "Değişiklikleri Kaydet",
+      "buttonAdd": "Borç Ekle",
+      "labels": {
+        "name": "Borç Adı",
+        "namePlaceholder": "Örn. Kredi Kartı",
+        "balance": "Mevcut Bakiye (TL)",
+        "balancePlaceholder": "1500",
+        "interest": "Yıllık Faiz Oranı (%)",
+        "interestPlaceholder": "24.5",
+        "minPayment": "Min. Aylık Ödeme (TL)",
+        "minPaymentPlaceholder": "150"
+      },
+      "toasts": {
+        "updateSuccess": "Borç başarıyla güncellendi.",
+        "addSuccess": "Borç başarıyla eklendi.",
+        "updateError": "Borç güncellenirken bir hata oluştu.",
+        "addError": "Borç eklenirken bir hata oluştu."
+      },
+      "zod": {
+        "required": "Bu alan zorunludur",
+        "minAmount": "En az 0.01 olmalıdır",
+        "maxAmount": "Değer 999.999.999.999,99'u geçemez",
+        "negative": "Negatif olamaz",
+        "maxInterest": "Değer 100'ü geçemez",
+        "minPaymentGreater": "Min. ödeme bakiyeden büyük olamaz"
+      }
+    },
+    "CalculationForm": {
+      "title": "Hesaplama",
+      "description": "Borç ödemenizi hızlandırmak için aylık ekstra bir bütçe girin.",
+      "label": "Aylık Ekstra Bütçe (TL)",
+      "placeholder": "0",
+      "button": "Hesapla",
+      "buttonLoading": "Hesaplanıyor...",
+      "footerWarning": "Hesaplama yapabilmek için önce borç eklemelisiniz.",
+      "toasts": {
+        "noReportId": "Sunucudan rapor ID'si dönmedi.",
+        "defaultError": "Hesaplama yapılamadı. Lütfen borçlarınızı kontrol edin."
+      },
+      "zod": {
+        "negative": "Negatif olamaz",
+        "maxAmount": "Değer 999.999.999.999,99'u geçemez"
+      }
+    },
+    "CalculationHistory": {
+      "title": "Hesaplama Geçmişi",
+      "description": "En son 10 hesaplama senaryonuz.",
+      "empty": "Henüz kayıtlı bir hesaplamanız yok.",
+      "details": {
+        "totalDebt": "Toplam Borç:",
+        "extraPayment": "Ekstra Ödeme:",
+        "saved": "Tasarruf:"
+      },
+      "toasts": {
+        "loadError": "Hesaplama geçmişi yüklenemedi."
+      }
+    }
+  }
+}

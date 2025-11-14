@@ -2,19 +2,24 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
-import { AuthProvider} from "@/context/AuthContext";
+import { NextIntlClientProvider, hasLocale, useMessages } from "next-intl";
+import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from 'react-hot-toast';
+import {routing} from "@/i18n/routing";
+import {notFound} from "next/navigation";
 
-import { NextIntlClientProvider, useMessages } from 'next-intl';
 
-export default function RootLayout({
-  children,
-    params: { lang }
+export default async function RootLayout({
+  children, params
 }: {
   children: React.ReactNode;
-    params: { lang: string };
+    params: Promise<{ locale: string }>;
 }) {
-    const messages = useMessages();
+    const { locale } = await params;
+
+    if (!hasLocale(routing.locales, locale)) {
+        notFound();
+    }
 
   return (
     <html lang="en">
@@ -22,7 +27,7 @@ export default function RootLayout({
         className={`${GeistSans.className} antialiased`}
       >
       <AuthProvider>
-          <NextIntlClientProvider locale={lang} messages={messages}>
+          <NextIntlClientProvider>
               {children}
               <Toaster position="top-right"/>
           </NextIntlClientProvider>

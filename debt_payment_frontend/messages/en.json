@@ -1,0 +1,170 @@
+{
+  "Navbar": {
+    "appTitle": "Debt Calculator",
+    "logoutButton": "Logout",
+    "languageLabel": "Change language",
+    "turkish": "Turkish (TR)",
+    "english": "English (EN)"
+  },
+  "LoginPage": {
+    "title": "Login",
+    "subtitle": "Enter your credentials to access your account.",
+    "redirecting": "Redirecting to dashboard...",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submitButton": "Login",
+      "submitButtonLoading": "Logging in..."
+    },
+    "zodErrors": {
+      "blank": "This field cannot be blank",
+      "invalidEmail": "Invalid email address."
+    },
+    "toasts": {
+      "success": "Login successful, redirecting...",
+      "defaultError": "Login failed"
+    },
+    "footer": {
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register"
+    }
+  },
+  "RegisterPage": {
+    "title": "Create Account",
+    "subtitle": "Create your account to get started.",
+    "redirecting": "Redirecting to dashboard...",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "passwordLabel": "Password",
+      "passwordDescription": "Min. 8 Chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Symbol.",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "submitButton": "Register",
+      "submitButtonLoading": "Registering..."
+    },
+    "zodErrors": {
+      "emailBlank": "Email field cannot be blank",
+      "emailInvalid": "Invalid email address.",
+      "passwordBlank": "Password cannot be blank",
+      "passwordNotStrong": "Password is not strong enough.",
+      "confirmPasswordBlank": "Please confirm your password",
+      "passwordsNoMatch": "Passwords do not match"
+    },
+    "toasts": {
+      "success": "Register successful! Please log in.",
+      "defaultError": "Register failed.."
+    },
+    "footer": {
+      "haveAccount": "Already have an account?",
+      "loginLink": "Login"
+    }
+  },
+  "DashboardPage": {
+    "page": {
+      "toasts": {
+        "loadError": "Debts could not be loaded."
+      }
+    },
+    "OverviewCard": {
+      "title": "Overview",
+      "description": "A financial summary of all your debts.",
+      "totalBalance": "Total Balance",
+      "totalMinPayment": "Total Min. Monthly Payment",
+      "totalDebtCount": "Total Debt Amount"
+    },
+    "DebtsCard": {
+      "title": "Current Debts",
+      "addButton": "+ Add Debt",
+      "emptyTitle": "No debts added yet",
+      "emptyDescription": "Click the + Add Debt button above to get started.",
+      "pagination": "Page {currentPage} of {totalPages}",
+      "toasts": {
+        "loadError": "Debts could not be loaded."
+      }
+    },
+    "DebtListItem": {
+      "editLabel": "Edit",
+      "editTooltip": "Edit debt",
+      "deleteLabel": "Delete",
+      "deleteTooltip": "Delete debt",
+      "dialogTitle": "Are you sure?",
+      "dialogDescription": "This action cannot be undone. You will permanently delete {debtName}.",
+      "dialogCancel": "Cancel",
+      "dialogConfirm": "Delete",
+      "details": {
+        "balance": "Balance",
+        "minPayment": "Min. Payment",
+        "interest": "Interest"
+      },
+      "toasts": {
+        "deleteSuccess": "Debt deleted.",
+        "deleteError": "Could not delete debt."
+      }
+    },
+    "DebtFormModal": {
+      "titleEdit": "Edit Debt",
+      "titleAdd": "Add new debt",
+      "buttonSave": "Save Changes",
+      "buttonAdd": "Add Debt",
+      "labels": {
+        "name": "Debt Name",
+        "namePlaceholder": "E.g. Credit Card",
+        "balance": "Current Balance (TL)",
+        "balancePlaceholder": "1500",
+        "interest": "Annual Interest Rate (%)",
+        "interestPlaceholder": "24.5",
+        "minPayment": "Min. Monthly Payment (TL)",
+        "minPaymentPlaceholder": "150"
+      },
+      "toasts": {
+        "updateSuccess": "The debt has been successfully updated.",
+        "addSuccess": "The debt has been successfully added.",
+        "updateError": "An error occurred while updating the debt.",
+        "addError": "An error occurred while adding the debt."
+      },
+      "zod": {
+        "required": "This field is required",
+        "minAmount": "Must be at least 0.01",
+        "maxAmount": "Value cannot exceed 999,999,999,999.99",
+        "negative": "Cannot be negative",
+        "maxInterest": "Value cannot exceed 100",
+        "minPaymentGreater": "Min. payment cannot be greater than the balance"
+      }
+    },
+    "CalculationForm": {
+      "title": "Calculation",
+      "description": "Enter an extra budget to speed up your debt repayment.",
+      "label": "Monthly Extra Budget (TL)",
+      "placeholder": "0",
+      "button": "Calculate",
+      "buttonLoading": "Calculating...",
+      "footerWarning": "To perform the calculation, you must first add the debt.",
+      "toasts": {
+        "noReportId": "Report ID was not returned from the server.",
+        "defaultError": "The calculation could not be performed. Please check your debts."
+      },
+      "zod": {
+        "negative": "Cannot be negative",
+        "maxAmount": "Value cannot exceed 999,999,999,999.99"
+      }
+    },
+    "CalculationHistory": {
+      "title": "Calculation History",
+      "description": "Your 10 most recent calculation scenarios.",
+      "empty": "You have no saved calculations yet.",
+      "details": {
+        "totalDebt": "Total Debt:",
+        "extraPayment": "Extra Payment:",
+        "saved": "Saved:"
+      },
+      "toasts": {
+        "loadError": "Could not load calculation history."
+      }
+    }
+  }
+}

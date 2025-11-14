@@ -30,6 +30,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {LanguageSwitcher} from "@/components/LanguageSwitcher";
 
 export const dynamic = 'force-dynamic';
 
@@ -180,12 +181,16 @@ export default function LoginPage() {
                     </Form>
                 </CardContent>
                 <CardFooter>
-                    <p className="text-center text-sm text-muted-foreground w-full">
-                        {t('footer.noAccount')}
-                        <Link href={"/register"} className="text-primary hover:underline ml-1 font-semibold">
-                            {t('footer.registerLink')}
-                        </Link>
-                    </p>
+                    <div className="flex justify-between items-center w-full">
+                        <LanguageSwitcher/>
+
+                        <p className="text-sm text-muted-foreground">
+                            {t('footer.noAccount')}
+                            <Link href={"/register"} className="text-primary hover:underline ml-1 font-semibold">
+                                {t('footer.registerLink')}
+                            </Link>
+                        </p>
+                    </div>
                 </CardFooter>
             </Card>
         </div>

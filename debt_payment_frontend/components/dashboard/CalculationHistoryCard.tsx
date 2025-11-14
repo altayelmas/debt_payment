@@ -1,16 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import {useEffect, useState} from 'react';
+import {Link} from '@/i18n/navigation';
 import api from '@/lib/api';
-import { CalculationHistoryDto } from '@/types';
+import {CalculationHistoryDto} from '@/types';
 import toast from 'react-hot-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatCurrency } from '@/lib/utils';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Skeleton} from "@/components/ui/skeleton";
+import {formatCurrency} from '@/lib/utils';
 import {useAuth} from "@/context/AuthContext";
+import {useTranslations, useLocale} from 'next-intl';
 
 export default function CalculationHistoryCard() {
+    const t = useTranslations('DashboardPage.CalculationHistory');
+    const locale = useLocale();
+
     const [history, setHistory] = useState<CalculationHistoryDto[] | null>(null);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const {isAuthenticated} = useAuth();
@@ -25,7 +29,7 @@ export default function CalculationHistoryCard() {
             const response = await api.get<CalculationHistoryDto[]>('/api/calculation/history');
             setHistory(response.data);
         } catch (error) {
-            toast.error('Could not load calculation history.');
+            toast.error(t('toasts.loadError'));
         } finally {
             setLoadingHistory(false);
         }
@@ -34,9 +38,9 @@ export default function CalculationHistoryCard() {
     return (
         <Card className="lg:col-span-3">
             <CardHeader>
-                <CardTitle className="text-2xl">Calculation History</CardTitle>
+                <CardTitle className="text-2xl">{t('title')}</CardTitle>
                 <CardDescription>
-                    Your 10 most recent calculation scenarios.
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -46,7 +50,7 @@ export default function CalculationHistoryCard() {
                         <Skeleton className="h-[60px] w-full rounded-md"/>
                     </div>
                 ) : !history || history.length === 0 ? (
-                    <p className="text-muted-foreground">You have no saved calculations yet.</p>
+                    <p className="text-muted-foreground">{t('empty')}</p>
                 ) : (
                     <div className="space-y-3">
                         {history.map(report => (
@@ -57,7 +61,7 @@ export default function CalculationHistoryCard() {
                             >
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                                     <span className="font-semibold text-blue-600">
-                                        {new Date(report.createdAt).toLocaleString('tr-TR', {
+                                        {new Date(report.createdAt).toLocaleString(locale, {
                                             day: '2-digit',
                                             month: 'long',
                                             year: 'numeric',
@@ -69,15 +73,19 @@ export default function CalculationHistoryCard() {
                                         {report.recommendedPayOffDate}
                                     </span>
                                 </div>
-                                <div className="text-sm text-muted-foreground mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div
+                                    className="text-sm text-muted-foreground mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                                     <div>
-                                        Total Debt: <strong className="text-foreground">{formatCurrency(report.totalDebt)}</strong>
+                                        {t('details.totalDebt')} <strong
+                                        className="text-foreground">{formatCurrency(report.totalDebt, locale)}</strong>
                                     </div>
                                     <div>
-                                        Extra Payment: <strong className="text-foreground">{formatCurrency(report.extraPayment)}</strong>
+                                        {t('details.extraPayment')} <strong
+                                        className="text-foreground">{formatCurrency(report.extraPayment, locale)}</strong>
                                     </div>
                                     <div>
-                                        Saved: <strong className="text-green-600">{formatCurrency(report.recommendedInterestSaved)}</strong>
+                                        {t('details.saved')} <strong
+                                        className="text-green-600">{formatCurrency(report.recommendedInterestSaved, locale)}</strong>
                                     </div>
                                 </div>
                             </Link>

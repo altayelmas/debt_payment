@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Debt, PagedResult } from '@/types';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
+
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -22,8 +24,8 @@ import {
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox } from "lucide-react";
-import DebtFormModal from "@/app/[lang]/dashboard/DebtFormModal";
-import DebtListItem from "@/app/[lang]/dashboard/DebtListItem";
+import DebtFormModal from "@/components/dashboard/DebtFormModal";
+import DebtListItem from "@/components/dashboard/DebtListItem";
 
 const PAGE_SIZE = 5;
 
@@ -33,6 +35,8 @@ interface DebtsCardProps {
 }
 
 export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardProps) {
+    const t = useTranslations('DashboardPage.DebtsCard');
+
     const [pagedData, setPagedData] = useState<PagedResult<Debt> | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [loadingDebts, setLoadingDebts] = useState(true);
@@ -54,7 +58,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
             setPagedData(response.data);
             onDebtsChange(response.data);
         } catch (error) {
-            toast.error('Debts could not be loaded.');
+            toast.error(t('toasts.loadError'));
             onDebtsChange(null);
         } finally {
             setLoadingDebts(false);
@@ -87,7 +91,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
         <Card className="lg:col-span-3 flex flex-col">
             <CardHeader>
                 <div className={"flex justify-between items-center gap-4"}>
-                    <CardTitle className="text-2xl">Current Debts</CardTitle>
+                    <CardTitle className="text-2xl">{t('title')}</CardTitle>
 
                     <Button onClick={() => {
                         setEditingDebt(null);
@@ -130,10 +134,10 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                                         className="flex flex-col items-center justify-center gap-3 text-center py-16">
                                         <Inbox className="h-16 w-16 text-muted-foreground" />
                                         <h3 className="text-xl font-semibold text-foreground">
-                                            No debts added yet
+                                            {t('emptyTitle')}
                                         </h3>
                                         <p className="text-muted-foreground">
-                                            Click the + Add Debt button above to get started.
+                                            {t('emptyDescription')}
                                         </p>
                                     </div>
                                 )}
@@ -159,7 +163,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                             </PaginationItem>
                             <PaginationItem>
                                 <span className="px-4 py-2 text-sm font-medium">
-                                    Page {pagedData.currentPage} of {pagedData.totalPages}
+                                    {t('pagination', {currentPage: pagedData.currentPage, totalPages: pagedData.totalPages})}
                                 </span>
                             </PaginationItem>
                             <PaginationItem>
