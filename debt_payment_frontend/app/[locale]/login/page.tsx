@@ -1,5 +1,6 @@
 'use client';
 
+import {useTranslations, useLocale} from 'next-intl';
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthContext";
@@ -32,17 +33,22 @@ import {Input} from "@/components/ui/input";
 
 export const dynamic = 'force-dynamic';
 
-const loginFormSchema = z.object({
-    email: z.string()
-        .min(1, {message: "This field cannot be blank"})
-        .email({message: "Invalid email address."}),
-    password: z.string()
-        .min(1, {message: "This field cannot be blank"}),
-});
-
-type LoginFormInputs = z.infer<typeof loginFormSchema>;
 
 export default function LoginPage() {
+    const t = useTranslations('LoginPage');
+    const tZod = useTranslations('LoginPage.zodErrors');
+    const locale = useLocale();
+
+    const loginFormSchema = z.object({
+        email: z.string()
+            .min(1, {message: "This field cannot be blank"})
+            .email({message: "Invalid email address."}),
+        password: z.string()
+            .min(1, {message: "This field cannot be blank"}),
+    });
+
+    type LoginFormInputs = z.infer<typeof loginFormSchema>;
+
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -59,9 +65,9 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace('/dashboard');
+            router.replace(`/${locale}/dashboard`);
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, router, locale]);
 
     const onSubmit = async (data: LoginFormInputs) => {
         setLoading(true);
@@ -73,15 +79,15 @@ export default function LoginPage() {
 
             login(response.data.token);
 
-            toast.success('Login successful, redirecting...');
-            router.push('/dashboard');
+            toast.success(t('toasts.success'));
+            router.push(`/${locale}/dashboard`);
         } catch (error: any) {
             console.error('Login error: ', error);
             const errorMessage = error.response?.data?.errors?.[0] ||
                 error.response?.data?.Error ||
                 error.response?.data ||
                 'Login failed';
-            toast.error(errorMessage);
+            toast.error(errorMessage || t('toasts.defaultError'));
         } finally {
             setLoading(false);
         }
@@ -91,7 +97,7 @@ export default function LoginPage() {
         return (
             <div className="flex items-center justify-center min-h-screen bg-background">
                 <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
-                <p className="text-lg text-muted-foreground">Redirecting to dashboard...</p>
+                <p className="text-lg text-muted-foreground">{t('redirecting')}</p>
             </div>
         );
     }
@@ -100,8 +106,8 @@ export default function LoginPage() {
         <div className={"flex items-center justify-center min-h-screen bg-background p-4"}>
             <Card className={"w-full max-w-md"}>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
-                    <CardDescription>Enter your credentials to access your account.</CardDescription>
+                    <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
+                    <CardDescription>{t('subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -112,11 +118,11 @@ export default function LoginPage() {
                                 name="email"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t('form.emailLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
-                                                placeholder="name@example.com"
+                                                placeholder={t('form.emailPlaceholder')}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -130,12 +136,12 @@ export default function LoginPage() {
                                 name="password"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>{t('form.passwordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
-                                                    placeholder="••••••••"
+                                                    placeholder={t('form.passwordPlaceholder')}
                                                     {...field}
                                                     autoComplete="current-password"
                                                 />
@@ -153,7 +159,7 @@ export default function LoginPage() {
                                                     <Eye className="h-4 w-4" aria-hidden="true"/>
                                                 )}
                                                 <span className="sr-only">
-                                                    {showPassword ? "Hide password" : "Show password"}
+                                                    {showPassword ? t('form.hidePassword') : t('form.showPassword')}
                                                 </span>
                                             </Button>
                                         </div>
@@ -168,16 +174,16 @@ export default function LoginPage() {
                                 className="w-full"
                             >
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                                {loading ? 'Logging in...' : 'Login'}
+                                {loading ? t('form.submitButtonLoading') : t('form.submitButton')}
                             </Button>
                         </form>
                     </Form>
                 </CardContent>
                 <CardFooter>
                     <p className="text-center text-sm text-muted-foreground w-full">
-                        Don&#39;t have an account?
+                        {t('footer.noAccount')}
                         <Link href={"/register"} className="text-primary hover:underline ml-1 font-semibold">
-                            Register
+                            {t('footer.registerLink')}
                         </Link>
                     </p>
                 </CardFooter>
