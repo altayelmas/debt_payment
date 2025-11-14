@@ -39,6 +39,8 @@ namespace debt_payment_backend.Tests
                      .ReturnsAsync(debts);
             _mockRepo.Setup(repo => repo.GetTotalDebtCountByUserIdAsync(userId))
                      .ReturnsAsync(2);
+            _mockRepo.Setup(repo => repo.GetAllDebtsByUserIdAsync(userId))
+                     .ReturnsAsync(debts);
 
             var result = await _sut.GetDebtsForUserAsync(userId, page, pageSize);
 

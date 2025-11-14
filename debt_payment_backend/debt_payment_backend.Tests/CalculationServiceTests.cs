@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Model.Entity;
 using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
 using debt_payment_backend.CalculationService.Service.Impl;
@@ -20,7 +20,6 @@ namespace debt_payment_backend.Tests
         private readonly Mock<IHttpClientFactory> _mockFactory;
         private readonly Mock<IHttpContextAccessor> _mockContextAccessor;
         private readonly Mock<HttpMessageHandler> _mockHandler;
-        private readonly HttpClient _httpClient;
         private readonly Mock<CalculationRepository> _mockRepository;
 
         private readonly CalculateServiceImpl _sut;
@@ -28,14 +27,9 @@ namespace debt_payment_backend.Tests
         public CalculationServiceTests()
         {
             _mockHandler = new Mock<HttpMessageHandler>();
-            _httpClient = new HttpClient(_mockHandler.Object)
-            {
-                BaseAddress = new Uri("http://localhost:5002")
-            };
-
             _mockFactory = new Mock<IHttpClientFactory>();
             _mockFactory.Setup(_ => _.CreateClient("DebtServiceClient"))
-                        .Returns(_httpClient);
+                        .Returns(new HttpClient(_mockHandler.Object) { BaseAddress = new Uri("http://testhost/") });
 
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
 
@@ -59,12 +53,12 @@ namespace debt_payment_backend.Tests
             _mockContextAccessor.Setup(a => a.HttpContext).Returns(mockHttpContext.Object);
         }
 
-        private void SetupMockHttpResponse(HttpStatusCode statusCode, object content)
+        private void SetupMockHttpResponse<T>(T content, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             var httpResponse = new HttpResponseMessage
             {
                 StatusCode = statusCode,
-                Content = new StringContent(JsonSerializer.Serialize(content), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(content), Encoding.UTF8, "application/json"),
             };
 
             _mockHandler.Protected()
@@ -77,7 +71,7 @@ namespace debt_payment_backend.Tests
         }
 
         [Fact]
-        public async Task CalculateAsync_ShouldThrowUnauthorizedAccessException_WhenTokenIsMissing()
+        public async Task CalculateAsync_Should_ThrowUnauthorizedAccessException_When_TokenIsMissing()
         {
             var request = new CalculationRequestDto
             {
@@ -92,7 +86,7 @@ namespace debt_payment_backend.Tests
         }
 
         [Fact]
-        public async Task CalculateAsync_ShouldThrowInvalidOperationException_WhenHttpClientFails()
+        public async Task CalculateAsync_Should_ThrowInvalidOperationException_When_DebtServiceCallFails()
         {
             var request = new CalculationRequestDto
             {
@@ -116,23 +110,25 @@ namespace debt_payment_backend.Tests
         }
 
         [Fact]
-        public async Task CalculateAsync_ShouldReturnNull_WhenNoDebtsAreFound()
+        public async Task CalculateAsync_Should_ThrowInvalidOperationException_When_NoDebtsAreFound()
         {
             var request = new CalculationRequestDto
             {
                 ExtraMonthlyPayment = 500
             };
             SetupMockAuthToken();
-
             var emptyDebtList = new List<DebtDto>();
-            SetupMockHttpResponse(HttpStatusCode.OK, emptyDebtList);
+            SetupMockHttpResponse(emptyDebtList);
 
-            var result = await _sut.CalculateAsync(request, "user-id");
-            Assert.Null(result);
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                _sut.CalculateAsync(request, "user-id")
+            );
+
+            Assert.Equal("No debts found to calculate.", ex.Message);
         }
 
         [Fact]
-        public async Task CalculateAsync_ShouldThrowInvalidOperationException_WhenSimulationExceedsMaxMonths()
+        public async Task CalculateAsync_Should_ThrowInvalidOperationException_When_SimulationExceedsMaxMonths()
         {
             var request = new CalculationRequestDto { ExtraMonthlyPayment = 0 };
             SetupMockAuthToken();
@@ -141,7 +137,7 @@ namespace debt_payment_backend.Tests
             {
                 new DebtDto { DebtId = 1, Name = "Impossible Debt", CurrentBalance = 10000, InterestRate = 20, MinPayment = 50 }
             };
-            SetupMockHttpResponse(HttpStatusCode.OK, impossibleDebt);
+            SetupMockHttpResponse(impossibleDebt);
 
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 _sut.CalculateAsync(request, "user-id")
@@ -151,7 +147,29 @@ namespace debt_payment_backend.Tests
         }
         
         [Fact]
-        public async Task CalculateAsync_ShouldReturnCorrectResult_WhenHappyPath()
+        public async Task CalculateAsync_Should_ReturnExistingReportId_When_ScenarioHashMatches()
+        {
+            var request = new CalculationRequestDto { ExtraMonthlyPayment = 100 };
+            var userId = "user-id";
+            SetupMockAuthToken();
+
+            var debts = new List<DebtDto>
+            {
+                new DebtDto { DebtId = 1, Name = "Debt 1", CurrentBalance = 1000, InterestRate = 10, MinPayment = 50 }
+            };
+            SetupMockHttpResponse(debts);
+
+            var existingReport = new CalculationReport { CalculationId = Guid.NewGuid(), UserId = userId };
+            _mockRepository.Setup(r => r.GetReportByHashAsync(It.IsAny<string>())).ReturnsAsync(existingReport);
+
+            var resultId = await _sut.CalculateAsync(request, userId);
+
+            Assert.Equal(existingReport.CalculationId, resultId);
+            _mockRepository.Verify(r => r.AddCalculationReportAsync(It.IsAny<CalculationReport>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task CalculateAsync_Should_CreateAndReturnNewReportId_When_HappyPath()
         {
             var request = new CalculationRequestDto { ExtraMonthlyPayment = 100 };
             SetupMockAuthToken();
@@ -161,22 +179,21 @@ namespace debt_payment_backend.Tests
                 new DebtDto { DebtId = 1, Name = "Debt 1", CurrentBalance = 1000, InterestRate = 20, MinPayment = 50 },
                 new DebtDto { DebtId = 2, Name = "Debt 2", CurrentBalance = 500, InterestRate = 10, MinPayment = 25 }
             };
-            SetupMockHttpResponse(HttpStatusCode.OK, debts);
+            SetupMockHttpResponse(debts);
 
-            var result = await _sut.CalculateAsync(request, "user-id");
+            _mockRepository.Setup(r => r.GetReportByHashAsync(It.IsAny<string>())).ReturnsAsync((CalculationReport)null);
 
-            Assert.NotNull(result);
-            Assert.NotNull(result.SnowballResult);
-            Assert.NotNull(result.AvalancheResult);
-            
-            Assert.Equal(1500, result.BeginningDebt);
+            var newReportId = await _sut.CalculateAsync(request, "user-id");
 
-            Assert.True(result.AvalancheResult.TotalInterestPaid < result.SnowballResult.TotalInterestPaid);
+            Assert.NotEqual(Guid.Empty, newReportId);
 
-            Assert.Contains("Avalanche method", result.Recommendation);
-            
-            Assert.Equal("Snowball", result.SnowballResult.StrategyName);
-            Assert.Equal("Avalanche", result.AvalancheResult.StrategyName);
+            _mockRepository.Verify(r => r.AddCalculationReportAsync(It.Is<CalculationReport>(report =>
+                report.CalculationId == newReportId &&
+                report.UserId == "user-id" &&
+                !string.IsNullOrEmpty(report.ReportDataJson) &&
+                !string.IsNullOrEmpty(report.ScenarioHash)
+            )), Times.Once);
+            _mockRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
         }
     }
 }
