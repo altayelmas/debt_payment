@@ -37,7 +37,7 @@ import {
     ResponsiveContainer,
     ReferenceLine
 } from 'recharts';
-import {useLocale} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 
 interface ResultCardProps {
     result: StrategyResult;
@@ -47,14 +47,13 @@ interface ResultCardProps {
 
 export default function ResultCard({result, isSnowball, isRecommended}: ResultCardProps) {
     const locale = useLocale();
-
-    console.log(`[${result.strategyName}] Milestones Verisi:`, result.milestones);
+    const t = useTranslations('ResultsPage.ResultCard');
 
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
     const titleColor = isRecommended ? 'text-blue-600' : (isSnowball ? 'text-green-600' : 'text-red-600');
     const description = isSnowball
-        ? "Motivation-based: It delivers quick wins by eliminating even the smallest debts."
-        : "Mathematically the most efficient: Minimizes total interest.";
+        ? t('descriptionSnowball')
+        : t('descriptionAvalanche');
 
     const milestoneMonths = new Set(result.milestones.map(m => m.month));
 
@@ -78,53 +77,57 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
     return (
         <Card className={`border-t-4 ${borderColor} relative flex flex-col`}>
             {isRecommended && (
-                <Badge className="absolute -top-3 right-4">Recommended</Badge>
+                <Badge className="absolute -top-3 right-4">{t('recommendedBadge')}</Badge>
             )}
-            <CardHeader>
-                <CardTitle className={`text-2xl font-bold ${titleColor}`}>
+            <CardHeader className="p-3">
+                <CardTitle className={`text-xl font-bold ${titleColor}`}>
                     {result.strategyName}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-lg flex-grow">
+            <CardContent className="p-3 space-y-1.5 text-base">
                 <div className="flex justify-between items-baseline">
-                    <span className="text-base text-muted-foreground">End Date</span>
+                    <span className="text-sm text-muted-foreground">{t('endDate')}</span>
                     <span className="font-semibold">{result.payOffDate}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                    <span className="text-base text-muted-foreground">Total Interest Paid</span>
+                    <span className="text-sm text-muted-foreground">{t('totalInterest')}</span>
                     <span className="font-semibold">{formatCurrency(result.totalInterestPaid, locale)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                    <span className="text-base text-muted-foreground">Total Paid</span>
+                    <span className="text-sm text-muted-foreground">{t('totalPaid')}</span>
                     <span className="font-semibold">{formatCurrency(result.totalPaid, locale)}</span>
                 </div>
             </CardContent>
 
-            <CardFooter>
-                <div className="flex flex-col items-start gap-4 w-full">
+            <CardFooter className="p-3">
+                <div className="flex flex-col items-start gap-3 w-full">
                     <p className="text-sm text-muted-foreground">{description}</p>
 
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
-                                View Monthly Plan
+                                {t('viewPlanButton')}
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-4xl flex flex-col max-h-[90vh]">
                             <DialogHeader>
-                                <DialogTitle>{result.strategyName} - Payment Plan</DialogTitle>
+                                <DialogTitle>{t('dialogTitle', {strategyName: result.strategyName})}</DialogTitle>
                             </DialogHeader>
                             <div className={"overflow-y-auto pr-4"}>
                                 {result.milestones && result.milestones.length > 0 && (
                                     <div className="mb-4 p-4 border rounded-lg bg-muted/50">
-                                        <h4 className="font-semibold mb-2">Key Milestones</h4>
+                                        <h4 className="font-semibold mb-2">{t('milestonesTitle')}</h4>
                                         <ul className="space-y-1 list-disc list-inside text-sm">
                                             {result.milestones.map((milestone) => (
                                                 <li key={milestone.month}>
-                                                    <strong>Month {milestone.month} ({milestone.monthYear}):</strong>
-                                                    <span className="text-green-600 font-medium ml-1">
-                                                    &#34;{milestone.debtName}&#34; debt paid off!
-                                                </span>
+                                                    {t.rich('milestoneItem', {
+                                                        month: milestone.month,
+                                                        monthYear: milestone.monthYear,
+                                                        debtName: milestone.debtName,
+                                                        str: (chunks) => <strong>{chunks}</strong>,
+                                                        sp: (chunks) => <span
+                                                            className="text-green-600 font-medium ml-1">{chunks}</span>
+                                                    })}
                                                 </li>
                                             ))}
                                         </ul>
@@ -132,14 +135,14 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                 )}
                                 <Tabs defaultValue="chart" className="w-full">
                                     <TabsList className="grid w-full grid-cols-2">
-                                        <TabsTrigger value="chart">Chart</TabsTrigger>
-                                        <TabsTrigger value="table">Monthly Breakdown</TabsTrigger>
+                                        <TabsTrigger value="chart">{t('chartTab')}</TabsTrigger>
+                                        <TabsTrigger value="table">{t('tableTab')}</TabsTrigger>
                                     </TabsList>
 
                                     <TabsContent value="chart">
-                                        <div className="h-[450px] w-full pt-4">
+                                        <div className="h-[400px] w-full pt-4">
                                             <p className="text-sm text-muted-foreground mb-4">
-                                                This chart shows how your total debt balance decreases over time.
+                                                {t('chartDescription')}
                                             </p>
 
                                             <ResponsiveContainer width="100%" height="100%">
@@ -151,7 +154,7 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                     <XAxis
                                                         dataKey="month"
                                                         label={{
-                                                            value: 'Month',
+                                                            value: t('chartXAxis'),
                                                             position: 'insideBottomRight',
                                                             offset: -10
                                                         }}
@@ -159,23 +162,23 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                     />
                                                     <YAxis
                                                         tickFormatter={(value) => formatCurrency(value, locale)}
-                                                        width={130}
+                                                        width={100}
                                                     />
                                                     <RechartsTooltip
                                                         labelFormatter={(label, payload) => {
                                                             if (payload && payload.length > 0) {
                                                                 const monthYear = payload[0].payload.monthYear;
-                                                                return `Month ${label} (${monthYear})`;
+                                                                return t('tooltipTitle', {label: label, monthYear: monthYear});
                                                             }
                                                             return `Month ${label}`;
                                                         }}
-                                                        formatter={(value: number) => [formatCurrency(value, locale), "Ending Balance"]}
+                                                        formatter={(value: number) => [formatCurrency(value, locale), t('tooltipLabel')]}
                                                     />
                                                     <Legend/>
                                                     <Line
                                                         type="monotone"
                                                         dataKey="endingBalance"
-                                                        name="Ending Balance"
+                                                        name={t('tooltipLabel')}
                                                         stroke="#0989FF"
                                                         strokeWidth={2}
                                                         dot={<CustomMilestoneDot />}
@@ -187,15 +190,15 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                     </TabsContent>
 
                                     <TabsContent value="table">
-                                        <div className="overflow-y-auto pr-4 mt-4">
+                                        <div className="overflow-y-auto pr-4 mt-2">
                                             <Table>
                                                 <TableHeader className="sticky top-0 bg-background">
                                                     <TableRow>
-                                                        <TableHead className="w-[60px]">Month</TableHead>
-                                                        <TableHead>Date</TableHead>
-                                                        <TableHead className="text-right">Interest Paid</TableHead>
-                                                        <TableHead className="text-right">Principal Paid</TableHead>
-                                                        <TableHead className="text-right">Ending Balance</TableHead>
+                                                        <TableHead className="w-[60px]">{t('tableHeadMonth')}</TableHead>
+                                                        <TableHead>{t('tableHeadDate')}</TableHead>
+                                                        <TableHead className="text-right">{t('tableHeadInterest')}</TableHead>
+                                                        <TableHead className="text-right">{t('tableHeadPrincipal')}</TableHead>
+                                                        <TableHead className="text-right">{t('tableHeadBalance')}</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>

@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import {useState} from 'react';
 import api from '@/lib/api';
-import { Debt } from '@/types';
+import {Debt} from '@/types';
 import toast from 'react-hot-toast';
-import { useTranslations, useLocale } from 'next-intl';
+import {useTranslations, useLocale} from 'next-intl';
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card} from "@/components/ui/card";
+import {Badge} from "@/components/ui/badge";
 import {
     Tooltip,
     TooltipContent,
@@ -26,8 +26,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
-import { formatCurrency } from '@/lib/utils';
+import {Loader2, Pencil, Trash2} from "lucide-react";
+import {formatCurrency} from '@/lib/utils';
 
 interface DebtListItemProps {
     debt: Debt;
@@ -35,7 +35,7 @@ interface DebtListItemProps {
     onDeleteComplete: () => void;
 }
 
-export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: DebtListItemProps) {
+export default function DebtListItem({debt, onEditClick, onDeleteComplete}: DebtListItemProps) {
     const t = useTranslations('DashboardPage.DebtListItem');
     const locale = useLocale();
 
@@ -57,22 +57,42 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
     return (
         <TooltipProvider>
             <Card className="shadow-sm">
-                <div className="p-3">
+                <div className="px-3 py-2">
                     <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-lg font-semibold leading-tight" title={debt.name}>
-                            {debt.name}
-                        </h3>
-                        <div className="flex-shrink-0 -mt-2 -mr-1">
-                            {/* Edit Butonu */}
+                        <div className="flex-grow flex items-baseline gap-x-4 gap-y-1 flex-wrap min-w-0">
+                            <h3 className="text-base font-semibold leading-tight truncate" title={debt.name}>
+                                {debt.name}
+                            </h3>
+                            <div className="flex items-baseline gap-x-3 gap-y-1 flex-wrap">
+                                <div>
+                                    <span
+                                        className="text-xs text-muted-foreground uppercase">{t('details.balance')}:</span>
+                                    <span
+                                        className="text-sm font-medium ml-1">{formatCurrency(debt.currentBalance, locale)}</span>
+                                </div>
+                                <div>
+                                    <span
+                                        className="text-xs text-muted-foreground uppercase">{t('details.minPayment')}:</span>
+                                    <span
+                                        className="text-sm font-medium ml-1">{formatCurrency(debt.minPayment, locale)}</span>
+                                </div>
+                                <div>
+                                    <span
+                                        className="text-xs text-muted-foreground uppercase">{t('details.interest')}:</span>
+                                    <Badge variant="secondary" className="ml-1 text-xs">%{debt.interestRate}</Badge>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex-shrink-0">
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="text-muted-foreground hover:text-blue-600"
+                                        className="text-muted-foreground hover:text-blue-600 h-8 w-8"
                                         onClick={() => onEditClick(debt)}
                                     >
-                                        <Pencil className="h-5 w-5" />
+                                        <Pencil className="h-4 w-4"/>
                                         <span className="sr-only">{t('editLabel')}</span>
                                     </Button>
                                 </TooltipTrigger>
@@ -88,13 +108,13 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="text-muted-foreground hover:text-destructive"
+                                                className="text-muted-foreground hover:text-destructive h-8 w-8"
                                                 disabled={isDeleting}
                                             >
                                                 {isDeleting ? (
-                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                    <Loader2 className="h-4 w-4 animate-spin"/>
                                                 ) : (
-                                                    <Trash2 className="h-5 w-5" />
+                                                    <Trash2 className="h-4 w-4"/>
                                                 )}
                                                 <span className="sr-only">{t('deleteLabel')}</span>
                                             </Button>
@@ -122,21 +142,6 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                        </div>
-                    </div>
-                    {/* Borç Detayları */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1.5">
-                        <div>
-                            <span className="text-xs text-muted-foreground block uppercase">{t('details.balance')}</span>
-                            <span className="text-sm font-medium">{formatCurrency(debt.currentBalance, locale)}</span>
-                        </div>
-                        <div>
-                            <span className="text-xs text-muted-foreground block uppercase">{t('details.minPayment')}</span>
-                            <span className="text-sm font-medium">{formatCurrency(debt.minPayment, locale)}</span>
-                        </div>
-                        <div>
-                            <span className="text-xs text-muted-foreground block uppercase mb-1">{t('details.interest')}</span>
-                            <Badge variant="secondary">%{debt.interestRate}</Badge>
                         </div>
                     </div>
                 </div>

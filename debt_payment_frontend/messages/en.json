@@ -176,5 +176,47 @@
   },
   "HomePage": {
     "redirecting": "Redirecting..."
+  },
+  "ResultsPage": {
+    "page": {
+      "loading": "Loading results...",
+      "notFoundTitle": "Report Not Found",
+      "notFoundDescription": "The report you are looking for does not exist or has been deleted.",
+      "backButton": "Back to Dashboard",
+      "headerTitle": "Calculation Results",
+      "headerSubtitle": "Strategy Comparison",
+      "extraPaymentLabel": "Monthly Extra Payment:",
+      "initialDebtLabel": "Initial Debt:",
+      "recommendationTitle": "Recommendation",
+      "recommendationText": "We recommend the <str>{strategyName}</str> method. By choosing this, you'll save <str>{interestSaved}</str> in interest and pay off your debt <str>{monthsSaved} months</str> sooner.",
+      "recommendationText_noSavings": "We recommend the <str>{strategyName}</str> method.",
+      "newCalcButton": "Perform new calculation",
+      "toasts": {
+        "loadError": "Could not load calculation results."
+      }
+    },
+    "ResultCard": {
+      "recommendedBadge": "Recommended",
+      "endDate": "End Date",
+      "totalInterest": "Total Interest Paid",
+      "totalPaid": "Total Paid",
+      "descriptionSnowball": "Motivation-based: It delivers quick wins by eliminating even the smallest debts.",
+      "descriptionAvalanche": "Mathematically the most efficient: Minimizes total interest.",
+      "viewPlanButton": "View Monthly Plan",
+      "dialogTitle": "{strategyName} - Payment Plan",
+      "milestonesTitle": "Key Milestones",
+      "milestoneItem": "<str>Month {month} ({monthYear}):</str><sp> \"{debtName}\" debt paid off!</sp>",
+      "chartTab": "Chart",
+      "tableTab": "Monthly Breakdown",
+      "chartDescription": "This chart shows how your total debt balance decreases over time.",
+      "chartXAxis": "Month",
+      "tooltipLabel": "Ending Balance",
+      "tooltipTitle": "Month {label} ({monthYear})",
+      "tableHeadMonth": "Month",
+      "tableHeadDate": "Date",
+      "tableHeadInterest": "Interest Paid",
+      "tableHeadPrincipal": "Principal Paid",
+      "tableHeadBalance": "Ending Balance"
+    }
   }
 }

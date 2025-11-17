@@ -51,19 +51,21 @@ export default function DashboardPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen flex flex-col bg-gray-50">
                 <Navbar/>
-                <main className="container mx-auto p-4 md:p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <OverviewCard pagedData={pagedData} loadingDebts={loadingDebts}/>
-                        <DebtsCard
-                            isAuthenticated={isAuthenticated}
-                            onDebtsChange={(data) => {
-                                setPagedData(data);
-                                setLoadingDebts(false);
-                            }}
-                        />
-                        <CalculationHistoryCard isCalculationDisabled={!pagedData || pagedData.totalCount === 0}/>
+                <main className="container mx-auto p-4 md:p-6 flex-grow flex flex-col">
+                    <OverviewCard pagedData={pagedData} loadingDebts={loadingDebts}/>
+                    <div className="mt-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                            <DebtsCard
+                                isAuthenticated={isAuthenticated}
+                                onDebtsChange={(data) => {
+                                    setPagedData(data);
+                                    setLoadingDebts(false);
+                                }}
+                            />
+                            <CalculationHistoryCard isCalculationDisabled={!pagedData || pagedData.totalCount === 0}/>
+                        </div>
                     </div>
                 </main>
             </div>

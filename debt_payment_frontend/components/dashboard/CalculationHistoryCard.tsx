@@ -78,7 +78,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
     };
 
     return (
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 flex flex-col">
             <CardHeader>
                 <div className="flex justify-between items-center gap-4">
                     <div>
@@ -93,6 +93,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                     </Button>
                 </div>
             </CardHeader>
+
             <CardContent>
                 {loadingHistory ? (
                     <div className="space-y-3">

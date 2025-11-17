@@ -101,8 +101,8 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                     </Button>
                 </div>
             </CardHeader>
-            <CardContent className="flex-grow">
-                <div className="h-[320px] overflow-y-auto pr-2 space-y-3">
+            <CardContent>
+                <div className="pr-2 space-y-1.5">
                     {loadingDebts ? (
                         <div className="space-y-3">
                             <Skeleton className="h-[70px] w-full rounded-md" />

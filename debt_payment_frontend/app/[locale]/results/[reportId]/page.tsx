@@ -1,29 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useRouter} from '@/i18n/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { CalculationResult } from '@/types';
+import {CalculationResult} from '@/types';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { buttonVariants } from "@/components/ui/button";
-import { ArrowLeft, Lightbulb, Loader2 } from "lucide-react";
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+import {buttonVariants} from "@/components/ui/button";
+import {ArrowLeft, Lightbulb, Loader2} from "lucide-react";
 
 import {formatCurrency} from "@/lib/utils";
 import ResultCard from "@/components/results/ResultCard";
-import {useLocale} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 
-export default function ResultsPage({ params }: { params: { reportId: string } }) {
+export default function ResultsPage({params}: { params: { reportId: string } }) {
     const locale = useLocale();
+    const t = useTranslations('ResultsPage.page');
 
     const [report, setReport] = useState<CalculationResult | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { reportId } = params;
+    const {reportId} = params;
 
     useEffect(() => {
 
@@ -37,7 +38,7 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
                 const response = await api.get<CalculationResult>(`/api/Calculation/${reportId}`);
                 setReport(response.data);
             } catch (error) {
-                toast.error('Could not load calculation results.');
+                toast.error(t('toasts.loadError'));
                 router.replace('/dashboard');
             } finally {
                 setLoading(false);
@@ -53,7 +54,7 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
             <ProtectedRoute>
                 <div className="flex items-center justify-center min-h-screen bg-background">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
-                    <p className="text-lg ml-3 text-muted-foreground">Loading results...</p>
+                    <p className="text-lg ml-3 text-muted-foreground">{t('loading')}</p>
                 </div>
             </ProtectedRoute>
         );
@@ -63,14 +64,14 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
         return (
             <ProtectedRoute>
                 <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-                    <h2 className="text-2xl font-semibold text-destructive">Report Not Found</h2>
-                    <p className="text-muted-foreground mt-2">The report you are looking for does not exist or has been deleted.</p>
+                    <h2 className="text-2xl font-semibold text-destructive">{t('notFoundTitle')}</h2>
+                    <p className="text-muted-foreground mt-2">{t('notFoundDescription')}</p>
                     <Link
                         href="/dashboard"
-                        className={buttonVariants({ variant: "outline", className: "mt-4" })}
+                        className={buttonVariants({variant: "outline", className: "mt-4"})}
                     >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Dashboard
+                        <ArrowLeft className="mr-2 h-4 w-4"/>
+                        {t('backButton')}
                     </Link>
                 </div>
             </ProtectedRoute>
@@ -84,34 +85,48 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-background">
-                <Navbar />
+                <Navbar/>
 
                 <main className="container mx-auto p-4 md:p-8 max-w-5xl">
-                    <header className="text-center mb-8">
-                        <h1 className="text-4xl font-bold">Calculation Results</h1>
-                        <p className="text-lg text-muted-foreground mt-2">Strategy Comparison</p>
+                    <header className="text-center mb-6">
+                        <h1 className="text-3xl font-bold">{t('headerTitle')}</h1>
+                        <p className="text-base text-muted-foreground mt-2">{t('headerSubtitle')}</p>
 
-                        <div className="text-lg mt-4 inline-block rounded-lg border bg-muted p-4 text-muted-foreground">
-                            <span className="font-semibold text-foreground">Monthly Extra Payment:</span> {formatCurrency(report.extraPayment, locale)}
+                        <div
+                            className="text-base mt-3 inline-block rounded-lg border bg-muted p-3 text-muted-foreground">
+                            <span
+                                className="font-semibold text-foreground">{t('extraPaymentLabel')}</span> {formatCurrency(report.extraPayment, locale)}
                             <br/>
-                            <span className="font-semibold text-foreground">Initial Debt:</span> {formatCurrency(report.beginningDebt, locale)}
+                            <span
+                                className="font-semibold text-foreground">{t('initialDebtLabel')}</span> {formatCurrency(report.beginningDebt, locale)}
                         </div>
                     </header>
 
-                    <Alert className="mb-8 max-w-3xl mx-auto">
-                        <Lightbulb className="h-4 w-4" />
-                        <AlertTitle className="font-semibold">Recommendation</AlertTitle>
+                    <Alert className="mb-6 max-w-3xl mx-auto p-3">
+                        <Lightbulb className="h-4 w-4"/>
+                        <AlertTitle className="font-semibold">{t('recommendationTitle')}</AlertTitle>
                         <AlertDescription>
-                            We recommend the <strong>{recommendedStrategy}</strong> method.
-                            {interestSaved > 0 && monthsSaved > 0 && (
-                                <>
-                                    {' '}By choosing this, you&#39;ll save <strong>{formatCurrency(interestSaved, locale)}</strong> in interest and pay off your debt <strong>{monthsSaved} months</strong> sooner.
-                                </>
-                            )}
+                            <p className="text-sm leading-snug">
+                                {(interestSaved > 0 && monthsSaved > 0) ? (
+                                    t.rich('recommendationText', {
+                                        strategyName: recommendedStrategy,
+                                        interestSaved: formatCurrency(interestSaved, locale),
+                                        monthsSaved: monthsSaved,
+                                        str: (chunks) => <strong
+                                            className="font-semibold text-foreground">{chunks}</strong>
+                                    })
+                                ) : (
+                                    t.rich('recommendationText_noSavings', {
+                                        strategyName: recommendedStrategy,
+                                        str: (chunks) => <strong
+                                            className="font-semibold text-foreground">{chunks}</strong>
+                                    })
+                                )}
+                            </p>
                         </AlertDescription>
                     </Alert>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                         <ResultCard
                             result={report.snowballResult}
                             isSnowball={true}
@@ -124,13 +139,13 @@ export default function ResultsPage({ params }: { params: { reportId: string } }
                         />
                     </div>
 
-                    <div className="text-center mt-12">
+                    <div className="text-center mt-8">
                         <Link
                             href="/dashboard"
-                            className={buttonVariants({ variant: "outline" })}
+                            className={buttonVariants({variant: "outline"})}
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Perform new calculation
+                            <ArrowLeft className="mr-2 h-4 w-4"/>
+                            {t('newCalcButton')}
                         </Link>
                     </div>
                 </main>

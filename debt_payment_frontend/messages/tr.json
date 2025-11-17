@@ -176,5 +176,47 @@
   },
   "HomePage": {
     "redirecting": "Yönlendiriliyor..."
+  },
+  "ResultsPage": {
+    "page": {
+      "loading": "Sonuçlar yükleniyor...",
+      "notFoundTitle": "Rapor Bulunamadı",
+      "notFoundDescription": "Aradığınız rapor mevcut değil veya silinmiş.",
+      "backButton": "Gösterge Paneline Dön",
+      "headerTitle": "Hesaplama Sonuçları",
+      "headerSubtitle": "Strateji Karşılaştırması",
+      "extraPaymentLabel": "Aylık Ekstra Ödeme:",
+      "initialDebtLabel": "Başlangıç Borcu:",
+      "recommendationTitle": "Öneri",
+      "recommendationText": "<str>{strategyName}</str> yöntemini öneriyoruz. Bu yöntemi seçerek <str>{interestSaved}</str> faiz tasarrufu yapacak ve borcunuzu <str>{monthsSaved} ay</str> daha erken bitireceksiniz.",
+      "recommendationText_noSavings": "<str>{strategyName}</str> yöntemini öneriyoruz.",
+      "newCalcButton": "Yeni Hesaplama Yap",
+      "toasts": {
+        "loadError": "Hesaplama sonuçları yüklenemedi."
+      }
+    },
+    "ResultCard": {
+      "recommendedBadge": "Önerilen",
+      "endDate": "Bitiş Tarihi",
+      "totalInterest": "Toplam Ödenen Faiz",
+      "totalPaid": "Toplam Ödenen",
+      "descriptionSnowball": "Motivasyon odaklı: En küçük borçları bile ortadan kaldırarak hızlı kazanımlar sağlar.",
+      "descriptionAvalanche": "Matematiksel olarak en verimli: Toplam faizi en aza indirir.",
+      "viewPlanButton": "Aylık Planı Görüntüle",
+      "dialogTitle": "{strategyName} - Ödeme Planı",
+      "milestonesTitle": "Önemli Aşamalar",
+      "milestoneItem": "<str>Ay {month} ({monthYear}):</str><sp> \"{debtName}\" borcu kapandı!</sp>",
+      "chartTab": "Grafik",
+      "tableTab": "Aylık Döküm",
+      "chartDescription": "Bu grafik, toplam borç bakiyenizin zamanla nasıl azaldığını gösterir.",
+      "chartXAxis": "Ay",
+      "tooltipLabel": "Kalan Bakiye",
+      "tooltipTitle": "Ay {label} ({monthYear})",
+      "tableHeadMonth": "Ay",
+      "tableHeadDate": "Tarih",
+      "tableHeadInterest": "Ödenen Faiz",
+      "tableHeadPrincipal": "Ödenen Anapara",
+      "tableHeadBalance": "Kalan Bakiye"
+    }
   }
 }
