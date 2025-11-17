@@ -87,7 +87,7 @@ export default function CalculationFormCard({
     };
 
     return (
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-2">
             <Form {...calcForm}>
                 <form onSubmit={calcForm.handleSubmit(onCalculateSubmit)}>
                     <CardHeader>

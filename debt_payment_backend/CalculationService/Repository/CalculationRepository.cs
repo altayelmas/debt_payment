@@ -13,6 +13,8 @@ namespace CalculationService.Repository
         Task<CalculationReport> AddCalculationReportAsync(CalculationReport calculationReport);
         Task<List<CalculationReport>> GetCalculationsByUserId(string userId);
         Task<CalculationReport?> GetReportByHashAsync(string hash);
+        Task DeleteCalculationReportAsync(CalculationReport calculationReport);
+        Task UpdateReport(CalculationReport calculationReport);
 
     }
 }

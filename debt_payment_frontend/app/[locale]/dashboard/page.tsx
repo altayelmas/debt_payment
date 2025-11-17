@@ -11,7 +11,6 @@ import {useAuth} from "@/context/AuthContext";
 import {useTranslations} from 'next-intl';
 
 import CalculationHistoryCard from "@/components/dashboard/CalculationHistoryCard";
-import CalculationFormCard from "@/components/dashboard/CalculationFormCard";
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import DebtsCard from "@/components/dashboard/DebtsCard";
 
@@ -25,7 +24,6 @@ export default function DashboardPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [loadingDebts, setLoadingDebts] = useState(true);
 
-    const [historyKey, setHistoryKey] = useState(0);
 
     const router = useRouter();
     const {isAuthenticated} = useAuth();
@@ -55,8 +53,8 @@ export default function DashboardPage() {
         <ProtectedRoute>
             <div className="min-h-screen bg-gray-50">
                 <Navbar/>
-                <main className="container mx-auto p-4 md:p-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <main className="container mx-auto p-4 md:p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <OverviewCard pagedData={pagedData} loadingDebts={loadingDebts}/>
                         <DebtsCard
                             isAuthenticated={isAuthenticated}
@@ -65,11 +63,7 @@ export default function DashboardPage() {
                                 setLoadingDebts(false);
                             }}
                         />
-                        <CalculationFormCard
-                            isCalculationDisabled={!pagedData || pagedData.totalCount === 0}
-                            onCalculationComplete={() => setHistoryKey(prevKey => prevKey + 1)}
-                        />
-                        <CalculationHistoryCard key={historyKey}/>
+                        <CalculationHistoryCard isCalculationDisabled={!pagedData || pagedData.totalCount === 0}/>
                     </div>
                 </main>
             </div>

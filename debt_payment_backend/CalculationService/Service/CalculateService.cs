@@ -12,5 +12,6 @@ namespace debt_payment_backend.CalculationService.Service
         Task<Guid> CalculateAsync(CalculationRequestDto request, string userId);
         Task<CalculationResultDto> GetCalculationResultById(string userId, Guid reportId);
         Task<List<CalculationHistoryDto>> GetCalculationHistory(string userId);
+        Task<bool> DeleteCalculationById(string userId,  Guid reportId);
     }
 }

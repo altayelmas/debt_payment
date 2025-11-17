@@ -88,7 +88,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
     };
 
     return (
-        <Card className="lg:col-span-3 flex flex-col">
+        <Card className="lg:col-span-1 flex flex-col">
             <CardHeader>
                 <div className={"flex justify-between items-center gap-4"}>
                     <CardTitle className="text-2xl">{t('title')}</CardTitle>

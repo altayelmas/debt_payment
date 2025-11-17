@@ -60,6 +60,9 @@ namespace debt_payment_backend.CalculationService.Service.Impl
 
             if (existingReport != null)
             {
+                existingReport.CreatedAt = DateTime.UtcNow;
+                await _calculationRepository.UpdateReport(existingReport);
+                await _calculationRepository.SaveChangesAsync();
                 return existingReport.CalculationId;
             }
 
@@ -307,6 +310,19 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             }
             return historyList;
         }
+
+        public async Task<bool> DeleteCalculationById(string userId, Guid reportId)
+        {
+            var report = await _calculationRepository.GetCalculationReportByIdAndUserIdAsync(userId, reportId);
+            if (report == null)
+            {
+                return false;
+            }
+            await _calculationRepository.DeleteCalculationReportAsync(report);
+            await _calculationRepository.SaveChangesAsync();
+            return true;
+        }
+
         public class DebtSimulationModel
         {
             public int Id { get; set; }

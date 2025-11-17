@@ -96,5 +96,22 @@ namespace debt_payment_backend.CalculationService.Controller
 
             return Ok(calculationHistory);
         }
+
+        [HttpDelete("{reportId}")]
+        public async Task<IActionResult> DeleteReportById([FromRoute] Guid reportId)
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var success = await _calculationService.DeleteCalculationById(userId, reportId);
+            if (!success)
+            {
+                return NotFound("Calculation report not found or you do not have permission.");
+            }
+            return Ok();
+        }
     }
 }

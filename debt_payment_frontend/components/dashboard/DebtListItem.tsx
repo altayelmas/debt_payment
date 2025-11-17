@@ -57,7 +57,7 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
     return (
         <TooltipProvider>
             <Card className="shadow-sm">
-                <div className="p-4">
+                <div className="p-3">
                     <div className="flex justify-between items-start gap-4">
                         <h3 className="text-lg font-semibold leading-tight" title={debt.name}>
                             {debt.name}
@@ -125,7 +125,7 @@ export default function DebtListItem({ debt, onEditClick, onDeleteComplete }: De
                         </div>
                     </div>
                     {/* Borç Detayları */}
-                    <div className="flex flex-wrap gap-x-6 gap-y-1 pt-2">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1.5">
                         <div>
                             <span className="text-xs text-muted-foreground block uppercase">{t('details.balance')}</span>
                             <span className="text-sm font-medium">{formatCurrency(debt.currentBalance, locale)}</span>

@@ -144,6 +144,7 @@
       "button": "Hesapla",
       "buttonLoading": "Hesaplanıyor...",
       "footerWarning": "Hesaplama yapabilmek için önce borç eklemelisiniz.",
+      "buttonShort": "Hesapla",
       "toasts": {
         "noReportId": "Sunucudan rapor ID'si dönmedi.",
         "defaultError": "Hesaplama yapılamadı. Lütfen borçlarınızı kontrol edin."
@@ -155,7 +156,7 @@
     },
     "CalculationHistory": {
       "title": "Hesaplama Geçmişi",
-      "description": "En son 10 hesaplama senaryonuz.",
+      "description": "En son 5 hesaplama senaryonuz.",
       "empty": "Henüz kayıtlı bir hesaplamanız yok.",
       "details": {
         "totalDebt": "Toplam Borç:",
@@ -163,11 +164,17 @@
         "saved": "Tasarruf:"
       },
       "toasts": {
-        "loadError": "Hesaplama geçmişi yüklenemedi."
+        "loadError": "Hesaplama geçmişi yüklenemedi.",
+        "deleteSuccess": "Geçmiş öğesi silindi.",
+        "deleteError": "Geçmiş öğesi silinemedi."
       },
-      "HomePage": {
-        "redirecting": "Yönlendiriliyor..."
-      }
+      "dialogTitle": "Emin misiniz?",
+      "dialogDescription": "Bu işlem geri alınamaz. {date} tarihli hesaplamayı kalıcı olarak sileceksiniz.",
+      "dialogCancel": "İptal",
+      "dialogConfirm": "Sil"
     }
+  },
+  "HomePage": {
+    "redirecting": "Yönlendiriliyor..."
   }
 }

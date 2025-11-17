@@ -144,6 +144,7 @@
       "button": "Calculate",
       "buttonLoading": "Calculating...",
       "footerWarning": "To perform the calculation, you must first add the debt.",
+      "buttonShort": "Calculate",
       "toasts": {
         "noReportId": "Report ID was not returned from the server.",
         "defaultError": "The calculation could not be performed. Please check your debts."
@@ -155,7 +156,7 @@
     },
     "CalculationHistory": {
       "title": "Calculation History",
-      "description": "Your 10 most recent calculation scenarios.",
+      "description": "Your 5 most recent calculation scenarios.",
       "empty": "You have no saved calculations yet.",
       "details": {
         "totalDebt": "Total Debt:",
@@ -163,11 +164,17 @@
         "saved": "Saved:"
       },
       "toasts": {
-        "loadError": "Could not load calculation history."
+        "loadError": "Could not load calculation history.",
+        "deleteSuccess": "History item deleted.",
+        "deleteError": "Could not delete history item."
       },
-      "HomePage": {
-        "redirecting": "Redirecting..."
-      }
+      "dialogTitle": "Are you sure?",
+      "dialogDescription": "This action cannot be undone. You will permanently delete the calculation from {date}.",
+      "dialogCancel": "Cancel",
+      "dialogConfirm": "Delete"
     }
+  },
+  "HomePage": {
+    "redirecting": "Redirecting..."
   }
 }

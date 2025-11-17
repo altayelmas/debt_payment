@@ -17,7 +17,7 @@ export default function OverviewCard({ pagedData, loadingDebts }: OverviewCardPr
     const locale = useLocale();
 
     return (
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-2">
             <CardHeader>
                 <CardTitle className="text-xl">
                     {t('title')}
@@ -26,13 +26,13 @@ export default function OverviewCard({ pagedData, loadingDebts }: OverviewCardPr
                     {t('description')}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-3">
+            <CardContent className="grid gap-6 sm:grid-cols-3">
                 <div className="p-4 bg-secondary rounded-lg">
                     <span className="text-sm text-muted-foreground block uppercase">{t('totalBalance')}</span>
                     {loadingDebts ? (
-                        <Skeleton className="h-8 w-[150px] mt-1"/>
+                        <Skeleton className="h-7 w-[150px] mt-1"/>
                     ) : (
-                        <span className="text-2xl font-semibold">
+                        <span className="text-xl font-semibold">
                             {formatCurrency(pagedData?.totalBalance || 0, locale)}
                         </span>
                     )}
@@ -41,9 +41,9 @@ export default function OverviewCard({ pagedData, loadingDebts }: OverviewCardPr
                 <div className="p-4 bg-secondary rounded-lg">
                     <span className="text-sm text-muted-foreground block uppercase">{t('totalMinPayment')}</span>
                     {loadingDebts ? (
-                        <Skeleton className="h-8 w-[150px] mt-1"/>
+                        <Skeleton className="h-7 w-[150px] mt-1"/>
                     ) : (
-                        <span className="text-2xl font-semibold">
+                        <span className="text-xl font-semibold">
                             {formatCurrency(pagedData?.totalMonthlyMinPayment || 0, locale)}
                         </span>
                     )}
@@ -53,9 +53,9 @@ export default function OverviewCard({ pagedData, loadingDebts }: OverviewCardPr
                     <span
                         className="text-sm text-muted-foreground block uppercase">{t('totalDebtCount')}</span>
                     {loadingDebts ? (
-                        <Skeleton className="h-8 w-[50px] mt-1"/>
+                        <Skeleton className="h-7 w-[50px] mt-1"/>
                     ) : (
-                        <span className="text-2xl font-semibold">
+                        <span className="text-xl font-semibold">
                             {pagedData?.totalCount || 0}
                         </span>
                     )}

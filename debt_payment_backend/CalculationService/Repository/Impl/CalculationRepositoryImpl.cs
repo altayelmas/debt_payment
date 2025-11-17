@@ -34,7 +34,7 @@ namespace CalculationService.Repository.Impl
             return await _context.CalculationReports
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.CreatedAt)
-                .Take(10)
+                .Take(5)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -50,5 +50,19 @@ namespace CalculationService.Repository.Impl
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.ScenarioHash == hash);
         }
+
+        public async Task DeleteCalculationReportAsync(CalculationReport calculationReport)
+        {
+            _context.CalculationReports.Remove(calculationReport);
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateReport(CalculationReport calculationReport)
+        {
+            _context.Entry(calculationReport).State = EntityState.Modified;
+            await Task.CompletedTask;
+        }
+       
     }
 }
+
