@@ -164,6 +164,9 @@
       },
       "toasts": {
         "loadError": "Hesaplama geçmişi yüklenemedi."
+      },
+      "HomePage": {
+        "redirecting": "Yönlendiriliyor..."
       }
     }
   }

@@ -164,6 +164,9 @@
       },
       "toasts": {
         "loadError": "Could not load calculation history."
+      },
+      "HomePage": {
+        "redirecting": "Redirecting..."
       }
     }
   }

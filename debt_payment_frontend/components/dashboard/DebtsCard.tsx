@@ -97,7 +97,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                         setEditingDebt(null);
                         setIsModalOpen(true);
                     }}>
-                        + Add Debt
+                        {t('addButton')}
                     </Button>
                 </div>
             </CardHeader>

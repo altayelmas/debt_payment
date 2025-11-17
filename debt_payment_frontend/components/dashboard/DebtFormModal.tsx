@@ -135,7 +135,7 @@ export default function DebtFormModal({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Debt Name</FormLabel>
+                                        <FormLabel>{t('labels.name')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder={t('labels.namePlaceholder')} {...field} />
                                         </FormControl>
@@ -174,7 +174,7 @@ export default function DebtFormModal({
                                 name="minPayment"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Min. Monthly Payment (TL)</FormLabel>
+                                        <FormLabel>{t('labels.minPayment')}</FormLabel>
                                         <FormControl>
                                             <Input type="number" min="0" step="0.01" placeholder={t('labels.minPaymentPlaceholder')} {...field} />
                                         </FormControl>
