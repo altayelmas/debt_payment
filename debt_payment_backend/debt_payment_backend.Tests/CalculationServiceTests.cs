@@ -195,5 +195,18 @@ namespace debt_payment_backend.Tests
             )), Times.Once);
             _mockRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
         }
+
+        [Fact]
+        public async Task GetCalculationHistory_ShouldReturnEmptyList_WhenNoReportsExist()
+        {
+            var userId = "user-id";
+            _mockRepository.Setup(r => r.GetCalculationsByUserId(userId)).ReturnsAsync(new List<CalculationReport>());
+
+            var result = await _sut.GetCalculationHistory(userId);
+
+            Assert.Empty(result);
+            _mockRepository.Verify(r => r.GetCalculationsByUserId(userId), Times.Once);
+        }
+
     }
 }
