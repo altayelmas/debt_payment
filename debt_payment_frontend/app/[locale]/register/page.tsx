@@ -232,7 +232,6 @@ export default function RegisterPage() {
                 <CardFooter>
                     <div className="flex justify-between items-center w-full">
                         <LanguageSwitcher/>
-
                         <p className="text-sm text-muted-foreground">
                             {t('footer.haveAccount')}
                             <Link href="/login" className="text-primary hover:underline ml-1 font-semibold">

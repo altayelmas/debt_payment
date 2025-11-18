@@ -4,7 +4,11 @@
     "logoutButton": "Logout",
     "languageLabel": "Change language",
     "turkish": "Turkish (TR)",
-    "english": "English (EN)"
+    "english": "English (EN)",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "systemMode": "System",
+    "themeLabel": "Theme"
   },
   "LoginPage": {
     "title": "Login",
@@ -216,7 +220,12 @@
       "tableHeadDate": "Date",
       "tableHeadInterest": "Interest Paid",
       "tableHeadPrincipal": "Principal Paid",
-      "tableHeadBalance": "Ending Balance"
+      "tableHeadBalance": "Ending Balance",
+      "actionPlanTitle": "Your Action Plan",
+      "actionPlanDateRange": "Months {startMonth} - {endMonth} ({startDate} - {endDate})",
+      "actionPlanDateSingle": "Month {month} ({monthYear})",
+      "actionPlanStep": "Step {step}: Focus on \"{debtName}\"",
+      "actionPlanDescription": "Pay all minimum payments, plus all your extra budget, towards <str>\"{debtName}\"</str> until it is paid off."
     }
   }
 }

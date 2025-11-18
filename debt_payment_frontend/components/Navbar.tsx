@@ -7,6 +7,7 @@ import { LogOut } from "lucide-react"
 import { useTranslations } from 'next-intl';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
+import {ThemeToggle} from "@/components/theme-toggle";
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
@@ -29,6 +30,7 @@ export default function Navbar() {
                         {userEmail}
                     </span>
                     <LanguageSwitcher />
+                    <ThemeToggle />
                     <Button
                         variant="destructive"
                         onClick={handleLogout}

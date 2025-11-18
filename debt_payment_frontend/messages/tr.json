@@ -4,7 +4,11 @@
     "logoutButton": "Çıkış Yap",
     "languageLabel": "Dil değiştir",
     "turkish": "Türkçe (TR)",
-    "english": "İngilizce (EN)"
+    "english": "İngilizce (EN)",
+    "lightMode": "Açık",
+    "darkMode": "Karanlık",
+    "systemMode": "Sistem",
+    "themeLabel": "Tema"
   },
   "LoginPage": {
     "title": "Giriş Yap",
@@ -216,7 +220,12 @@
       "tableHeadDate": "Tarih",
       "tableHeadInterest": "Ödenen Faiz",
       "tableHeadPrincipal": "Ödenen Anapara",
-      "tableHeadBalance": "Kalan Bakiye"
+      "tableHeadBalance": "Kalan Bakiye",
+      "actionPlanTitle": "Sizin Eylem Planınız",
+      "actionPlanDateRange": "Aylar {startMonth} - {endMonth} ({startDate} - {endDate})",
+      "actionPlanDateSingle": "Ay {month} ({monthYear})",
+      "actionPlanStep": "Adım {step}: \"{debtName}\" borcuna odaklanın",
+      "actionPlanDescription": "Tüm minimum ödemeleri yapın ve tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcu bitene kadar bu borca yönlendirin."
     }
   }
 }

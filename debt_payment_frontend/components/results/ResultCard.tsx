@@ -115,22 +115,62 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                             </DialogHeader>
                             <div className={"overflow-y-auto pr-4"}>
                                 {result.milestones && result.milestones.length > 0 && (
-                                    <div className="mb-4 p-4 border rounded-lg bg-muted/50">
-                                        <h4 className="font-semibold mb-2">{t('milestonesTitle')}</h4>
-                                        <ul className="space-y-1 list-disc list-inside text-sm">
-                                            {result.milestones.map((milestone) => (
-                                                <li key={milestone.month}>
-                                                    {t.rich('milestoneItem', {
+                                    <div className="mb-4 p-4 border rounded-lg">
+                                        <h4 className="font-semibold text-lg mb-3">{t('actionPlanTitle')}</h4>
+
+                                        <ol className="relative border-l border-gray-200 dark:border-gray-700 space-y-4">
+
+                                            {result.milestones.map((milestone, index) => {
+
+                                                let startMonth: number;
+                                                let startDate: string | undefined;
+
+                                                if (index === 0) {
+                                                    startMonth = 1;
+                                                    startDate = result.paymentSchedule[0]?.monthYear;
+                                                } else {
+                                                    const prevMilestone = result.milestones[index - 1];
+
+                                                    if (milestone.month === prevMilestone.month) {
+                                                        startMonth = milestone.month;
+                                                        startDate = milestone.monthYear;
+                                                    } else {
+                                                        startMonth = prevMilestone.month + 1;
+                                                        startDate = prevMilestone.monthYear;
+                                                    }
+                                                }
+                                                const isSingleMonth = startMonth === milestone.month;
+                                                const dateRange = isSingleMonth
+                                                    ? t('actionPlanDateSingle', {
                                                         month: milestone.month,
-                                                        monthYear: milestone.monthYear,
-                                                        debtName: milestone.debtName,
-                                                        str: (chunks) => <strong>{chunks}</strong>,
-                                                        sp: (chunks) => <span
-                                                            className="text-green-600 font-medium ml-1">{chunks}</span>
-                                                    })}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                                        monthYear: milestone.monthYear
+                                                    })
+                                                    : t('actionPlanDateRange', {
+                                                        startMonth: startMonth,
+                                                        endMonth: milestone.month,
+                                                        startDate: startDate,
+                                                        endDate: milestone.monthYear
+                                                    });
+
+                                                return (
+                                                    <li key={milestone.month + milestone.debtName} className="ml-4">
+                                                        <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+                                                        <time className="mb-1 text-sm font-normal leading-none text-muted-foreground">
+                                                            {dateRange}
+                                                        </time>
+                                                        <h3 className="text-md font-semibold text-foreground">
+                                                            {t('actionPlanStep', { step: index + 1, debtName: milestone.debtName })}
+                                                        </h3>
+                                                        <p className="text-sm font-normal text-muted-foreground">
+                                                            {t.rich('actionPlanDescription', {
+                                                                debtName: milestone.debtName,
+                                                                str: (chunks) => <strong className="text-foreground">{chunks}</strong>
+                                                            })}
+                                                        </p>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ol>
                                     </div>
                                 )}
                                 <Tabs defaultValue="chart" className="w-full">
