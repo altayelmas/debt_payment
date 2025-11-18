@@ -185,8 +185,8 @@ jobs:
             SERVICE_NAME=$(echo $GITHUB_REF_NAME | cut -d'-' -f1)
             IMAGE_TAG=$(echo $GITHUB_REF_NAME | cut -d'-' -f2-)
             
-            export DOCKERHUB_USERNAME=$DOCKER_USERNAME
-            export IMAGE_TAG=$IMAGE_TAG
+            echo "DOCKERHUB_USERNAME=$DOCKER_USERNAME" > .env
+            echo "IMAGE_TAG=$IMAGE_TAG" >> .env
 
             echo "Deploying $SERVICE_NAME with tag $IMAGE_TAG on Server..."
 
