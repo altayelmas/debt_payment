@@ -60,6 +60,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Parse the Git Tag
+        id: parse_tag
         run: |
           TAG_NAME=${{ github.ref_name }}
           SERVICE_NAME=$(echo $TAG_NAME | cut -d'-' -f1)
