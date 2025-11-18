@@ -34,6 +34,15 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Restore dependencies
+      run: dotnet restore debt_payment_backend/debt_payment_backend.sln
+
+    - name: Build
+      run: dotnet build debt_payment_backend/debt_payment_backend.sln --no-restore
+      
+    - name: Run Tests
+      run: dotnet test debt_payment_backend/debt_payment_backend.sln --no-build --verbosity normal
+
   push_release_image:
     name: 2. Versioned Release Push
     runs-on: ubuntu-latest
