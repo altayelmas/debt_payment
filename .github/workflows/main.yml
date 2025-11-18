@@ -33,7 +33,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
-
+        
     - name: Restore dependencies
       run: dotnet restore debt_payment_backend/debt_payment_backend.sln
 
@@ -77,7 +77,7 @@ jobs:
 
           if [ "$SERVICE_NAME" == "frontend" ]; then
             echo "NEXT_PUBLIC_API_URL=http://localhost:5000" >> $GITHUB_ENV
-            docker build -t $DOCKER_USERNAME/frontend:$IMAGE_TAG -f ./debt_payment_frontend/Dockerfile ./debt_payment_frontend
+            docker build --build-arg NEXT_PUBLIC_API_URL=http://localhost:5000 -t $DOCKER_USERNAME/frontend:$IMAGE_TAG -f ./debt_payment_frontend/Dockerfile ./debt_payment_frontend            
             docker push $DOCKER_USERNAME/frontend:$IMAGE_TAG
             
           elif [ "$SERVICE_NAME" == "identityservice" ]; then
