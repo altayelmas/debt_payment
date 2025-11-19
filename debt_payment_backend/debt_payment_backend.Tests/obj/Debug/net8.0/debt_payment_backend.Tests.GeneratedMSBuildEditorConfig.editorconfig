@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = debt_payment_backend.Tests
-build_property.ProjectDir = C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\debt_payment_backend.Tests\
+build_property.ProjectDir = c:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\debt_payment_backend.Tests\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

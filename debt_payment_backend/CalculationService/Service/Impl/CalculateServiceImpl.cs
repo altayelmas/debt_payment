@@ -11,6 +11,8 @@ using CalculationService.Model.Dto;
 using CalculationService.Model.Entity;
 using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
+using DebtPayment.Shared.Events;
+using MassTransit;
 
 namespace debt_payment_backend.CalculationService.Service.Impl
 {
@@ -19,13 +21,17 @@ namespace debt_payment_backend.CalculationService.Service.Impl
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CalculationRepository _calculationRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
         private const int MAX_SIMULATION_MONTHS = 1200;
         public CalculateServiceImpl(IHttpClientFactory httpClientFactory,
-        IHttpContextAccessor httpContextAccessor, CalculationRepository calculationRepository)
+        IHttpContextAccessor httpContextAccessor, 
+        CalculationRepository calculationRepository,
+        IPublishEndpoint publishEndpoint)
         {
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
             _calculationRepository = calculationRepository;
+            _publishEndpoint = publishEndpoint;
         }
         public async Task<Guid> CalculateAsync(CalculationRequestDto request, string userId)
         {
@@ -115,6 +121,15 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             await _calculationRepository.AddCalculationReportAsync(report);
             await _calculationRepository.SaveChangesAsync();
 
+            await _publishEndpoint.Publish(new CalculationCreatedEvent
+            {
+                ReportId = report.CalculationId,
+                UserId = userId,
+                Email = "test@user.com", 
+                TotalDebt = resultDto.BeginningDebt,
+                CreatedAt = DateTime.UtcNow
+            });
+            
             return report.CalculationId;
         }
 

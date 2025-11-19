@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "debt_payment_backend.Tests", "debt_payment_backend.Tests\debt_payment_backend.Tests.csproj", "{14A60112-377A-49A5-A7ED-10569DD30C79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{D8AE9807-DEB2-4D6F-9AC7-CDAE1DDBA35A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{14A60112-377A-49A5-A7ED-10569DD30C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14A60112-377A-49A5-A7ED-10569DD30C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14A60112-377A-49A5-A7ED-10569DD30C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8AE9807-DEB2-4D6F-9AC7-CDAE1DDBA35A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8AE9807-DEB2-4D6F-9AC7-CDAE1DDBA35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8AE9807-DEB2-4D6F-9AC7-CDAE1DDBA35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8AE9807-DEB2-4D6F-9AC7-CDAE1DDBA35A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -49,6 +49,41 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
     const locale = useLocale();
     const t = useTranslations('ResultsPage.ResultCard');
 
+    const formatDateString = (dateString: string | undefined) => {
+        if (!dateString) return "";
+        try {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            return dateString;
+        } catch (e) {
+            return dateString;
+        }
+    };
+
+    const formatPayOffDate = (rawString: string) => {
+        if (!rawString) return "";
+
+        const regex = /^([a-zA-Z]+ \d{4}) \((\d+) Months\)$/;
+        const match = rawString.match(regex);
+
+        if (match) {
+            const datePart = match[1];
+            const monthsCount = match[2];
+
+            const translatedDate = formatDateString(datePart);
+
+            const monthsLabel = locale === 'tr' ? 'Ay' : 'Months';
+
+            return `${translatedDate} (${monthsCount} ${monthsLabel})`;
+        }
+        return rawString;
+    };
+
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
     const titleColor = isRecommended ? 'text-blue-600' : (isSnowball ? 'text-green-600' : 'text-red-600');
     const description = isSnowball
@@ -87,7 +122,7 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
             <CardContent className="p-3 space-y-1.5 text-base">
                 <div className="flex justify-between items-baseline">
                     <span className="text-sm text-muted-foreground">{t('endDate')}</span>
-                    <span className="font-semibold">{result.payOffDate}</span>
+                    <span className="font-semibold">{formatPayOffDate(result.payOffDate)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
                     <span className="text-sm text-muted-foreground">{t('totalInterest')}</span>
@@ -143,13 +178,13 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                 const dateRange = isSingleMonth
                                                     ? t('actionPlanDateSingle', {
                                                         month: milestone.month,
-                                                        monthYear: milestone.monthYear
+                                                        monthYear: formatDateString(milestone.monthYear)
                                                     })
                                                     : t('actionPlanDateRange', {
                                                         startMonth: startMonth,
                                                         endMonth: milestone.month,
-                                                        startDate: startDate,
-                                                        endDate: milestone.monthYear
+                                                        startDate: formatDateString(startDate),
+                                                        endDate: formatDateString(milestone.monthYear)
                                                     });
 
                                                 return (
@@ -207,8 +242,8 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                     <RechartsTooltip
                                                         labelFormatter={(label, payload) => {
                                                             if (payload && payload.length > 0) {
-                                                                const monthYear = payload[0].payload.monthYear;
-                                                                return t('tooltipTitle', {label: label, monthYear: monthYear});
+                                                                const rawMonthYear = payload[0].payload.monthYear;
+                                                                return t('tooltipTitle', {label: label, monthYear: formatDateString(rawMonthYear)});
                                                             }
                                                             return `Month ${label}`;
                                                         }}
@@ -245,7 +280,7 @@ export default function ResultCard({result, isSnowball, isRecommended}: ResultCa
                                                     {result.paymentSchedule.map((month) => (
                                                         <TableRow key={month.month}>
                                                             <TableCell className="font-medium">{month.month}</TableCell>
-                                                            <TableCell>{month.monthYear}</TableCell>
+                                                            <TableCell>{formatDateString(month.monthYear)}</TableCell>
                                                             <TableCell className="text-right text-red-600">
                                                                 {formatCurrency(month.interestPaid, locale)}
                                                             </TableCell>

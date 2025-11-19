@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\NotificationService\\NotificationService.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\NotificationService\\NotificationService.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\NotificationService\\NotificationService.csproj",
+        "projectName": "NotificationService",
+        "projectPath": "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\NotificationService\\NotificationService.csproj",
+        "packagesPath": "C:\\Users\\altay\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\NotificationService\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\altay\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MassTransit.RabbitMQ": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.122/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

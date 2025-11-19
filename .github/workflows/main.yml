@@ -20,6 +20,7 @@ on:
           - debtservice
           - calculationservice
           - apigateway
+          - notificationservice
 
 jobs:
   test:
@@ -97,6 +98,10 @@ jobs:
             docker build -t $DOCKER_USERNAME/apigateway:$IMAGE_TAG -f ./debt_payment_backend/ApiGateway/Dockerfile ./debt_payment_backend
             docker push $DOCKER_USERNAME/apigateway:$IMAGE_TAG
             
+          elif [ "$SERVICE_NAME" == "notificationservice" ]; then
+            docker build -t $DOCKER_USERNAME/notificationservice:$IMAGE_TAG -f ./debt_payment_backend/NotificationService/Dockerfile ./debt_payment_backend
+            docker push $DOCKER_USERNAME/notificationservice:$IMAGE_TAG
+
           else
             echo "::error::Unknown Service Name: $SERVICE_NAME"
             exit 1
@@ -154,6 +159,10 @@ jobs:
           elif [ "$SERVICE_NAME" == "apigateway" ]; then
             docker build -t $DOCKER_USERNAME/apigateway:$IMAGE_TAG -f ./debt_payment_backend/ApiGateway/Dockerfile ./debt_payment_backend
             docker push $DOCKER_USERNAME/apigateway:$IMAGE_TAG
+
+          elif [ "$SERVICE_NAME" == "notificationservice" ]; then
+            docker build -t $DOCKER_USERNAME/notificationservice:$IMAGE_TAG -f ./debt_payment_backend/NotificationService/Dockerfile ./debt_payment_backend
+            docker push $DOCKER_USERNAME/notificationservice:$IMAGE_TAG
             
           else
             echo "::error::Unknown Service Name: $SERVICE_NAME"

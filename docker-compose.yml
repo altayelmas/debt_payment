@@ -83,6 +83,7 @@ services:
     depends_on:
       - debtservice
       - db
+      - rabbitmq
 
   apigateway:
     image: ${DOCKERHUB_USERNAME}/apigateway:${IMAGE_TAG:-latest}
@@ -125,6 +126,33 @@ services:
       - debt-network
     depends_on:
       - apigateway
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: debt_rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - debt-network
+  
+  notificationservice:
+    image: ${DOCKERHUB_USERNAME}/notificationservice:${IMAGE_TAG:-latest}
+    container_name: notification_service
+    build:
+      context: ./debt_payment_backend
+      dockerfile: NotificationService/Dockerfile
+    restart: always
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - debt-network
+    depends_on:
+      - rabbitmq
 
 volumes:
   postgres_data:

@@ -4,6 +4,7 @@ using CalculationService.Repository;
 using CalculationService.Repository.Impl;
 using debt_payment_backend.CalculationService.Service;
 using debt_payment_backend.CalculationService.Service.Impl;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -67,6 +68,17 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<CalculateService, CalculateServiceImpl>();
 builder.Services.AddScoped<CalculationRepository, CalculationRepositoryImpl>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq", "/", h => {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
