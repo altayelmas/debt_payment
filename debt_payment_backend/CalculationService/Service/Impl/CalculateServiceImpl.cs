@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -44,6 +45,15 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             }
 
             httpClient.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse(token);
+
+            var userEmail = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value 
+                    ?? _httpContextAccessor.HttpContext?.User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                userEmail = "email-not-found-in-token@example.com";
+                Console.WriteLine("Warning: Couldn't find email claim in token. Using placeholder email.");
+            }
 
             List<DebtDto>? userDebts;
 
@@ -125,7 +135,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             {
                 ReportId = report.CalculationId,
                 UserId = userId,
-                Email = "test@user.com", 
+                Email = userEmail, 
                 TotalDebt = resultDto.BeginningDebt,
                 CreatedAt = DateTime.UtcNow
             });

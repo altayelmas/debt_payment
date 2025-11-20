@@ -38,6 +38,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.14.1, )"
+            },
             "MassTransit.RabbitMQ": {
               "target": "Package",
               "version": "[8.0.0, )"

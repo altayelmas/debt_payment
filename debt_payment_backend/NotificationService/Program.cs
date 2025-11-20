@@ -1,5 +1,6 @@
 using MassTransit;
 using NotificationService.Consumer;
+using NotificationService.Service;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddMassTransit(x =>
         });
     });
 });
+
+builder.Services.AddScoped<EmailService>();
 
 var host = builder.Build();
 host.Run();

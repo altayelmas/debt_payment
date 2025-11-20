@@ -182,13 +182,15 @@ jobs:
   #       env:
   #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   #         GITHUB_REF_NAME: ${{ github.ref_name }}
+  #          EMAIL_USER: ${{ secrets.EMAIL_SENDER_ADDRESS }}  
+  #          EMAIL_PASS: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         
   #       with:
   #         host: ${{ secrets.SERVER_HOST }}
   #         username: ${{ secrets.SERVER_USERNAME }}
   #         key: ${{ secrets.SERVER_SSH_KEY }}
           
-  #         envs: DOCKER_USERNAME,GITHUB_REF_NAME
+  #         envs: DOCKER_USERNAME,GITHUB_REF_NAME,EMAIL_USER,EMAIL_PASS
           
   #         script: |
   #           SERVICE_NAME=$(echo $GITHUB_REF_NAME | cut -d'-' -f1)
@@ -196,6 +198,8 @@ jobs:
             
   #           echo "DOCKERHUB_USERNAME=$DOCKER_USERNAME" > .env
   #           echo "IMAGE_TAG=$IMAGE_TAG" >> .env
+  #           echo "EMAIL_SENDER_ADDRESS=$EMAIL_USER" >> .env
+  #           echo "EMAIL_SENDER_PASSWORD=$EMAIL_PASS" >> .env
 
   #           echo "Deploying $SERVICE_NAME with tag $IMAGE_TAG on Server..."
 

@@ -149,6 +149,10 @@ services:
     restart: always
     environment:
       - DOTNET_ENVIRONMENT=Development
+      - EmailSettings__SmtpServer=smtp.gmail.com
+      - EmailSettings__SmtpPort=587
+      - EmailSettings__SenderEmail=${EMAIL_SENDER_ADDRESS}
+      - EmailSettings__SenderPassword=${EMAIL_SENDER_PASSWORD}
     networks:
       - debt-network
     depends_on:
