@@ -13,5 +13,6 @@ namespace debt_payment_backend.CalculationService.Service
         Task<CalculationResultDto> GetCalculationResultById(string userId, Guid reportId);
         Task<List<CalculationHistoryDto>> GetCalculationHistory(string userId);
         Task<bool> DeleteCalculationById(string userId,  Guid reportId);
+        Task<byte[]?> GeneratePdfReportAsync(string userId, Guid reportId, string languageCode = "en");
     }
 }

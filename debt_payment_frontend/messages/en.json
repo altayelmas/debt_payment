@@ -225,7 +225,11 @@
       "actionPlanDateRange": "Months {startMonth} - {endMonth} ({startDate} - {endDate})",
       "actionPlanDateSingle": "Month {month} ({monthYear})",
       "actionPlanStep": "Step {step}: Focus on \"{debtName}\"",
-      "actionPlanDescription": "Pay all minimum payments, plus all your extra budget, towards <str>\"{debtName}\"</str> until it is paid off."
+      "actionPlanDescription": "Pay all minimum payments, plus all your extra budget, towards <str>\"{debtName}\"</str> until it is paid off.",
+      "downloadPdfButton": "Download as PDF",
+      "toastGeneratingPdf": "Generating PDF...",
+      "toastPdfDownloaded": "PDF Downloaded!",
+      "toastPdfError": "Could not download PDF."
     }
   }
 }

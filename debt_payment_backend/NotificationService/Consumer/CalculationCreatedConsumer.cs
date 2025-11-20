@@ -46,7 +46,7 @@ namespace NotificationService.Consumer
                 </ul>
                 <p>Detayları görmek için uygulamayı ziyaret edin.</p>
                 <br>
-                <p>Sevgiler,<br>Debt Calculator Ekibi</p>
+                <p>Debt Calculator</p>
             ";
 
             await _emailService.SendEmailAsync(message.Email, "Borç Hesaplama Sonucunuz", emailBody);*/

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+5bc/THTztR2EKACNoyyfb2cPd3lGClXEEUysLLNPy5sZeuw9YoLz5fm6psY181ccN/Eyy52xAm0co2rag4LzQ==",
+  "dgSpecHash": "4H99IDGDeqMKhbnQMC420A7yJKco9lj3lFANLLv2rVbTxow14IMTZih2EZqlkayGg8e70wycfFqKv8jrZwq1EQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\altay\\Desktop\\altay\\ideal_staj\\debt_payment\\debt_payment_backend\\CalculationService\\CalculationService.csproj",
   "expectedPackageFiles": [
@@ -46,6 +46,7 @@
     "C:\\Users\\altay\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\altay\\.nuget\\packages\\npgsql\\8.0.0\\npgsql.8.0.0.nupkg.sha512",
     "C:\\Users\\altay\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.0\\npgsql.entityframeworkcore.postgresql.8.0.0.nupkg.sha512",
+    "C:\\Users\\altay\\.nuget\\packages\\questpdf\\2025.12.0-alpha4\\questpdf.2025.12.0-alpha4.nupkg.sha512",
     "C:\\Users\\altay\\.nuget\\packages\\rabbitmq.client\\6.2.4\\rabbitmq.client.6.2.4.nupkg.sha512",
     "C:\\Users\\altay\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "C:\\Users\\altay\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",

@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 using CalculationService.Model.Dto;
 using CalculationService.Model.Entity;
 using CalculationService.Repository;
+using debt_payment_backend.CalculationService.Document;
 using debt_payment_backend.CalculationService.Model.Dto;
 using DebtPayment.Shared.Events;
 using MassTransit;
+using QuestPDF.Fluent;
 
 namespace debt_payment_backend.CalculationService.Service.Impl
 {
@@ -346,6 +348,19 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             await _calculationRepository.DeleteCalculationReportAsync(report);
             await _calculationRepository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<byte[]?> GeneratePdfReportAsync(string userId, Guid reportId, string languageCode = "en")
+        {
+            var calculationReport = await _calculationRepository.GetCalculationReportByIdAndUserIdAsync(userId, reportId);
+            if (calculationReport == null) return null;
+
+            var reportData = JsonSerializer.Deserialize<CalculationResultDto>(calculationReport.ReportDataJson);
+            if (reportData == null) return null;
+
+            var document = new CalculationReportDocument(reportData, languageCode);
+            var pdfBytes = document.GeneratePdf();
+            return pdfBytes; 
         }
 
         public class DebtSimulationModel

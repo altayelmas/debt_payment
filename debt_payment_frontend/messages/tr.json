@@ -225,7 +225,11 @@
       "actionPlanDateRange": "Aylar {startMonth} - {endMonth} ({startDate} - {endDate})",
       "actionPlanDateSingle": "Ay {month} ({monthYear})",
       "actionPlanStep": "Adım {step}: \"{debtName}\" borcuna odaklanın",
-      "actionPlanDescription": "Tüm minimum ödemeleri yapın ve tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcu bitene kadar bu borca yönlendirin."
+      "actionPlanDescription": "Tüm minimum ödemeleri yapın ve tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcu bitene kadar bu borca yönlendirin.",
+      "downloadPdfButton": "PDF Olarak İndir",
+      "toastGeneratingPdf": "PDF oluşturuluyor...",
+      "toastPdfDownloaded": "PDF indirildi!",
+      "toastPdfError": "PDF indirilemedi."
     }
   }
 }

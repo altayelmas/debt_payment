@@ -131,11 +131,13 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
                             result={report.snowballResult}
                             isSnowball={true}
                             isRecommended={recommendedStrategy === "Snowball"}
+                            reportId={reportId}
                         />
                         <ResultCard
                             result={report.avalancheResult}
                             isSnowball={false}
                             isRecommended={recommendedStrategy === "Avalanche"}
+                            reportId={reportId}
                         />
                     </div>
 

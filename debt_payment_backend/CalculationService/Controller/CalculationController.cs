@@ -113,5 +113,23 @@ namespace debt_payment_backend.CalculationService.Controller
             }
             return Ok();
         }
+
+        [HttpGet("{reportId:guid}/pdf")]
+        public async Task<IActionResult> GetReportPdf([FromRoute] Guid reportId)
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("User ID could not be retrieved from token.");
+
+            var acceptLanguage = Request.Headers["Accept-Language"].ToString();
+            var languageCode = string.IsNullOrEmpty(acceptLanguage) ? "en" : acceptLanguage;
+
+            if (languageCode.Length > 2) languageCode = languageCode.Substring(0, 2);
+
+            var pdfBytes = await _calculationService.GeneratePdfReportAsync(userId, reportId, languageCode);
+
+            if (pdfBytes == null) return NotFound("Report not found.");
+            
+            return File(pdfBytes, "application/pdf", $"DebtPlan-{reportId}.pdf");
+        }
     }
 }
