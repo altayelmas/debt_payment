@@ -278,6 +278,17 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                             width={100}
                                                         />
                                                         <RechartsTooltip
+                                                            contentStyle={{
+                                                                backgroundColor: "hsl(var(--background))",
+                                                                borderColor: "hsl(var(--border))",
+                                                                borderRadius: "var(--radius)",
+                                                                color: "hsl(var(--foreground))"}}
+
+                                                            labelStyle={{
+                                                                color: "hsl(var(--foreground))",
+                                                                fontWeight: "bold",
+                                                                marginBottom: "0.25rem"
+                                                            }}
                                                             labelFormatter={(label, payload) => {
                                                                 if (payload && payload.length > 0) {
                                                                     const rawMonthYear = payload[0].payload.monthYear;
@@ -313,6 +324,9 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                             <TableHead
                                                                 className="w-[60px]">{t('tableHeadMonth')}</TableHead>
                                                             <TableHead>{t('tableHeadDate')}</TableHead>
+                                                            <TableHead className="w-[150px] text-center text-xs text-muted-foreground">
+                                                                {t('tableHeadDistribution')}
+                                                            </TableHead>
                                                             <TableHead className="text-right">{t('tableHeadInterest')}</TableHead>
                                                             <TableHead className="text-right">{t('tableHeadPrincipal')}</TableHead>
                                                             <TableHead className="text-right font-bold text-blue-600">
@@ -328,6 +342,24 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                                 <TableCell
                                                                     className="font-medium">{month.month}</TableCell>
                                                                 <TableCell>{formatDateString(month.monthYear)}</TableCell>
+                                                                <TableCell>
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <div className="flex h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                                                                            <div
+                                                                                className="bg-red-500"
+                                                                                style={{ width: `${(month.interestPaid / month.totalPaymentAmount) * 100}%` }}
+                                                                            />
+                                                                            <div
+                                                                                className="bg-green-500"
+                                                                                style={{ width: `${(month.principalPaid / month.totalPaymentAmount) * 100}%` }}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="flex justify-between text-[10px] text-muted-foreground">
+                                                                            <span className="text-red-600">{t('breakdownInterest')}: %{Math.round((month.interestPaid / month.totalPaymentAmount) * 100)}</span>
+                                                                            <span className="text-green-600">{t('breakdownPrincipal')}: %{Math.round((month.principalPaid / month.totalPaymentAmount) * 100)}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </TableCell>
                                                                 <TableCell className="text-right text-red-600">
                                                                     {formatCurrency(month.interestPaid, locale)}
                                                                 </TableCell>
@@ -341,7 +373,7 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                                     {formatCurrency(month.endingBalance, locale)}
                                                                 </TableCell>
                                                                 <TableCell className="text-left pl-4">
-                                                                    {month.monthlyNote && (
+                                                                    {month.paidOffDebts && month.paidOffDebts.length > 0 && (
                                                                         <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50">
                                                                             🎉 {t('paidOffMessage', { debts: month.paidOffDebts.join(", ") })}
                                                                         </Badge>
