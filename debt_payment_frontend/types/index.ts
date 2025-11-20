@@ -39,8 +39,11 @@ export interface MonthlyPaymentDetail {
     month: number;
     monthYear: string;
     interestPaid: number;
+    totalPaymentAmount: number;
+    monthlyNote: string;
     principalPaid: number;
     endingBalance: number;
+    paidOffDebts: string[];
 }
 
 export interface CalculationHistoryDto {

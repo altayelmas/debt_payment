@@ -183,6 +183,9 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             int months = 0;
             decimal totalOriginalPayment = activeDebts.Sum(d => d.OriginalBalance);
 
+            decimal initialTotalMinPayment = activeDebts.Sum(d => d.MinPayment);
+            decimal monthlyTotalBudget = initialTotalMinPayment + extraMonthlyPayment;
+
             var paymentSchedule = new List<MonthlyPaymentDetailDto>();
             var milestones = new List<DebtPayoffMilestoneDto>();
 
@@ -193,14 +196,12 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 if (months > MAX_SIMULATION_MONTHS)
                 {
                     throw new InvalidOperationException(
-                        "The calculation limit has been exceeded. Your payment plan does not cover the monthly interest " +
-                        "or it takes more than 100 years. Please increase your payment amounts."
+                        "The calculation limit has been exceeded."
                     );
                 }
-                decimal monthBeginningBalance = activeDebts.Sum(d => d.CurrentBalance);
 
+                decimal monthBeginningBalance = activeDebts.Sum(d => d.CurrentBalance);
                 decimal monthlyNewInterest = 0;
-                decimal extraPaymentSnowball = extraMonthlyPayment;
 
                 foreach (var debt in activeDebts)
                 {
@@ -208,46 +209,59 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     debt.CurrentBalance += monthlyInterest;
                     monthlyNewInterest += monthlyInterest;
                 }
+
                 totalInterestPaid += monthlyNewInterest;
                 List<DebtSimulationModel> paidOffThisMonth = new List<DebtSimulationModel>();
+
+                decimal moneySpentOnMinPayments = 0;
 
                 foreach (var debt in activeDebts)
                 {
                     decimal payment = debt.MinPayment;
 
-                    if (debt.CurrentBalance <= payment)
+                    if (debt.CurrentBalance < payment)
                     {
                         payment = debt.CurrentBalance;
+                    }
+
+                    debt.CurrentBalance -= payment;
+                    moneySpentOnMinPayments += payment;
+                    if (debt.CurrentBalance <= 0)
+                    {
                         debt.CurrentBalance = 0;
-                        paidOffThisMonth.Add(debt);
-                        extraPaymentSnowball += debt.MinPayment;
-                    }
-                    else
-                    {
-                        debt.CurrentBalance -= payment;
+                        if(!paidOffThisMonth.Contains(debt)) paidOffThisMonth.Add(debt);
                     }
                 }
-                var orderedTargetDebts = strategyOrder(activeDebts.Where(d => d.CurrentBalance > 0).ToList());
 
-                foreach (var targetDebt in orderedTargetDebts)
+                decimal availableForSnowball = monthlyTotalBudget - moneySpentOnMinPayments;
+
+                if (availableForSnowball > 0)
                 {
-                    if (extraPaymentSnowball <= 0) break;
+                    var orderedTargetDebts = strategyOrder(activeDebts.Where(d => d.CurrentBalance > 0).ToList());
 
-                    if (targetDebt.CurrentBalance <= extraPaymentSnowball)
+                    foreach (var targetDebt in orderedTargetDebts)
                     {
-                        extraPaymentSnowball -= targetDebt.CurrentBalance;
-                        targetDebt.CurrentBalance = 0;
-                        paidOffThisMonth.Add(targetDebt);
-                    }
-                    else
-                    {
-                        targetDebt.CurrentBalance -= extraPaymentSnowball;
-                        extraPaymentSnowball = 0;
+                        if (availableForSnowball <= 0) break;
+
+                        if (targetDebt.CurrentBalance <= availableForSnowball)
+                        {
+                            availableForSnowball -= targetDebt.CurrentBalance;
+                            targetDebt.CurrentBalance = 0;
+                            if (!paidOffThisMonth.Contains(targetDebt)) paidOffThisMonth.Add(targetDebt);
+                        }
+                        else
+                        {
+                            targetDebt.CurrentBalance -= availableForSnowball;
+                            availableForSnowball = 0;
+                        }
                     }
                 }
-                activeDebts.RemoveAll(d => paidOffThisMonth.Contains(d));
+               
+                activeDebts.RemoveAll(d => d.CurrentBalance <= 0);
                 decimal monthEndingBalance = activeDebts.Sum(d => d.CurrentBalance);
-                decimal principalPaid = monthBeginningBalance + monthlyNewInterest - monthEndingBalance;
+                decimal totalPaidThisMonth = monthlyTotalBudget - availableForSnowball;
+
+                decimal principalPaid = totalPaidThisMonth - monthlyNewInterest;
                 var currentMonthDate = DateTime.Now.AddMonths(months);
                 //Console.WriteLine($"[Month {months}] Debts paid off this month: {paidOffThisMonth.Count}");
 
@@ -269,8 +283,11 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     Month = months,
                     MonthYear = currentMonthDate.ToString("MMMM yyyy"),
                     InterestPaid = Math.Round(monthlyNewInterest, 2),
-                    PrincipalPaid = Math.Round(principalPaid, 2),
-                    EndingBalance = Math.Round(monthEndingBalance, 2)
+                    PrincipalPaid = Math.Round(principalPaid, 2),                  
+                    TotalPaymentAmount = Math.Round(totalPaidThisMonth, 2),
+                    MonthlyNote = "",
+                    EndingBalance = Math.Round(monthEndingBalance, 2),
+                    PaidOffDebts = paidOffThisMonth.Select(d => d.Name).ToList()
                 });
             }
             var payoffDate = DateTime.Now.AddMonths(months);

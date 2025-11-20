@@ -33,7 +33,10 @@ namespace debt_payment_backend.CalculationService.Document
                 {"Page", "Sayfa"},
                 {"Snowball", "Kartopu (Snowball)"},
                 {"Avalanche", "Çığ (Avalanche)"},
-                {"RecTemplate", "{0} yöntemini kullanmanızı öneriyoruz. Bu yöntemle toplam {1} faiz tasarrufu yapabilirsiniz."}
+                {"RecTemplate", "{0} yöntemini kullanmanızı öneriyoruz. Bu yöntemle toplam {1} faiz tasarrufu yapabilirsiniz."},
+                {"TotalPayment", "Toplam Ödeme"},
+                {"Notes", "Notlar"},
+                {"PaidOffPrefix", "Kapanan Borç: "}
             } : new Dictionary<string, string>
             {
                 {"Title", "Debt Payment Plan"},
@@ -50,7 +53,10 @@ namespace debt_payment_backend.CalculationService.Document
                 {"Page", "Page"},
                 {"Snowball", "Snowball"},
                 {"Avalanche", "Avalanche"},
-                {"RecTemplate", "We recommend using the {0} method. You can save a total of {1} in interest."}
+                {"RecTemplate", "We recommend using the {0} method. You can save a total of {1} in interest."},
+                {"TotalPayment", "Total Payment"},
+                {"Notes", "Notes"},
+                {"PaidOffPrefix", "Paid off: "}
             };
         }
 
@@ -143,25 +149,34 @@ namespace debt_payment_backend.CalculationService.Document
                 {
                     table.ColumnsDefinition(columns =>
                     {
-                        columns.ConstantColumn(50); // Month
-                        columns.RelativeColumn();   // Date
-                        columns.RelativeColumn();   // Interest
-                        columns.RelativeColumn();   // Principal
-                        columns.RelativeColumn();   // Balance
+                        columns.ConstantColumn(40); 
+                        columns.RelativeColumn(2); 
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);  
+                        columns.RelativeColumn(2);  
+                        columns.RelativeColumn(3);  
                     });
+
+                    static IContainer CellStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold().FontSize(10)).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                    }
+
+                    static IContainer HeaderStyle(IContainer container)
+                    {
+                        return container.DefaultTextStyle(x => x.SemiBold().FontSize(10)).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                    }
 
                     table.Header(header =>
                     {
-                        header.Cell().Element(CellStyle).Text("#");
-                        header.Cell().Element(CellStyle).Text(_translations["Date"]);
-                        header.Cell().Element(CellStyle).Text(_translations["Interest"]);
-                        header.Cell().Element(CellStyle).Text(_translations["Principal"]);
-                        header.Cell().Element(CellStyle).Text(_translations["Balance"]);
-
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
-                        }
+                        header.Cell().Element(HeaderStyle).Text("#");
+                        header.Cell().Element(HeaderStyle).Text(_translations["Date"]);
+                        header.Cell().Element(HeaderStyle).AlignRight().Text(_translations["Interest"]);
+                        header.Cell().Element(HeaderStyle).AlignRight().Text(_translations["Principal"]);
+                        header.Cell().Element(HeaderStyle).AlignRight().Text(_translations["TotalPayment"]);
+                        header.Cell().Element(HeaderStyle).AlignRight().Text(_translations["Balance"]);
+                        header.Cell().Element(HeaderStyle).PaddingLeft(5).Text(_translations["Notes"]);
                     });
 
                     foreach (var row in _data.SnowballResult.PaymentSchedule)
@@ -175,14 +190,19 @@ namespace debt_payment_backend.CalculationService.Document
                         }
 
                         table.Cell().Element(CellStyle).Text(formattedDate);
-                        table.Cell().Element(CellStyle).Text(row.InterestPaid.ToString("N2", _culture));
-                        table.Cell().Element(CellStyle).Text(row.PrincipalPaid.ToString("N2", _culture));
-                        table.Cell().Element(CellStyle).Text(row.EndingBalance.ToString("N2", _culture));
+                        table.Cell().Element(CellStyle).AlignRight().Text(row.InterestPaid.ToString("N2", _culture));
+                        table.Cell().Element(CellStyle).AlignRight().Text(row.PrincipalPaid.ToString("N2", _culture));
+                        table.Cell().Element(CellStyle).AlignRight().Text(row.TotalPaymentAmount.ToString("N2", _culture));
+                        table.Cell().Element(CellStyle).AlignRight().Text(row.EndingBalance.ToString("N2", _culture));
 
-                        static IContainer CellStyle(IContainer container)
+                        string noteText = "";
+                        if (row.PaidOffDebts != null && row.PaidOffDebts.Any())
                         {
-                            return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
+                            string debtNames = string.Join(", ", row.PaidOffDebts);
+                            noteText = $"{_translations["PaidOffPrefix"]}{debtNames}";
                         }
+                        
+                        table.Cell().Element(CellStyle).PaddingLeft(5).Text(noteText).FontColor(Colors.Green.Medium);
                     }
                 });
             });

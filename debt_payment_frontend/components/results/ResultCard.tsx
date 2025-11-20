@@ -313,12 +313,13 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                             <TableHead
                                                                 className="w-[60px]">{t('tableHeadMonth')}</TableHead>
                                                             <TableHead>{t('tableHeadDate')}</TableHead>
-                                                            <TableHead
-                                                                className="text-right">{t('tableHeadInterest')}</TableHead>
-                                                            <TableHead
-                                                                className="text-right">{t('tableHeadPrincipal')}</TableHead>
-                                                            <TableHead
-                                                                className="text-right">{t('tableHeadBalance')}</TableHead>
+                                                            <TableHead className="text-right">{t('tableHeadInterest')}</TableHead>
+                                                            <TableHead className="text-right">{t('tableHeadPrincipal')}</TableHead>
+                                                            <TableHead className="text-right font-bold text-blue-600">
+                                                                {t('tableHeadPayment')}
+                                                            </TableHead>
+                                                            <TableHead className="text-right">{t('tableHeadBalance')}</TableHead>
+                                                            <TableHead className="text-left pl-4">{t('tableHeadNotes')}</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
@@ -333,8 +334,18 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                                                                 <TableCell className="text-right text-green-600">
                                                                     {formatCurrency(month.principalPaid, locale)}
                                                                 </TableCell>
-                                                                <TableCell className="text-right font-medium">
+                                                                <TableCell className="text-right font-bold text-blue-600">
+                                                                    {formatCurrency(month.totalPaymentAmount, locale)}
+                                                                </TableCell>
+                                                                <TableCell className="text-right text-muted-foreground">
                                                                     {formatCurrency(month.endingBalance, locale)}
+                                                                </TableCell>
+                                                                <TableCell className="text-left pl-4">
+                                                                    {month.monthlyNote && (
+                                                                        <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50">
+                                                                            🎉 {t('paidOffMessage', { debts: month.paidOffDebts.join(", ") })}
+                                                                        </Badge>
+                                                                    )}
                                                                 </TableCell>
                                                             </TableRow>
                                                         ))}
