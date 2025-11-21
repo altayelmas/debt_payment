@@ -1,28 +1,47 @@
 using MassTransit;
 using NotificationService.Consumer;
 using NotificationService.Service;
+using Serilog;
 
-var builder = Host.CreateApplicationBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq("http://seq")
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
-builder.Services.AddMassTransit(x =>
-{
-    x.AddConsumer<CalculationCreatedConsumer>();
+try {
+    var builder = Host.CreateApplicationBuilder(args);
 
-    x.UsingRabbitMq((context, cfg) =>
+    builder.Services.AddSerilog();
+
+    builder.Services.AddMassTransit(x =>
     {
-        cfg.Host("rabbitmq", "/", h => {
-            h.Username("guest");
-            h.Password("guest");
-        });
+        x.AddConsumer<CalculationCreatedConsumer>();
 
-        cfg.ReceiveEndpoint("notification-queue", e =>
+        x.UsingRabbitMq((context, cfg) =>
         {
-            e.ConfigureConsumer<CalculationCreatedConsumer>(context);
+            cfg.Host("rabbitmq", "/", h => {
+                h.Username("guest");
+                h.Password("guest");
+            });
+
+            cfg.ReceiveEndpoint("notification-queue", e =>
+            {
+                e.ConfigureConsumer<CalculationCreatedConsumer>(context);
+            });
         });
     });
-});
 
-builder.Services.AddScoped<EmailService>();
+    builder.Services.AddScoped<EmailService>();
 
-var host = builder.Build();
-host.Run();
+    var host = builder.Build();
+    host.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Notification Service terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

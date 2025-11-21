@@ -158,6 +158,22 @@ services:
     depends_on:
       - rabbitmq
 
+  seq:
+    image: datalust/seq:latest
+    container_name: debt_seq
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Y
+    ports:
+      - "5341:80"
+    volumes:
+      - seq_data:/data
+    networks:
+      - debt-network
+
 volumes:
   postgres_data:
+    driver: local
+  seq_data:
     driver: local

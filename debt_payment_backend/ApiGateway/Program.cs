@@ -1,55 +1,76 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq("http://seq:5341")
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowNextJsApp",
-        policy =>
-        {
-            policy.WithOrigins(
-                      "http://localhost:3000"
-                  )
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
+try  {
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    builder.Host.UseSerilog();
+
+    builder.Services.AddCors(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
-            )
-        };
+        options.AddPolicy("AllowNextJsApp",
+            policy =>
+            {
+                policy.WithOrigins(
+                        "http://localhost:3000"
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
     });
 
-builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+                )
+            };
+        });
 
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    builder.Services.AddAuthorization();
 
-var app = builder.Build();
+    builder.Services.AddReverseProxy()
+        .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-//app.UseHttpsRedirection();
+    var app = builder.Build();
 
-app.UseCors("AllowNextJsApp");
+    //app.UseHttpsRedirection();
 
-app.UseRouting();
+    app.UseCors("AllowNextJsApp");
 
-app.UseAuthentication();
-app.UseAuthorization();
+    app.UseRouting();
 
-app.MapReverseProxy();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.Run();
+    app.UseSerilogRequestLogging();
+
+    app.MapReverseProxy();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "ApiGateway terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
