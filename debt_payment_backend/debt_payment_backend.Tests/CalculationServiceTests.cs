@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using CalculationService.Model.Entity;
 using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
 using debt_payment_backend.CalculationService.Service.Impl;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Moq.Protected;
@@ -21,6 +23,7 @@ namespace debt_payment_backend.Tests
         private readonly Mock<IHttpContextAccessor> _mockContextAccessor;
         private readonly Mock<HttpMessageHandler> _mockHandler;
         private readonly Mock<CalculationRepository> _mockRepository;
+        private readonly Mock<IPublishEndpoint> _mockPublishEndpoint;
 
         private readonly CalculateServiceImpl _sut;
 
@@ -34,11 +37,13 @@ namespace debt_payment_backend.Tests
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
 
             _mockRepository = new Mock<CalculationRepository>();
+            _mockPublishEndpoint = new Mock<IPublishEndpoint>();
 
             _sut = new CalculateServiceImpl(
                 _mockFactory.Object,
                 _mockContextAccessor.Object,
-                _mockRepository.Object
+                _mockRepository.Object,
+                _mockPublishEndpoint.Object
             );
         }
 
@@ -50,6 +55,17 @@ namespace debt_payment_backend.Tests
 
             mockHttpRequest.Setup(r => r.Headers).Returns(headers);
             mockHttpContext.Setup(c => c.Request).Returns(mockHttpRequest.Object);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, "test@user.com"),
+                new Claim("email", "test@user.com")
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            mockHttpContext.Setup(c => c.User).Returns(claimsPrincipal);
+            
             _mockContextAccessor.Setup(a => a.HttpContext).Returns(mockHttpContext.Object);
         }
 

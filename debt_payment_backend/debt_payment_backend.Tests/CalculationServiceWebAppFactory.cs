@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using CalculationService.Data;
 using debt_payment_backend.CalculationService.Controller;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,10 +15,16 @@ using Moq.Protected;
 
 namespace debt_payment_backend.Tests
 {
-    public class CalculationServiceWebAppFactory : WebApplicationFactory<CalculationController>
+    public class CalculationServiceWebAppFactory : WebApplicationFactory<CalculationController>, IAsyncLifetime
     {
-        public Mock<HttpMessageHandler> MockHttpMessageHandler { get; } = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        public Mock<HttpMessageHandler> MockHttpMessageHandler { get; } = new Mock<HttpMessageHandler>(MockBehavior.Loose);
 
+        public Task InitializeAsync() => Task.CompletedTask;
+
+        public new Task DisposeAsync() {
+            MockHttpMessageHandler.Reset();
+            return base.DisposeAsync().AsTask();
+        }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             {
@@ -33,7 +41,7 @@ namespace debt_payment_backend.Tests
 
                     services.AddDbContext<ApplicationDbContext>(options =>
                     {
-                        options.UseInMemoryDatabase("SharedTestDatabase");
+                        options.UseInMemoryDatabase("CalculationServiceInMemoryDb");
                     });
 
                     var authServiceDescriptor = services.SingleOrDefault(
@@ -80,6 +88,20 @@ namespace debt_payment_backend.Tests
                         .Returns(client);
 
                     services.AddSingleton(mockHttpClientFactory.Object);
+
+                    var publishEndpointDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IPublishEndpoint));
+                    if (publishEndpointDescriptor != null) services.Remove(publishEndpointDescriptor);
+
+                    var busDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IBus));
+                    if (busDescriptor != null) services.Remove(busDescriptor);
+
+                    var mockPublishEndpoint = new Mock<IPublishEndpoint>();
+
+                    mockPublishEndpoint
+                    .Setup(x => x.Publish(It.IsAny<object>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
+                    services.AddSingleton(mockPublishEndpoint.Object);
                 });
 
                 builder.UseEnvironment("Development");

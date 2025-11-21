@@ -30,7 +30,7 @@ namespace debt_payment_backend.Tests
 
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("SharedTestDatabase");
+                    options.UseInMemoryDatabase("DebtServiceInMemoryDb");
                 });
 
                 var authServiceDescriptor = services.SingleOrDefault(

@@ -34,6 +34,7 @@ namespace debt_payment_backend.Tests
             using (var scope = _factory.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.EnsureDeleted();
                 dbContext.Database.EnsureCreated();
             }
         }
@@ -107,13 +108,6 @@ namespace debt_payment_backend.Tests
         [Fact]
         public async Task GetHistory_ShouldReturnUserHistory()
         {
-    
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.CalculationReports.RemoveRange(dbContext.CalculationReports);
-                await dbContext.SaveChangesAsync();
-            }
             var debts = new List<DebtDto> { new DebtDto { DebtId = 2, Name = "Debt 2", CurrentBalance = 2000, InterestRate = 5, MinPayment = 50 } };
             SetupMockDebtServiceResponse(debts);
             var calculateResponse = await _client.PostAsJsonAsync("/api/Calculation/calculate", new CalculationRequestDto { ExtraMonthlyPayment = 100 });

@@ -48,11 +48,14 @@ namespace debt_payment_backend.Tests
             Assert.Equal("CRUD Test", createdDebt.Name);
             int newDebtId = createdDebt.DebtId;
 
-            var getResponse = await _client.GetAsync($"/api/Debt/{newDebtId}");
+            var getResponse = await _client.GetAsync($"/api/Debt");
             getResponse.EnsureSuccessStatusCode();
-            var fetchedDebt = await getResponse.Content.ReadFromJsonAsync<DebtDto>();
+            var fetchedReponse = await getResponse.Content.ReadFromJsonAsync<PaginationDtos<DebtDto>>();
 
+            Assert.NotNull(fetchedReponse);
+            var fetchedDebt = fetchedReponse.Items.FirstOrDefault(d => d.DebtId == newDebtId);
             Assert.NotNull(fetchedDebt);
+
             Assert.Equal(1000, fetchedDebt.CurrentBalance);
             Assert.Equal(newDebtId, fetchedDebt.DebtId);
 
