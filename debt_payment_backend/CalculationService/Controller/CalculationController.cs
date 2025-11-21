@@ -115,7 +115,9 @@ namespace debt_payment_backend.CalculationService.Controller
         }
 
         [HttpGet("{reportId:guid}/pdf")]
-        public async Task<IActionResult> GetReportPdf([FromRoute] Guid reportId)
+        public async Task<IActionResult> GetReportPdf(
+            [FromRoute] Guid reportId,
+            [FromQuery] string strategy = "Snowball")
         {
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("User ID could not be retrieved from token.");
@@ -125,11 +127,18 @@ namespace debt_payment_backend.CalculationService.Controller
 
             if (languageCode.Length > 2) languageCode = languageCode.Substring(0, 2);
 
-            var pdfBytes = await _calculationService.GeneratePdfReportAsync(userId, reportId, languageCode);
+            var textInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+            strategy = textInfo.ToTitleCase(strategy.ToLower());
+
+            if (strategy != "Avalanche" && strategy != "Snowball")
+            {
+                strategy = "Snowball";
+            }
+            var pdfBytes = await _calculationService.GeneratePdfReportAsync(userId, reportId, strategy, languageCode);
 
             if (pdfBytes == null) return NotFound("Report not found.");
             
-            return File(pdfBytes, "application/pdf", $"DebtPlan-{reportId}.pdf");
+            return File(pdfBytes, "application/pdf", $"DebtPlan-{strategy}-{reportId}.pdf");
         }
     }
 }

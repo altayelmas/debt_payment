@@ -367,7 +367,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             return true;
         }
 
-        public async Task<byte[]?> GeneratePdfReportAsync(string userId, Guid reportId, string languageCode = "en")
+        public async Task<byte[]?> GeneratePdfReportAsync(string userId, Guid reportId, string strategy, string languageCode = "en")
         {
             var calculationReport = await _calculationRepository.GetCalculationReportByIdAndUserIdAsync(userId, reportId);
             if (calculationReport == null) return null;
@@ -375,7 +375,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             var reportData = JsonSerializer.Deserialize<CalculationResultDto>(calculationReport.ReportDataJson);
             if (reportData == null) return null;
 
-            var document = new CalculationReportDocument(reportData, languageCode);
+            var document = new CalculationReportDocument(reportData, strategy, languageCode);
             var pdfBytes = document.GeneratePdf();
             return pdfBytes; 
         }

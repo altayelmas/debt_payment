@@ -92,17 +92,21 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
     const handleDownloadPdf = async () => {
         const loadingToast = toast.loading(t('toastGeneratingPdf'));
         try {
+            const strategyParam = isSnowball ? 'Snowball' : 'Avalanche';
             const response = await api.get(`/api/calculation/${reportId}/pdf`, {
                 responseType: 'blob',
                 headers: {
                     'Accept-Language': locale
+                },
+                params: {
+                    strategy: strategyParam
                 }
             });
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `${result.strategyName}-Plan.pdf`);
+            link.setAttribute('download', `${strategyParam}-Plan.pdf`);
             document.body.appendChild(link);
             link.click();
 

@@ -9,12 +9,14 @@ namespace debt_payment_backend.CalculationService.Document
     public class CalculationReportDocument : IDocument
     {
         private readonly CalculationResultDto _data;
+        private readonly string _selectedStrategy;
         private readonly CultureInfo _culture;
         private readonly Dictionary<string, string> _translations;
 
-        public CalculationReportDocument(CalculationResultDto data, string languageCode = "en")
+        public CalculationReportDocument(CalculationResultDto data, string strategyName, string languageCode = "en")
         {
             _data = data;
+            _selectedStrategy = strategyName;
             _culture = languageCode == "tr" ? new CultureInfo("tr-TR") : new CultureInfo("en-US");
 
             _translations = languageCode == "tr" ? new Dictionary<string, string>
@@ -103,6 +105,10 @@ namespace debt_payment_backend.CalculationService.Document
 
         void ComposeContent(IContainer container)
         {
+            var targetResult = _selectedStrategy == "Avalanche" 
+                           ? _data.AvalancheResult 
+                           : _data.SnowballResult;
+
             container.PaddingVertical(40).Column(column =>
             {
                 column.Spacing(20);
@@ -141,7 +147,7 @@ namespace debt_payment_backend.CalculationService.Document
 
                 column.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
 
-                var rawStrategyName = _data.SnowballResult.StrategyName;
+                var rawStrategyName = targetResult.StrategyName;
                 var translatedStrategyName = _translations.ContainsKey(rawStrategyName) ? _translations[rawStrategyName] : rawStrategyName;
                 column.Item().Text($"{translatedStrategyName} {_translations["ScheduleTitle"]}").FontSize(16).SemiBold();
                 
@@ -179,7 +185,7 @@ namespace debt_payment_backend.CalculationService.Document
                         header.Cell().Element(HeaderStyle).PaddingLeft(5).Text(_translations["Notes"]);
                     });
 
-                    foreach (var row in _data.SnowballResult.PaymentSchedule)
+                    foreach (var row in targetResult.PaymentSchedule)
                     {
                         table.Cell().Element(CellStyle).Text(row.Month.ToString());
                         string formattedDate = row.MonthYear;
