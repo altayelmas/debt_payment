@@ -218,6 +218,8 @@
       "chartXAxis": "Month",
       "tooltipLabel": "Ending Balance",
       "tooltipTitle": "Month {label} ({monthYear})",
+      "chartTooltipPaidOff": "Debts Paid Off: ",
+      "chartTooltipBalance": "Remaining Balance",
       "tableHeadMonth": "Month",
       "tableHeadDate": "Date",
       "tableHeadInterest": "Interest Paid",
@@ -237,7 +239,13 @@
       "downloadPdfButton": "Download as PDF",
       "toastGeneratingPdf": "Generating PDF...",
       "toastPdfDownloaded": "PDF Downloaded!",
-      "toastPdfError": "Could not download PDF."
+      "toastPdfError": "Could not download PDF.",
+      "milestoneGroupTitleMultiple": "{count} Debts Paid Off!",
+      "milestoneGroupTitleSingle": "End of \"{debtName}\"!",
+      "milestoneGroupDescription": "Direct all your extra budget to pay off these debts completely this month:",
+      "milestoneItemPaid": "Paid in full",
+      "gapFocusTitle": "Focus Phase",
+      "gapFocusDescription": "Months {start}-{end}: Keep directing all extra budget towards <str>\"{debtName}\"</str>."
     }
   },
   "Errors": {

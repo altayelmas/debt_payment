@@ -56,7 +56,7 @@ export default function StrategyTable({ data, formatDateString }: StrategyTableP
                             <TableCell className="text-left pl-4">
                                 {month.paidOffDebts && month.paidOffDebts.length > 0 && (
                                     <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50">
-                                        🎉 {t('paidOffMessage', { debts: month.paidOffDebts.join(", ") })}
+                                        {t('paidOffMessage', { debts: month.paidOffDebts.join(", ") })}
                                     </Badge>
                                 )}
                             </TableCell>

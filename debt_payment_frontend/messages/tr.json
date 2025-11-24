@@ -218,6 +218,8 @@
       "chartXAxis": "Ay",
       "tooltipLabel": "Kalan Bakiye",
       "tooltipTitle": "Ay {label} ({monthYear})",
+      "chartTooltipPaidOff": "Kapanan Borçlar: ",
+      "chartTooltipBalance": "Kalan Bakiye",
       "tableHeadMonth": "Ay",
       "tableHeadDate": "Tarih",
       "tableHeadInterest": "Ödenen Faiz",
@@ -237,7 +239,13 @@
       "downloadPdfButton": "PDF Olarak İndir",
       "toastGeneratingPdf": "PDF oluşturuluyor...",
       "toastPdfDownloaded": "PDF indirildi!",
-      "toastPdfError": "PDF indirilemedi."
+      "toastPdfError": "PDF indirilemedi.",
+      "milestoneGroupTitleMultiple": "{count} Borç Birden Bitiyor! ",
+      "milestoneGroupTitleSingle": "\"{debtName}\" Borcu Bitiyor!",
+      "milestoneGroupDescription": "Bu ay aşağıdaki borçları tamamen kapatmak için tüm ekstra bütçenizi bu borçlara yönlendirin:",
+      "milestoneItemPaid": "Tamamen ödendi",
+      "gapFocusTitle": "Odaklanma Dönemi",
+      "gapFocusDescription": "Ay {start} - {end} arasında: Tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcuna yönlendirin."
     }
   },
   "Errors": {
