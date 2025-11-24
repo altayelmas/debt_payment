@@ -87,6 +87,8 @@
       "emptyTitle": "Henüz borç eklenmemiş",
       "emptyDescription": "Başlamak için yukarıdaki + Borç Ekle butonuna tıklayın.",
       "pagination": "Sayfa {currentPage} / {totalPages}",
+      "previous": "Önceki",
+      "next": "Sonraki",
       "toasts": {
         "loadError": "Borçlar yüklenemedi."
       }
@@ -237,5 +239,11 @@
       "toastPdfDownloaded": "PDF indirildi!",
       "toastPdfError": "PDF indirilemedi."
     }
+  },
+  "Errors": {
+    "PAYMENT_INSUFFICIENT": "Girdiğiniz ödeme tutarı aylık faiz toplamını karşılamıyor. Borcun bitmesi için lütfen 'Aylık Ekstra Bütçe' tutarını artırın.",
+    "CALCULATION_LIMIT_EXCEEDED": "Hesaplama limiti aşıldı. Ödeme tutarı borcu kapatmak için çok düşük olabilir.",
+    "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
+    "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."
   }
 }

@@ -87,6 +87,8 @@
       "emptyTitle": "No debts added yet",
       "emptyDescription": "Click the + Add Debt button above to get started.",
       "pagination": "Page {currentPage} of {totalPages}",
+      "previous": "Previous",
+      "next": "Next",
       "toasts": {
         "loadError": "Debts could not be loaded."
       }
@@ -237,5 +239,11 @@
       "toastPdfDownloaded": "PDF Downloaded!",
       "toastPdfError": "Could not download PDF."
     }
+  },
+  "Errors": {
+    "PAYMENT_INSUFFICIENT": "The payment amount is too low to cover the monthly interest. Please increase the Extra Monthly Budget.",
+    "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
+    "NO_DEBTS_FOUND": "No debts found for calculation.",
+    "GENERIC_ERROR": "An unexpected error occurred. Please try again later."
   }
 }

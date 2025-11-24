@@ -33,6 +33,7 @@ interface CalculationHistoryCardProps {
 export default function CalculationHistoryCard({isCalculationDisabled}: CalculationHistoryCardProps) {
     const t = useTranslations('DashboardPage.CalculationHistory');
     const t_formButton = useTranslations('DashboardPage.CalculationForm');
+
     const locale = useLocale();
 
     const [history, setHistory] = useState<CalculationHistoryDto[] | null>(null);

@@ -159,7 +159,9 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                                     }}
                                     aria-disabled={currentPage === 1}
                                     className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                                />
+                                >
+                                    {t('previous')}
+                                </PaginationPrevious>
                             </PaginationItem>
                             <PaginationItem>
                                 <span className="px-4 py-2 text-sm font-medium">
@@ -175,7 +177,9 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                                     }}
                                     aria-disabled={currentPage === pagedData.totalPages}
                                     className={currentPage === pagedData.totalPages ? "pointer-events-none opacity-50" : ""}
-                                />
+                                >
+                                    {t('next')}
+                                </PaginationNext>
                             </PaginationItem>
                         </PaginationContent>
                     </Pagination>

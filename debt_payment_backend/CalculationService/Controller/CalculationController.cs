@@ -43,24 +43,28 @@ namespace debt_payment_backend.CalculationService.Controller
 
                 if (result == null)
                 {
-                    return BadRequest("No debts are found for the calculation.");
+                    return BadRequest(new { ErrorCode = "NO_DEBTS_FOUND", Message = "No debts are found for the calculation." });
                 }
 
                 return Ok(new { reportId = result });
             }
             catch (InvalidOperationException e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new { ErrorCode = "CALCULATION_LIMIT_EXCEEDED", Message = e.Message });
             }
             catch (OverflowException e)
             {
-                return BadRequest("The payment amount has grown too large to calculate the balance because it does not cover the monthly interest. Please increase the payment amount.");
+                return BadRequest(
+                    new { 
+                    ErrorCode = "PAYMENT_INSUFFICIENT", 
+                    Message = "The payment amount has grown too large to calculate the balance because it does not cover the monthly interest." 
+                });
             }
             catch (Exception e)
             {
                 var userIdForLog = User?.Claims?.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "unknown";
                 _logger.LogError(e, "Unknown error during calculation. User: {UserId}", userIdForLog);
-                return StatusCode(500, "A server-side error occurred during calculation.");
+                return StatusCode(500, new { ErrorCode = "GENERIC_ERROR", Message = "A server-side error occurred during calculation." });
             }
 
         }

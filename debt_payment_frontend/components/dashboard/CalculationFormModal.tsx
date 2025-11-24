@@ -53,8 +53,10 @@ export default function CalculationFormModal({
                                                  isCalculationDisabled,
                                                  onCalculationComplete
                                              }: CalculationFormModalProps) {
-    const t = useTranslations('DashboardPage.CalculationForm'); // CalculationFormCard'dan gelen
+    const t = useTranslations('DashboardPage.CalculationForm');
     const tZod = useTranslations('DashboardPage.CalculationForm.zod');
+    const tErrors = useTranslations('Errors');
+
 
     const [calculating, setCalculating] = useState(false);
     const router = useRouter();
@@ -81,8 +83,19 @@ export default function CalculationFormModal({
             }
 
         } catch (error: any) {
-            const errorMessage = error.response?.data?.message || error.response?.data || t('toasts.defaultError');
-            toast.error(errorMessage);
+            console.error("Calculation error:", error);
+            const errorData = error.response?.data;
+
+            const code = errorData?.errorCode || errorData?.ErrorCode;
+
+            if (code) {
+                toast.error(tErrors(code));
+            } else if (errorData?.message || errorData?.Message) {
+                toast.error(errorData.message || errorData.Message);
+            }
+            else {
+                toast.error(tErrors('GENERIC_ERROR'));
+            }
         } finally {
             setCalculating(false);
             calcForm.reset({ extraPayment: 0 });
