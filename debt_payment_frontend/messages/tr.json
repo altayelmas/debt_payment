@@ -231,6 +231,8 @@
       "breakdownInterest": "Faiz",
       "breakdownPrincipal": "Anapara",
       "paidOffMessage": "Ödendi: {debts}",
+      "paidOffSingle": "Ödendi: {debtName}",
+      "paidOffMultiple": "{count} Borç Ödendi!",
       "actionPlanTitle": "Sizin Eylem Planınız",
       "actionPlanDateRange": "Aylar {startMonth} - {endMonth} ({startDate} - {endDate})",
       "actionPlanDateSingle": "Ay {month} ({monthYear})",

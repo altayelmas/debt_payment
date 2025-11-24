@@ -231,6 +231,8 @@
       "breakdownInterest": "Interest",
       "breakdownPrincipal": "Principal",
       "paidOffMessage": "Paid off: {debts}",
+      "paidOffSingle": "Paid off: {debtName}",
+      "paidOffMultiple": "{count} Debts Paid!",
       "actionPlanTitle": "Your Action Plan",
       "actionPlanDateRange": "Months {startMonth} - {endMonth} ({startDate} - {endDate})",
       "actionPlanDateSingle": "Month {month} ({monthYear})",

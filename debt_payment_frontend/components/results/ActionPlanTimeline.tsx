@@ -51,37 +51,47 @@ export default function ActionPlanTimeline({ milestones, paymentSchedule, format
                         : "";
 
                     let gapElement = null;
+                    let gapStart: number | null = null;
+                    let gapEnd: number | null = null;
 
-                    if (index > 0) {
+                    if (index === 0) {
+                        if (monthNumber > 1) {
+                            gapStart = 1;
+                            gapEnd = monthNumber - 1;
+                        }
+                    }
+                    else {
                         const prevMonthNumber = sortedMonths[index - 1];
                         if (monthNumber - prevMonthNumber > 1) {
-                            const gapStart = prevMonthNumber + 1;
-                            const gapEnd = monthNumber - 1;
-
-                            const focusDebtName = firstMilestone.debtName;
-
-                            gapElement = (
-                                <div className="pl-4 py-3 flex gap-4 relative" key={`gap-${monthNumber}`}>
-                                    <div className="absolute left-[27px] top-0 bottom-0 w-0.5 bg-border -z-10"></div>
-
-                                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground shrink-0 mt-0.5 border bg-background">
-                                        <TrendingUp className="h-3 w-3" />
-                                    </div>
-
-                                    <div className="text-sm text-muted-foreground bg-muted/30 p-2 rounded w-full border border-dashed">
-                                        <span className="font-semibold text-foreground text-xs uppercase tracking-wider block mb-1">
-                                            {t('gapFocusTitle')}
-                                        </span>
-                                        {t.rich('gapFocusDescription', {
-                                            start: gapStart,
-                                            end: gapEnd,
-                                            debtName: focusDebtName,
-                                            str: (chunks) => <strong className="text-foreground">{chunks}</strong>
-                                        })}
-                                    </div>
-                                </div>
-                            );
+                            gapStart = prevMonthNumber + 1;
+                            gapEnd = monthNumber - 1;
                         }
+                    }
+
+                    if (gapStart !== null && gapEnd !== null) {
+                        const focusDebtName = firstMilestone.debtName;
+
+                        gapElement = (
+                            <div className="pl-4 py-3 flex gap-4 relative" key={`gap-${monthNumber}`}>
+                                <div className="absolute left-[27px] top-0 bottom-0 w-0.5 bg-border -z-10"></div>
+
+                                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground shrink-0 mt-0.5 border bg-background">
+                                    <TrendingUp className="h-3 w-3" />
+                                </div>
+
+                                <div className="text-sm text-muted-foreground bg-muted/30 p-2 rounded w-full border border-dashed">
+                                    <span className="font-semibold text-foreground text-xs uppercase tracking-wider block mb-1">
+                                        {t('gapFocusTitle')}
+                                    </span>
+                                    {t.rich('gapFocusDescription', {
+                                        start: gapStart,
+                                        end: gapEnd,
+                                        debtName: focusDebtName,
+                                        str: (chunks) => <strong className="text-foreground">{chunks}</strong>
+                                    })}
+                                </div>
+                            </div>
+                        );
                     }
 
                     return (

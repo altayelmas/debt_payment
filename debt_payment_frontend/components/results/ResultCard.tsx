@@ -65,12 +65,12 @@ export default function ResultCard({ result, isSnowball, isRecommended, reportId
                                     {t('viewPlanButton')}
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-4xl flex flex-col max-h-[90vh]">
+                            <DialogContent className="sm:max-w-5xl flex flex-col max-h-[90vh]">
                                 <DialogHeader>
                                     <DialogTitle>{t('dialogTitle', { strategyName: result.strategyName })}</DialogTitle>
                                 </DialogHeader>
 
-                                <div className={"overflow-y-auto pr-4"}>
+                                <div className={"overflow-y-auto px-1"}>
                                     <ActionPlanTimeline
                                         milestones={result.milestones}
                                         paymentSchedule={result.paymentSchedule}
@@ -83,7 +83,7 @@ export default function ResultCard({ result, isSnowball, isRecommended, reportId
                                             <TabsTrigger value="table">{t('tableTab')}</TabsTrigger>
                                         </TabsList>
 
-                                        <TabsContent value="chart">
+                                        <TabsContent value="chart" className="w-full mt-4">
                                             <StrategyChart
                                                 data={result.paymentSchedule}
                                                 milestones={result.milestones}
