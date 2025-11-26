@@ -1,18 +1,23 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from '@/components/ui/badge';
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download } from "lucide-react";
-import { formatCurrency } from '@/lib/utils';
-import { StrategyResult } from '@/types';
+import {useRouter} from '@/i18n/navigation';
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {Badge} from '@/components/ui/badge';
+import {Button} from "@/components/ui/button";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Download} from "lucide-react";
+import {formatCurrency} from '@/lib/utils';
+import {StrategyResult} from '@/types';
 
 import ActionPlanTimeline from "./ActionPlanTimeline";
 import StrategyChart from "./StrategyChart";
 import StrategyTable from "./StrategyTable";
-import { useResultCardLogic } from "./useResultCardLogic";
+import {useResultCardLogic} from "./useResultCardLogic";
+
+import {Play, CheckCircle} from "lucide-react";
+import toast from "react-hot-toast";
+import api from "@/lib/api";
 
 interface ResultCardProps {
     result: StrategyResult;
@@ -21,12 +26,34 @@ interface ResultCardProps {
     reportId: string;
 }
 
-export default function ResultCard({ result, isSnowball, isRecommended, reportId }: ResultCardProps) {
-    const { formatDateString, formatPayOffDate, handleDownloadPdf, isLoading, t, locale } = useResultCardLogic(reportId, isSnowball);
+export default function ResultCard({result, isSnowball, isRecommended, reportId}: ResultCardProps) {
+    const {
+        formatDateString,
+        formatPayOffDate,
+        handleDownloadPdf,
+        isLoading,
+        t,
+        locale
+    } = useResultCardLogic(reportId, isSnowball);
+    const router = useRouter();
 
     const borderColor = isRecommended ? 'border-blue-500' : (isSnowball ? 'border-green-500' : 'border-red-500');
     const titleColor = isRecommended ? 'text-blue-600' : (isSnowball ? 'text-green-600' : 'text-red-600');
     const description = isSnowball ? t('descriptionSnowball') : t('descriptionAvalanche');
+
+    const handleActivatePlan = async () => {
+        const loadingToast = toast.loading("Activating plan...");
+        try {
+            await api.post(`/api/plan/activate/${reportId}`);
+
+            toast.success("Plan activated! Redirecting to tracking...", {id: loadingToast});
+
+            setTimeout(() => router.push('/tracking'), 1000);
+
+        } catch (error) {
+            toast.error("Could not activate plan.", {id: loadingToast});
+        }
+    };
 
     return (
         <Card className={`border-t-4 ${borderColor} relative flex flex-col`}>
@@ -67,7 +94,7 @@ export default function ResultCard({ result, isSnowball, isRecommended, reportId
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-5xl flex flex-col max-h-[90vh]">
                                 <DialogHeader>
-                                    <DialogTitle>{t('dialogTitle', { strategyName: result.strategyName })}</DialogTitle>
+                                    <DialogTitle>{t('dialogTitle', {strategyName: result.strategyName})}</DialogTitle>
                                 </DialogHeader>
 
                                 <div className={"overflow-y-auto px-1"}>
@@ -109,8 +136,16 @@ export default function ResultCard({ result, isSnowball, isRecommended, reportId
                             onClick={handleDownloadPdf}
                             disabled={isLoading}
                         >
-                            <Download className="mr-2 h-4 w-4" />
+                            <Download className="mr-2 h-4 w-4"/>
                             {isLoading ? t('toastGeneratingPdf') : t('downloadPdfButton')}
+                        </Button>
+
+                        <Button
+                            className={`w-full ${isRecommended ? "bg-blue-600 hover:bg-blue-700" : ""}`}
+                            onClick={handleActivatePlan}
+                        >
+                            <Play className="mr-2 h-4 w-4"/>
+                            {t('startPlanButton')}
                         </Button>
                     </div>
                 </div>

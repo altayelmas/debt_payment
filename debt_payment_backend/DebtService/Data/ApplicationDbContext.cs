@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using debt_payment_backend.DebtService.Model.Entity;
+using DebtService.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace debt_payment_backend.DebtService.Data
@@ -14,6 +15,7 @@ namespace debt_payment_backend.DebtService.Data
         {
         }
         public DbSet<Debt> Debts { get; set; }
+        public DbSet<ActualPayment> ActualPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

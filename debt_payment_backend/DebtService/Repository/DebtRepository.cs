@@ -16,6 +16,7 @@ namespace debt_payment_backend.DebtService.Repository
         Task<Debt?> GetDebtByIdAndUserIdAsync(int debtId, string userId);
         Task<IEnumerable<Debt>> GetDebtsByUserIdAsync(string userId, int pageNumber, int pageSize);
         Task<int> GetTotalDebtCountByUserIdAsync(string userId);
+        Task<List<Debt>> GetActiveDebtsByUserIdAsync(string userId);
 
     }
 }

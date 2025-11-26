@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using DebtService.Model.Entity;
 
 namespace debt_payment_backend.DebtService.Model.Entity
 {
@@ -27,5 +28,6 @@ namespace debt_payment_backend.DebtService.Model.Entity
         public decimal MinPayment { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public ICollection<ActualPayment> Payments { get; set; } = new List<ActualPayment>();
     }
 }

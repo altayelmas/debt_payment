@@ -15,5 +15,8 @@ namespace CalculationService.Model.Dto
         public decimal PrincipalPaid { get; set; }
         public decimal EndingBalance { get; set; }
         public List<string> PaidOffDebts { get; set; } = new();
+        public bool IsPaid { get; set; } = false;
+        public decimal ActualPaidAmount { get; set; } = 0;
+        public DateTime? PaymentDate { get; set; }
     }
 }

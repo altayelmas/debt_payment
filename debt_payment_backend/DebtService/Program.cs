@@ -4,6 +4,10 @@ using debt_payment_backend.DebtService.Repository;
 using debt_payment_backend.DebtService.Repository.Impl;
 using debt_payment_backend.DebtService.Service.Impl;
 using DebtService.Data;
+using DebtService.Repository;
+using DebtService.Repository.Impl;
+using DebtService.Service;
+using DebtService.Service.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +73,9 @@ try {
 
     builder.Services.AddScoped<DebtsService, DebtsServiceImpl>();
     builder.Services.AddScoped<DebtRepository, DebtRepositoryImpl>();
+    builder.Services.AddScoped<PaymentService, PaymentServiceImpl>();
+    builder.Services.AddScoped<PaymentRepository, PaymentRepositoryImpl>();
+
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

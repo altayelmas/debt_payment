@@ -52,6 +52,32 @@ namespace CalculationService.Data.Migrations
 
                     b.ToTable("CalculationReports");
                 });
+
+            modelBuilder.Entity("CalculationService.Model.Entity.UserActivePlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActivatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CalculationReportId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserActivePlans");
+                });
 #pragma warning restore 612, 618
         }
     }

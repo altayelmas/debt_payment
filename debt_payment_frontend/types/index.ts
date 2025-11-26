@@ -23,6 +23,9 @@ export interface CalculationResult {
     avalancheResult: StrategyResult;
     recommendation: string;
     extraPayment: number;
+    currentTotalDebt: number;
+    calculationId: string;
+    isPlanOutdated: boolean;
 }
 
 export interface PagedResult<T> {
@@ -44,6 +47,9 @@ export interface MonthlyPaymentDetail {
     principalPaid: number;
     endingBalance: number;
     paidOffDebts: string[];
+    isPaid: boolean;
+    actualPaidAmount: number;
+    paymentDate?: string;
 }
 
 export interface CalculationHistoryDto {

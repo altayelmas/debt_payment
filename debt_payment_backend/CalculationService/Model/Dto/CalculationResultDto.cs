@@ -12,5 +12,8 @@ namespace debt_payment_backend.CalculationService.Model.Dto
         public StrategyResultDto AvalancheResult { get; set; } = null!;
         public string Recommendation { get; set; } = string.Empty;
         public decimal ExtraPayment { get; set; }
+        public decimal CurrentTotalDebt { get; set; }
+        public Guid CalculationId { get; set; }
+        public bool IsPlanOutdated { get; set; }
     }
 }

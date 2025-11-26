@@ -100,5 +100,16 @@ namespace debt_payment_backend.DebtService.Controller
             var pagedResult = await _debtService.GetDebtsForUserAsync(userId, pageNumber, pageSize);
             return Ok(pagedResult);
         }
+
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalDebt()
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var result = await _debtService.GetTotalDebtAsync(userId);
+
+            return Ok(result);
+        }
     }
 }

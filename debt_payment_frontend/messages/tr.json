@@ -8,7 +8,8 @@
     "lightMode": "Açık",
     "darkMode": "Karanlık",
     "systemMode": "Sistem",
-    "themeLabel": "Tema"
+    "themeLabel": "Tema",
+    "trackingLink": "Planım"
   },
   "LoginPage": {
     "title": "Giriş Yap",
@@ -247,7 +248,8 @@
       "milestoneGroupDescription": "Bu ay aşağıdaki borçları tamamen kapatmak için tüm ekstra bütçenizi bu borçlara yönlendirin:",
       "milestoneItemPaid": "Tamamen ödendi",
       "gapFocusTitle": "Odaklanma Dönemi",
-      "gapFocusDescription": "Ay {start} - {end} arasında: Tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcuna yönlendirin."
+      "gapFocusDescription": "Ay {start} - {end} arasında: Tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcuna yönlendirin.",
+      "startPlanButton": "Bu Planı Başlat"
     }
   },
   "Errors": {

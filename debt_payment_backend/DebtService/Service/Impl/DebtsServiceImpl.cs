@@ -152,5 +152,17 @@ namespace debt_payment_backend.DebtService.Service.Impl
                 TotalMonthlyMinPayment = totalMonthlyMinPayment
             };
         }
+
+        public async Task<decimal> GetTotalDebtAsync(string userId)
+        {
+            List<DebtDto> debts = (await GetAllDebtsForUserAsync(userId)).ToList();
+            decimal totalDebt = 0;
+            foreach (var debt in debts)
+            {
+                totalDebt += debt.CurrentBalance;
+            }
+
+            return totalDebt;
+        }
     }
 }

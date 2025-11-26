@@ -3,7 +3,7 @@
 import {useAuth} from "@/context/AuthContext";
 import {useRouter, Link} from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react"
+import { LogOut, LineChart } from "lucide-react"
 import { useTranslations } from 'next-intl';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -21,10 +21,22 @@ export default function Navbar() {
 
     return (
         <nav className={"bg-background border-b w-full mb-8"}>
-            <div className={"container mx-auto flex justify-between items-center p-4 gap-2"}>
-                <Link href="/dashboard" className="text-xl font-bold text-primary hover:opacity-80 transition-colors">
-                    {t('appTitle')}
-                </Link>
+            <div className={"container mx-auto flex justify-between items-center p-4"}>
+
+                <div className="flex items-center gap-6">
+                    <Link href="/dashboard" className="text-xl font-bold text-primary hover:opacity-80 transition-colors">
+                        {t('appTitle')}
+                    </Link>
+
+                    <Link
+                        href="/tracking"
+                        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                    >
+                        <LineChart className="h-4 w-4" />
+                        {t('trackingLink')}
+                    </Link>
+                </div>
+
                 <div className={"flex items-center gap-2 sm:gap-4"}>
                     <span className={"text-sm text-muted-foreground hidden sm:block"}>
                         {userEmail}

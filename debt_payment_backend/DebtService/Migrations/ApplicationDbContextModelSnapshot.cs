@@ -22,6 +22,36 @@ namespace DebtService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DebtService.Model.Entity.ActualPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("CalculationReportId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DebtId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DebtId");
+
+                    b.ToTable("ActualPayments");
+                });
+
             modelBuilder.Entity("debt_payment_backend.DebtService.Model.Entity.Debt", b =>
                 {
                     b.Property<int>("DebtId")
@@ -60,6 +90,22 @@ namespace DebtService.Migrations
                         .HasDatabaseName("IX_Debt_UserId");
 
                     b.ToTable("Debts");
+                });
+
+            modelBuilder.Entity("DebtService.Model.Entity.ActualPayment", b =>
+                {
+                    b.HasOne("debt_payment_backend.DebtService.Model.Entity.Debt", "Debt")
+                        .WithMany("Payments")
+                        .HasForeignKey("DebtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Debt");
+                });
+
+            modelBuilder.Entity("debt_payment_backend.DebtService.Model.Entity.Debt", b =>
+                {
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,8 @@ using System.Text;
 using CalculationService.Data;
 using CalculationService.Repository;
 using CalculationService.Repository.Impl;
+using CalculationService.Service;
+using CalculationService.Service.Impl;
 using debt_payment_backend.CalculationService.Service;
 using debt_payment_backend.CalculationService.Service.Impl;
 using MassTransit;
@@ -81,6 +83,8 @@ try {
 
     builder.Services.AddScoped<CalculateService, CalculateServiceImpl>();
     builder.Services.AddScoped<CalculationRepository, CalculationRepositoryImpl>();
+    builder.Services.AddScoped<PlanService, PlanServiceImpl>();
+    builder.Services.AddScoped<PlanRepository, PlanRepositoryImpl>();
 
     builder.Services.AddMassTransit(x =>
     {

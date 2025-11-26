@@ -316,12 +316,14 @@ namespace debt_payment_backend.CalculationService.Service.Impl
         public async Task<CalculationResultDto> GetCalculationResultById(string userId, Guid reportId)
         {
             var calculationReport = await _calculationRepository.GetCalculationReportByIdAndUserIdAsync(userId, reportId);
-            if (calculationReport == null)
-            {
-                return null;
-            }
+            if (calculationReport == null) return null;
 
             var reportData = JsonSerializer.Deserialize<CalculationResultDto>(calculationReport.ReportDataJson);
+
+            if (reportData != null)
+            {
+                reportData.CalculationId = calculationReport.CalculationId;
+            }
 
             return reportData;
         }

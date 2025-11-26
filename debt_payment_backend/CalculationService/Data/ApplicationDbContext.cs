@@ -14,6 +14,7 @@ namespace CalculationService.Data
         {
         }
         public DbSet<CalculationReport> CalculationReports { get; set; }
+        public DbSet<UserActivePlan> UserActivePlans { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

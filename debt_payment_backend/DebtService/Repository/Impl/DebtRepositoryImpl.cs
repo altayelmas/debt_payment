@@ -70,5 +70,11 @@ namespace debt_payment_backend.DebtService.Repository.Impl
                 .ToListAsync();
         }
 
+        public async Task<List<Debt>> GetActiveDebtsByUserIdAsync(string userId)
+        {
+            return await _context.Debts
+                .Where(d => d.UserId == userId && d.CurrentBalance > 0)
+                .ToListAsync();
+        }
     }
 }

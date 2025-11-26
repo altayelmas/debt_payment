@@ -8,7 +8,8 @@
     "lightMode": "Light",
     "darkMode": "Dark",
     "systemMode": "System",
-    "themeLabel": "Theme"
+    "themeLabel": "Theme",
+    "trackingLink": "My Plan"
   },
   "LoginPage": {
     "title": "Login",
@@ -247,7 +248,8 @@
       "milestoneGroupDescription": "Direct all your extra budget to pay off these debts completely this month:",
       "milestoneItemPaid": "Paid in full",
       "gapFocusTitle": "Focus Phase",
-      "gapFocusDescription": "Months {start}-{end}: Keep directing all extra budget towards <str>\"{debtName}\"</str>."
+      "gapFocusDescription": "Months {start}-{end}: Keep directing all extra budget towards <str>\"{debtName}\"</str>.",
+      "startPlanButton": "Start This Plan"
     }
   },
   "Errors": {
