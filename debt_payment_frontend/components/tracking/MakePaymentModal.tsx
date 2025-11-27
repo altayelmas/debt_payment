@@ -18,13 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { formatCurrency } from '@/lib/utils';
-import { useLocale } from 'next-intl';
-
-const paymentSchema = z.object({
-    amount: z.coerce.number().min(0.01, "Amount must be greater than 0"),
-});
-
-type PaymentFormInputs = z.infer<typeof paymentSchema>;
+import { useLocale, useTranslations } from 'next-intl';
 
 interface MakePaymentModalProps {
     isOpen: boolean;
@@ -46,6 +40,29 @@ export default function MakePaymentModal({
                                              reportId
                                          }: MakePaymentModalProps) {
     const locale = useLocale();
+    const t = useTranslations('TrackingPage.MakePaymentModal');
+    const tZod = useTranslations('TrackingPage.MakePaymentModal.zod');
+
+    const formatMonthYear = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                return date.toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+            return dateString;
+        } catch (e) {
+            return dateString;
+        }
+    };
+
+    const paymentSchema = z.object({
+        amount: z.coerce.number().min(0.01, tZod('minAmount')),
+    });
+
+    type PaymentFormInputs = z.infer<typeof paymentSchema>;
 
     const form = useForm<PaymentFormInputs>({
         resolver: zodResolver(paymentSchema),
@@ -72,11 +89,11 @@ export default function MakePaymentModal({
                 calculationReportId: reportId
             });
 
-            toast.success("Payment distributed and recorded!");
+            toast.success(t('toasts.success'));
             onSuccess();
             onOpenChange(false);
         } catch (error) {
-            toast.error("Could not record payment.");
+            toast.error(t('toasts.error'));
         }
     };
 
@@ -84,11 +101,14 @@ export default function MakePaymentModal({
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Make Payment for {monthYear}</DialogTitle>
+                    <DialogTitle>{t('title', {monthYear: formatMonthYear(monthYear)})}</DialogTitle>
                     <DialogDescription>
-                        Planned amount: <span className="font-bold text-primary">{formatCurrency(targetAmount, locale)}</span>.
-                        <br/>
-                        This amount will be automatically distributed according to the <strong>{strategyName}</strong> strategy.
+                        {t.rich('description', {
+                            amount: formatCurrency(targetAmount, locale),
+                            strategyName: strategyName,
+                            str: (chunks) => <span className="font-bold text-primary">{chunks}</span>,
+                            br: () => <br/>
+                        })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -100,10 +120,12 @@ export default function MakePaymentModal({
                             name="amount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Total Payment Amount</FormLabel>
+                                    <FormLabel>{t('labelAmount')}</FormLabel>
                                     <FormControl>
                                         <div className="relative">
-                                            <span className="absolute left-3 top-2 text-muted-foreground">₺</span>
+                                            <span className="absolute left-3 top-2 text-muted-foreground">
+                                                {locale === 'tr' ? '₺' : '$'}
+                                            </span>
                                             <Input
                                                 type="number"
                                                 step="0.01"
@@ -119,10 +141,10 @@ export default function MakePaymentModal({
 
                         <div className="flex justify-end gap-2">
                             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                Cancel
+                                {t('buttonCancel')}
                             </Button>
                             <Button type="submit">
-                                {form.formState.isSubmitting ? <Loader2 className="animate-spin" /> : "Confirm Payment"}
+                                {form.formState.isSubmitting ? <Loader2 className="animate-spin" /> : t('buttonConfirm')}
                             </Button>
                         </div>
                     </form>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Exceptions;
 using debt_payment_backend.CalculationService.Model.Dto;
 using debt_payment_backend.CalculationService.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -48,9 +49,13 @@ namespace debt_payment_backend.CalculationService.Controller
 
                 return Ok(new { reportId = result });
             }
-            catch (InvalidOperationException e)
+            catch (PaymentInsufficientException e)
             {
-                return BadRequest(new { ErrorCode = "CALCULATION_LIMIT_EXCEEDED", Message = e.Message });
+                return BadRequest(new { 
+                    errorCode = "PAYMENT_INSUFFICIENT", 
+                    deficit = e.DeficitAmount,
+                    message = "The payment amount is insufficient to cover the monthly interest. Please increase your payment amount."
+                });
             }
             catch (OverflowException e)
             {

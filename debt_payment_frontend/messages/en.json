@@ -152,13 +152,16 @@
       "buttonLoading": "Calculating...",
       "footerWarning": "To perform the calculation, you must first add the debt.",
       "buttonShort": "Calculate",
+      "infoTotalMin": "Current Minimum Payments:",
+      "infoTotalMinDesc": "The extra budget you enter will be added on top of this amount.",
       "toasts": {
         "noReportId": "Report ID was not returned from the server.",
         "defaultError": "The calculation could not be performed. Please check your debts."
       },
       "zod": {
         "negative": "Cannot be negative",
-        "maxAmount": "Value cannot exceed 999,999,999,999.99"
+        "maxAmount": "Value cannot exceed 999,999,999,999.99",
+        "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>."
       }
     },
     "CalculationHistory": {
@@ -253,9 +256,71 @@
     }
   },
   "Errors": {
-    "PAYMENT_INSUFFICIENT": "The payment amount is too low to cover the monthly interest. Please increase the Extra Monthly Budget.",
+    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>.",
     "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
     "NO_DEBTS_FOUND": "No debts found for calculation.",
     "GENERIC_ERROR": "An unexpected error occurred. Please try again later."
+  },
+  "TrackingPage": {
+    "page": {
+      "title": "Your Debt Freedom Journey",
+      "subtitle": "Track your progress month by month.",
+      "outdatedAlert": {
+        "title": "Plan Outdated",
+        "description": "Changes in your debts (add/delete/update) have been detected. Your current plan may no longer reflect the actual situation.",
+        "button": "Recalculate Plan"
+      },
+      "noPlan": {
+        "title": "No Active Plan Found",
+        "description": "You haven't started a debt payoff plan yet.",
+        "button": "Go to Dashboard"
+      },
+      "summary": {
+        "targetDate": "Target Date",
+        "totalRemaining": "Total Remaining",
+        "progress": "Progress",
+        "completed": "completed"
+      },
+      "cards": {
+        "month": "Month {month}",
+        "target": "Target:",
+        "paid": "Paid:",
+        "completedBadge": "Completed ✅",
+        "partialBadge": "Partial Payment ⚠️",
+        "currentGoalBadge": "Current Goal",
+        "partialMessage": "⚠️ Under target by <str>{amount}</str>.",
+        "makePaymentButton": "Make Payment",
+        "completePaymentButton": "Complete Payment",
+        "paidOffMessage": "Paid off:"
+      },
+      "chart": {
+        "title": "Progress Chart",
+        "plannedBalance": "Planned Balance",
+        "actualBalance": "Actual Balance (Est.)",
+        "description": "If the green line is below the blue line, you are ahead of schedule!",
+        "planned": "Planned",
+        "actual": "Actual",
+        "monthLabel": "Month {month}"
+      },
+      "success": {
+        "title": "Debt-Free Freedom! 🎉",
+        "description": "Congratulations! You have successfully paid off all your debts. This plan is complete. Enjoy your financial freedom.",
+        "button": "Set New Goals"
+      }
+    },
+    "MakePaymentModal": {
+      "title": "Make Payment for {monthYear}",
+      "description": "Planned amount: <str>{amount}</str>.<br>This amount will be automatically distributed according to the <str>{strategyName}</str> strategy.",
+      "labelAmount": "Total Payment Amount",
+      "buttonCancel": "Cancel",
+      "buttonConfirm": "Confirm Payment",
+      "toasts": {
+        "success": "Payment distributed and recorded!",
+        "error": "Could not record payment."
+      },
+      "zod": {
+        "minAmount": "Amount must be greater than 0"
+      }
+    }
   }
 }

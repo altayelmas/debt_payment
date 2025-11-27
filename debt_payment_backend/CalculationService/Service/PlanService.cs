@@ -10,5 +10,6 @@ namespace CalculationService.Service
     {
         Task<bool> ActivatePlanAsync(string userId, Guid reportId);
         Task<CalculationResultDto?> GetActivePlanAsync(string userId);
+        Task<Guid?> RecalculateActivePlanAsync(string userId);
     }
 }

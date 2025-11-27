@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Exceptions;
 using CalculationService.Model.Dto;
 using CalculationService.Model.Entity;
 using CalculationService.Repository;
@@ -73,6 +74,19 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             {
                 throw new InvalidOperationException("No debts found to calculate.");
             }
+
+            decimal totalMonthlyInterest = userDebts.Sum(d => d.CurrentBalance * (d.InterestRate / 100) / 12);
+            decimal totalMinPayment = userDebts.Sum(d => d.MinPayment);
+            decimal totalPaymentPower = totalMinPayment + request.ExtraMonthlyPayment;
+
+            if (totalPaymentPower <= totalMonthlyInterest)
+            {
+                decimal deficit = totalMonthlyInterest - totalPaymentPower;
+                decimal suggestedExtra = request.ExtraMonthlyPayment + deficit + 100;
+
+                throw new PaymentInsufficientException(suggestedExtra);
+            }
+            
             string scenarioHash = CreateScenarioHash(userId, request.ExtraMonthlyPayment, userDebts);
             var existingReport = await _calculationRepository.GetReportByHashAsync(scenarioHash);
 

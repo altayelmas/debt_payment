@@ -40,5 +40,11 @@ namespace CalculationService.Repository.Impl
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task UpdateUserActivePlanAsync(UserActivePlan userActivePlan)
+        {
+            _context.UserActivePlans.Update(userActivePlan);
+            await _context.SaveChangesAsync();
+        }
     }
 }

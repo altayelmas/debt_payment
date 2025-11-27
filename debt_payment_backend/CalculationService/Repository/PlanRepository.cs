@@ -13,5 +13,6 @@ namespace CalculationService.Repository
         Task<UserActivePlan?> GetActivePlanByUserIdAsync(string userId);
         Task<UserActivePlan> AddUserActivePlanAsync(UserActivePlan userActivePlan);
         Task<bool> SaveChangesAsync();
+        Task UpdateUserActivePlanAsync(UserActivePlan userActivePlan);
     }
 }

@@ -164,20 +164,12 @@ namespace CalculationService.Service.Impl
 
                 var tolerance = Math.Max(validRangeStart * 0.05m, 1000m);
 
-                bool isDebtIncreasedUnexpectedly = realCurrentDebt > (validRangeStart + tolerance);
-                bool isDebtDecreasedUnexpectedly = realCurrentDebt < (validRangeEnd - tolerance);
+                bool isDebtHigherThanExpected = realCurrentDebt > (validRangeStart + tolerance);
 
-                if (isDebtIncreasedUnexpectedly || isDebtDecreasedUnexpectedly)
+                if (isDebtHigherThanExpected)
                 {
-                    if (realCurrentDebt <= 100) 
-                    {
-                        report.IsPlanOutdated = false;
-                    }
-                    else 
-                    {
-                        report.IsPlanOutdated = true;
-                        Console.WriteLine($"Plan Outdated! Real: {realCurrentDebt}, Range: {validRangeEnd}-{validRangeStart}");
-                    }
+                    report.IsPlanOutdated = true;
+                    Console.WriteLine($"Plan Outdated! Real: {realCurrentDebt}, Expected Max: {validRangeStart + tolerance}");
                 }
                 else
                 {
@@ -185,6 +177,7 @@ namespace CalculationService.Service.Impl
                 }
 
                 report.CurrentTotalDebt = realCurrentDebt;
+                Console.WriteLine($"Real Debt: {realCurrentDebt}, Valid Range: {validRangeStart} - {validRangeEnd}");
             }
             catch (Exception ex)
             {
@@ -192,6 +185,27 @@ namespace CalculationService.Service.Impl
                 report.IsPlanOutdated = false;
             }
             return report;
+        }
+
+        public async  Task<Guid?> RecalculateActivePlanAsync(string userId)
+        {
+            var activePlan = await _planRepository.GetActivePlanByUserIdAsync(userId);
+            if (activePlan == null) return null;
+
+            var oldReport = await _calculateService.GetCalculationResultById(userId, activePlan.CalculationReportId);
+            if (oldReport == null) return null;
+
+            var newReportId = await _calculateService.CalculateAsync(
+                new CalculationRequestDto { ExtraMonthlyPayment = oldReport.ExtraPayment }, 
+                userId
+            );
+
+            activePlan.CalculationReportId = newReportId;
+            activePlan.ActivatedAt = DateTime.UtcNow; 
+            
+            await _planRepository.UpdateUserActivePlanAsync(activePlan);
+
+            return newReportId;
         }
     }
 }

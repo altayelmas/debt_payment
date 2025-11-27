@@ -50,5 +50,18 @@ namespace CalculationService.Controller
 
             return Ok(plan);
         }
+
+        [HttpPost("recalculate")]
+        public async Task<IActionResult> RecalculatePlan()
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var newReportId = await _planService.RecalculateActivePlanAsync(userId);
+
+            if (newReportId == null) return NotFound("Active plan not found.");
+
+            return Ok(new { message = "Plan recalculated successfully.", reportId = newReportId });
+        }       
     }
 }

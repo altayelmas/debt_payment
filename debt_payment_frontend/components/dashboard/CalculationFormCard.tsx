@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,19 +28,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
+import {formatCurrency} from "@/lib/utils";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 
 interface CalculationFormCardProps {
     isCalculationDisabled: boolean;
     onCalculationComplete: () => void;
+    totalMinPayment: number;
 }
 
 export default function CalculationFormCard({
                                                 isCalculationDisabled,
-                                                onCalculationComplete
+                                                onCalculationComplete,
+                                                totalMinPayment
                                             }: CalculationFormCardProps) {
     const t = useTranslations('DashboardPage.CalculationForm');
+    const locale = useLocale();
     const tZod = useTranslations('DashboardPage.CalculationForm.zod');
 
     const calcFormSchema = z.object({
@@ -79,8 +83,35 @@ export default function CalculationFormCard({
             }
 
         } catch (error: any) {
-            const errorMessage = error.response?.data?.message || error.response?.data || t('toasts.defaultError');
-            toast.error(errorMessage);
+            console.log("RAW ERROR:", error);
+
+            if (!error.response) {
+                console.log("No error.response mevcut → yani hata API’den gelmiyor. Muhtemelen Network Error.");
+                toast.error("Network error veya CORS hatası!");
+                return;
+            }
+
+            console.log("Error response:", error.response.data);
+
+            const errorData = error.response?.data;
+
+            if (errorData?.errorCode === "PAYMENT_INSUFFICIENT") {
+                const deficitAmount = errorData.deficit || 0;
+                const formattedAmount = formatCurrency(deficitAmount, locale);
+
+                // TODO - Payment Insufficient doesn't show the correct amount.
+                toast.error(
+                    <span>
+                        {tZod.rich('PAYMENT_INSUFFICIENT', {
+                            amount: formattedAmount,
+                            str: (chunks) => <strong className="font-bold">{chunks}</strong>
+                        })}
+                    </span>
+                );
+            } else {
+                const errorMessage = errorData?.message || t('toasts.defaultError');
+                toast.error(errorMessage);
+            }
         } finally {
             setCalculating(false);
         }
@@ -94,38 +125,49 @@ export default function CalculationFormCard({
                         <CardTitle className="text-2xl">{t('title')}</CardTitle>
                         <CardDescription>{t('description')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="flex flex-col sm:flex-row sm:items-end gap-4">
-                        <FormField
-                            control={calcForm.control}
-                            name="extraPayment"
-                            render={({ field }) => (
-                                <FormItem className="flex-1 max-w-xs">
-                                    <FormLabel>{t('label')}</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            step="50"
-                                            min="0"
-                                            max={MAX_CURRENCY_VALUE}
-                                            placeholder="0"
-                                            className="mt-1"
-                                            {...field}
-                                            value={field.value ?? ''}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button
-                            type="submit"
-                            size="lg"
-                            disabled={calculating || isCalculationDisabled}
-                            className="text-lg font-semibold"
-                        >
-                            {calculating && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                            {calculating ? t('buttonLoading') : t('button')}
-                        </Button>
+                    <CardContent className="flex flex-col gap-4">
+                        <div className="bg-blue-50 p-3 rounded-md border border-blue-100 text-sm text-blue-800">
+                            <p>
+                                {t('infoTotalMin')} <strong>{formatCurrency(totalMinPayment, locale)}</strong>
+                            </p>
+                            <p className="text-xs text-blue-600 mt-1 opacity-80">
+                                {t('infoTotalMinDesc')}
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+                            <FormField
+                                control={calcForm.control}
+                                name="extraPayment"
+                                render={({ field }) => (
+                                    <FormItem className="flex-1 max-w-xs">
+                                        <FormLabel>{t('label')}</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                step="50"
+                                                min="0"
+                                                max={MAX_CURRENCY_VALUE}
+                                                placeholder="0"
+                                                className="mt-1"
+                                                {...field}
+                                                value={field.value ?? ''}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button
+                                type="submit"
+                                size="lg"
+                                disabled={calculating || isCalculationDisabled}
+                                className="text-lg font-semibold"
+                            >
+                                {calculating && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                                {calculating ? t('buttonLoading') : t('button')}
+                            </Button>
+                        </div>
                     </CardContent>
                     {isCalculationDisabled && !isCalculationDisabled && (
                         <CardFooter>

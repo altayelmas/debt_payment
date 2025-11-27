@@ -152,13 +152,16 @@
       "buttonLoading": "Hesaplanıyor...",
       "footerWarning": "Hesaplama yapabilmek için önce borç eklemelisiniz.",
       "buttonShort": "Hesapla",
+      "infoTotalMin": "Mevcut Zorunlu Ödemeler:",
+      "infoTotalMinDesc": "Gireceğiniz ekstra bütçe, bu tutarın üzerine eklenecektir.",
       "toasts": {
         "noReportId": "Sunucudan rapor ID'si dönmedi.",
         "defaultError": "Hesaplama yapılamadı. Lütfen borçlarınızı kontrol edin."
       },
       "zod": {
         "negative": "Negatif olamaz",
-        "maxAmount": "Değer 999.999.999.999,99'u geçemez"
+        "maxAmount": "Değer 999.999.999.999,99'u geçemez",
+        "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> artırmalısınız."
       }
     },
     "CalculationHistory": {
@@ -253,9 +256,71 @@
     }
   },
   "Errors": {
-    "PAYMENT_INSUFFICIENT": "Girdiğiniz ödeme tutarı aylık faiz toplamını karşılamıyor. Borcun bitmesi için lütfen 'Aylık Ekstra Bütçe' tutarını artırın.",
+    "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> artırmalısınız.",
     "CALCULATION_LIMIT_EXCEEDED": "Hesaplama limiti aşıldı. Ödeme tutarı borcu kapatmak için çok düşük olabilir.",
     "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
     "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+  },
+  "TrackingPage": {
+    "page": {
+      "title": "Borçtan Kurtuluş Yolculuğunuz",
+      "subtitle": "İlerlemenizi ay ay takip edin.",
+      "outdatedAlert": {
+        "title": "Planınız Güncel Değil",
+        "description": "Borçlarınızda değişiklik yaptığınız (ekleme/silme/güncelleme) tespit edildi. Mevcut planınız artık gerçek durumu yansıtmıyor olabilir.",
+        "button": "Planı Yeniden Hesapla"
+      },
+      "noPlan": {
+        "title": "Aktif Plan Bulunamadı",
+        "description": "Henüz bir borç ödeme planı başlatmadınız.",
+        "button": "Panele Git"
+      },
+      "summary": {
+        "targetDate": "Hedef Tarih",
+        "totalRemaining": "Kalan Toplam",
+        "progress": "İlerleme",
+        "completed": "tamamlandı"
+      },
+      "cards": {
+        "month": "Ay {month}",
+        "target": "Hedef:",
+        "paid": "Ödenen:",
+        "completedBadge": "Tamamlandı ✅",
+        "partialBadge": "Kısmi Ödeme ⚠️",
+        "currentGoalBadge": "Mevcut Hedef",
+        "partialMessage": "⚠️ Hedefin <str>{amount}</str> altında.",
+        "makePaymentButton": "Ödeme Yap",
+        "completePaymentButton": "Ödemeyi Tamamla",
+        "paidOffMessage": "Kapanan borç:"
+      },
+      "chart": {
+        "title": "İlerleme Grafiği",
+        "plannedBalance": "Planlanan Bakiye",
+        "actualBalance": "Gerçekleşen Bakiye (Tahmini)",
+        "description": "Yeşil çizgi Mavi çizginin altındaysa, plandan öndesiniz demektir!",
+        "planned": "Planlanan",
+        "actual": "Gerçekleşen",
+        "monthLabel": "{month}. Ay"
+      },
+      "success": {
+        "title": "Borçsuz Özgürlük! 🎉",
+        "description": "Tebrikler! Tüm borçlarınızı başarıyla ödediniz. Bu plan tamamlandı. Artık finansal özgürlüğünüzün tadını çıkarabilirsiniz.",
+        "button": "Yeni Hedefler Belirle"
+      }
+    },
+    "MakePaymentModal": {
+      "title": "{monthYear} Ödemesi Yap",
+      "description": "Planlanan tutar: <str>{amount}</str>.<br>Bu tutar <str>{strategyName}</str> stratejisine göre otomatik olarak dağıtılacaktır.",
+      "labelAmount": "Toplam Ödeme Tutarı",
+      "buttonCancel": "İptal",
+      "buttonConfirm": "Ödemeyi Onayla",
+      "toasts": {
+        "success": "Ödeme dağıtıldı ve kaydedildi!",
+        "error": "Ödeme kaydedilemedi."
+      },
+      "zod": {
+        "minAmount": "Tutar 0'dan büyük olmalıdır"
+      }
+    }
   }
 }
