@@ -14,7 +14,18 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
     const t = useTranslations('TrackingPage.page');
     const locale = useLocale();
 
-    const progressPercentage = Math.round((currentStrategyResult.paymentSchedule.filter((m: any) => m.isPaid).length / currentStrategyResult.paymentSchedule.length) * 100);
+    const initialDebt = activePlan.beginningDebt;
+    const currentDebt = activePlan.currentTotalDebt;
+    let progressPercentage = 0;
+    if (initialDebt > 0) {
+        if (currentDebt <= 0) {
+            progressPercentage = 100;
+        } else {
+            const paidAmount = initialDebt - currentDebt;
+            progressPercentage = Math.round((paidAmount / initialDebt) * 100);
+        }
+    }
+    if (progressPercentage > 100) progressPercentage = 100;
 
     const formatPayOffDate = (rawString: string) => {
         if (!rawString) return "";
