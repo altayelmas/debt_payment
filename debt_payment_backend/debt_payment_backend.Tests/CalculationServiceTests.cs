@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CalculationService.Exceptions;
 using CalculationService.Model.Entity;
 using CalculationService.Repository;
 using debt_payment_backend.CalculationService.Model.Dto;
@@ -155,11 +156,12 @@ namespace debt_payment_backend.Tests
             };
             SetupMockHttpResponse(impossibleDebt);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var ex = await Assert.ThrowsAsync<PaymentInsufficientException>(() =>
                 _sut.CalculateAsync(request, "user-id")
             );
 
-            Assert.Contains("The calculation limit has been exceeded", ex.Message);
+            Assert.Contains("Payment insufficient.", ex.Message);
+            Assert.True(ex.DeficitAmount - 216.66m < 0.01m);
         }
         
         [Fact]

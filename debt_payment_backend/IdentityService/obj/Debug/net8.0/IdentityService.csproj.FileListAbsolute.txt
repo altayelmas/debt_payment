@@ -228,3 +228,13 @@ C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\Identi
 C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\obj\Debug\net8.0\IdentityService.pdb
 C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\obj\Debug\net8.0\IdentityService.genruntimeconfig.cache
 C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\obj\Debug\net8.0\ref\IdentityService.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\Users\altay\Desktop\altay\ideal_staj\debt_payment\debt_payment_backend\IdentityService\bin\Debug\net8.0\Serilog.Sinks.Seq.dll
