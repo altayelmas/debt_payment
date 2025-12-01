@@ -88,29 +88,31 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
     };
 
     return (
-        <Card className="lg:col-span-1 flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
-            <CardHeader>
+        <Card className="lg:col-span-1 flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 h-full">
+            <CardHeader className="p-4 pb-2">
                 <div className={"flex justify-between items-center gap-4"}>
-                    <CardTitle className="text-2xl text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
+                    <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
 
                     <Button
+                        size="sm"
                         onClick={() => {
                             setEditingDebt(null);
                             setIsModalOpen(true);
                         }}
-                        className="dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
+                        className="dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 h-8 text-xs"
                     >
                         {t('addButton')}
                     </Button>
                 </div>
             </CardHeader>
-            <CardContent>
-                <div className="pr-2 space-y-3">
+
+            <CardContent className="p-4 flex-1">
+                <div className="space-y-2">
                     {loadingDebts ? (
-                        <div className="space-y-3">
-                            <Skeleton className="h-[70px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
-                            <Skeleton className="h-[70px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
-                            <Skeleton className="h-[70px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
+                            <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
+                            <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800" />
                         </div>
                     ) : (
                         <>
@@ -133,14 +135,15 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                                     />
                                 ))
                             ) : (
-                                <div className="flex flex-col items-center justify-center gap-3 text-center py-16">
-                                    <div className="h-16 w-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                                        <Inbox className="h-8 w-8 text-muted-foreground" />
+                                /* COMPACT: Boş durum (Empty State) dikey boşlukları azaltıldı */
+                                <div className="flex flex-col items-center justify-center gap-2 text-center py-10 min-h-[200px]">
+                                    <div className="h-12 w-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-1">
+                                        <Inbox className="h-6 w-6 text-muted-foreground" />
                                     </div>
-                                    <h3 className="text-xl font-semibold text-foreground dark:text-gray-200">
+                                    <h3 className="text-base font-semibold text-foreground dark:text-gray-200">
                                         {t('emptyTitle')}
                                     </h3>
-                                    <p className="text-muted-foreground dark:text-gray-400">
+                                    <p className="text-sm text-muted-foreground dark:text-gray-400 max-w-[250px]">
                                         {t('emptyDescription')}
                                     </p>
                                 </div>
@@ -149,38 +152,42 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                     )}
                 </div>
             </CardContent>
+
             {/* Pagination */}
-            <CardFooter className="min-h-[70px] pt-4 border-t border-gray-100 dark:border-gray-800">
+            {/* COMPACT: Footer padding azaltıldı ve min-height kaldırıldı */}
+            <CardFooter className="p-2 border-t border-gray-100 dark:border-gray-800 mt-auto">
                 {!loadingDebts && pagedData && pagedData.totalPages > 1 && (
-                    <Pagination>
+                    <Pagination className="justify-center">
                         <PaginationContent>
                             <PaginationItem>
                                 <PaginationPrevious
                                     href="#"
+                                    size="sm" // Butonları küçültmek için (Shadcn UI destekliyorsa) veya className ile h-8
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handlePageChange(currentPage - 1);
                                     }}
                                     aria-disabled={currentPage === 1}
-                                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "dark:text-gray-300 dark:hover:bg-gray-800"}
+                                    className={`h-8 text-xs ${currentPage === 1 ? "pointer-events-none opacity-50" : "dark:text-gray-300 dark:hover:bg-gray-800"}`}
                                 >
                                     {t('previous')}
                                 </PaginationPrevious>
                             </PaginationItem>
                             <PaginationItem>
-                                <span className="px-4 py-2 text-sm font-medium dark:text-gray-300">
+                                <span className="px-4 py-2 text-xs font-medium dark:text-gray-300">
                                     {t('pagination', {currentPage: pagedData.currentPage, totalPages: pagedData.totalPages})}
                                 </span>
                             </PaginationItem>
                             <PaginationItem>
                                 <PaginationNext
                                     href="#"
+                                    size="sm"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handlePageChange(currentPage + 1);
                                     }}
                                     aria-disabled={currentPage === pagedData.totalPages}
-                                    className={currentPage === pagedData.totalPages ? "pointer-events-none opacity-50" : "dark:text-gray-300 dark:hover:bg-gray-800"}
+                                    className={`h-8 text-xs ${currentPage === pagedData.totalPages ? "pointer-events-none opacity-50" : "dark:text-gray-300 dark:hover:bg-gray-800"}`}
                                 >
                                     {t('next')}
                                 </PaginationNext>

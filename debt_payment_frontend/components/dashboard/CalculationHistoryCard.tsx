@@ -12,7 +12,7 @@ import {useAuth} from "@/context/AuthContext";
 import {useTranslations, useLocale} from 'next-intl';
 import {Button} from '@/components/ui/button';
 import CalculationFormModal from '@/components/dashboard/CalculationFormModal';
-import {Plus, Trash2, Loader2} from 'lucide-react';
+import {Plus, Trash2, Loader2, History} from 'lucide-react';
 
 import {
     AlertDialog,
@@ -36,11 +36,11 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
 
     const locale = useLocale();
 
-    // ... (state ve fonksiyonlar aynı)
     const [history, setHistory] = useState<CalculationHistoryDto[] | null>(null);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const {isAuthenticated} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -69,6 +69,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
         try {
             await api.delete(`/api/Calculation/${reportId}`);
             toast.success(t('toasts.deleteSuccess'));
+
             fetchHistory();
         } catch (error) {
             toast.error(t('toasts.deleteError'));
@@ -78,107 +79,122 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
     };
 
     return (
-        <Card className="lg:col-span-1 flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
-            <CardHeader>
+        <Card className="lg:col-span-1 flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 h-full">
+            <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-center gap-4">
                     <div>
-                        <CardTitle className="text-2xl text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
-                        <CardDescription className="text-muted-foreground dark:text-gray-400">
+                        <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground dark:text-gray-400 mt-0.5">
                             {t('description')}
                         </CardDescription>
                     </div>
                     <Button
                         onClick={() => setIsModalOpen(true)}
                         size="sm"
-                        className="dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
+                        className="dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 h-8 text-xs"
                     >
-                        <Plus className="h-4 w-4 mr-2"/>
+                        <Plus className="h-3.5 w-3.5 mr-1.5"/>
                         {t_formButton('buttonShort')}
                     </Button>
                 </div>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className="p-4 flex-1">
                 {loadingHistory ? (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                         <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800"/>
                         <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800"/>
                     </div>
                 ) : !history || history.length === 0 ? (
-                    <p className="text-muted-foreground">{t('empty')}</p>
+                    <div className="flex flex-col items-center justify-center gap-2 text-center py-10 min-h-[150px]">
+                        <div className="h-10 w-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-1">
+                            <History className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                        <p className="text-sm text-muted-foreground dark:text-gray-400">{t('empty')}</p>
+                    </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                         {history.map(report => (
                             <div
                                 key={report.reportId}
-                                className="flex items-center gap-2 border rounded-lg pr-2 transition-colors
+                                className="group relative flex items-start gap-2 border rounded-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all
                                 bg-gray-50 dark:bg-gray-800/40
-                                border-gray-100 dark:border-gray-700/50
-                                hover:border-blue-300 dark:hover:border-blue-700"
+                                border-gray-100 dark:border-gray-700/50"
                             >
                                 <Link
                                     key={report.reportId}
                                     href={`/results/${report.reportId}`}
-                                    className="flex-grow block p-4"
+                                    className="flex-grow block p-3"
                                 >
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                                    <span className="font-semibold text-blue-600 dark:text-blue-400">
-                                        {new Date(report.createdAt).toLocaleString(locale, {
-                                            day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </span>
-                                        <span className="text-sm font-semibold text-foreground dark:text-gray-200">
-                                        {report.recommendedPayOffDate}
-                                    </span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-1 mb-1.5">
+                                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                                            {new Date(report.createdAt).toLocaleString(locale, {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </span>
+                                        <span className="text-xs font-medium text-foreground dark:text-gray-300 bg-white dark:bg-gray-900/50 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-700">
+                                            {report.recommendedPayOffDate}
+                                        </span>
                                     </div>
-                                    <div
-                                        className="text-sm text-muted-foreground mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                        <div>
-                                            {t('details.totalDebt')} <strong
-                                            className="text-foreground dark:text-gray-300">{formatCurrency(report.totalDebt, locale)}</strong>
+
+                                    <div className="text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+                                        <div className="flex items-center gap-1">
+                                            <span>{t('details.totalDebt')}</span>
+                                            <strong className="text-foreground dark:text-gray-200 font-semibold">
+                                                {formatCurrency(report.totalDebt, locale)}
+                                            </strong>
                                         </div>
-                                        <div>
-                                            {t('details.extraPayment')} <strong
-                                            className="text-foreground dark:text-gray-300">{formatCurrency(report.extraPayment, locale)}</strong>
+                                        <div className="flex items-center gap-1">
+                                            <span>{t('details.extraPayment')}</span>
+                                            <strong className="text-foreground dark:text-gray-200 font-semibold">
+                                                {formatCurrency(report.extraPayment, locale)}
+                                            </strong>
                                         </div>
-                                        <div>
-                                            {t('details.saved')} <strong
-                                            className="text-green-600 dark:text-green-400">{formatCurrency(report.recommendedInterestSaved, locale)}</strong>
-                                        </div>
+                                        {report.recommendedInterestSaved > 0 && (
+                                            <div className="flex items-center gap-1">
+                                                <span>{t('details.saved')}</span>
+                                                <strong className="text-green-600 dark:text-green-400 font-semibold">
+                                                    {formatCurrency(report.recommendedInterestSaved, locale)}
+                                                </strong>
+                                            </div>
+                                        )}
                                     </div>
                                 </Link>
+
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-muted-foreground hover:text-destructive dark:hover:text-red-400"
+                                            className="absolute top-2 right-2 h-7 w-7 text-gray-400 hover:text-destructive dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" // Sadece hover'da görünür yaparak temizlik sağlar
                                             disabled={deletingId === report.reportId}
                                         >
                                             {deletingId === report.reportId ? (
-                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                             ) : (
-                                                <Trash2 className="h-4 w-4" />
+                                                <Trash2 className="h-3.5 w-3.5" />
                                             )}
                                         </Button>
                                     </AlertDialogTrigger>
-                                    <AlertDialogContent>
+                                    <AlertDialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                                         <AlertDialogHeader>
-                                            <AlertDialogTitle>{t('dialogTitle')}</AlertDialogTitle>
-                                            <AlertDialogDescription>
+                                            <AlertDialogTitle className="text-gray-900 dark:text-gray-50">{t('dialogTitle')}</AlertDialogTitle>
+                                            <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
                                                 {t('dialogDescription', {
                                                     date: new Date(report.createdAt).toLocaleDateString(locale)
                                                 })}
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel>{t('dialogCancel')}</AlertDialogCancel>
+                                            <AlertDialogCancel className="dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700">
+                                                {t('dialogCancel')}
+                                            </AlertDialogCancel>
                                             <AlertDialogAction
-                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800"
                                                 onClick={() => handleDeleteReport(report.reportId)}
                                             >
                                                 {t('dialogConfirm')}
