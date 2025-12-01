@@ -26,8 +26,8 @@
       "submitButtonLoading": "Logging in..."
     },
     "zodErrors": {
-      "blank": "This field cannot be blank",
-      "invalidEmail": "Invalid email address."
+      "required": "This field cannot be blank",
+      "emailInvalid": "Invalid email address."
     },
     "toasts": {
       "success": "Login successful, redirecting...",
@@ -291,7 +291,8 @@
         "partialMessage": "⚠️ Under target by <str>{amount}</str>.",
         "makePaymentButton": "Make Payment",
         "completePaymentButton": "Complete Payment",
-        "paidOffMessage": "Paid off:"
+        "paidOffMessage": "Paid off:",
+        "targetPayoffMessage": "Target Payoff: {debts}"
       },
       "chart": {
         "title": "Progress Chart",

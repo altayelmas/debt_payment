@@ -159,9 +159,12 @@ namespace CalculationService.Service.Impl
                 {
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 }
+            
+                var currentDebts = await client.GetFromJsonAsync<List<DebtDto>>("api/Debt/internal/all-for-user") ?? new List<DebtDto>();
+                var realCurrentDebt = currentDebts.Sum(d => d.CurrentBalance);
 
-                var realCurrentDebt = await client.GetFromJsonAsync<decimal>("api/Debt/total");
-
+                report.CurrentTotalDebt = realCurrentDebt;
+                
                 var tolerance = Math.Max(validRangeStart * 0.05m, 1000m);
 
                 bool isDebtHigherThanExpected = realCurrentDebt > (validRangeStart + tolerance);
@@ -176,8 +179,25 @@ namespace CalculationService.Service.Impl
                     report.IsPlanOutdated = false;
                 }
 
+                var originalDebts = report.DebtStatuses ?? new List<ActiveDebtStatusDto>();
+
+                report.DebtStatuses = new List<ActiveDebtStatusDto>();
+
+                foreach (var initialDebt in originalDebts)
+                {
+                    var liveDebt = currentDebts.FirstOrDefault(d => d.DebtId == initialDebt.DebtId);
+
+                    report.DebtStatuses.Add(new ActiveDebtStatusDto
+                    {
+                        DebtName = initialDebt.DebtName,
+                        DebtId = initialDebt.DebtId,
+                        StartingBalance = initialDebt.StartingBalance, 
+                        CurrentBalance = liveDebt?.CurrentBalance ?? 0 
+                    });
+                    report.CurrentTotalDebt = realCurrentDebt;
+                
+                }
                 report.CurrentTotalDebt = realCurrentDebt;
-                Console.WriteLine($"Real Debt: {realCurrentDebt}, Valid Range: {validRangeStart} - {validRangeEnd}");
             }
             catch (Exception ex)
             {

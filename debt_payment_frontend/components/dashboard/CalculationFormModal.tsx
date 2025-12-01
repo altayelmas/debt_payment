@@ -114,12 +114,12 @@ export default function CalculationFormModal({
             open={isOpen}
             onOpenChange={handleOpenChange}
         >
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <Form {...calcForm}>
                     <form onSubmit={calcForm.handleSubmit(onCalculateSubmit)}>
                         <DialogHeader>
-                            <DialogTitle>{t('title')}</DialogTitle>
-                            <DialogDescription>{t('description')}</DialogDescription>
+                            <DialogTitle className="text-gray-900 dark:text-gray-50">{t('title')}</DialogTitle>
+                            <DialogDescription className="text-muted-foreground dark:text-gray-400">{t('description')}</DialogDescription>
                         </DialogHeader>
 
                         <div className="pt-6 pb-4">
@@ -128,7 +128,7 @@ export default function CalculationFormModal({
                                 name="extraPayment"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('label')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('label')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
@@ -136,7 +136,7 @@ export default function CalculationFormModal({
                                                 min="0"
                                                 max={MAX_CURRENCY_VALUE}
                                                 placeholder="0"
-                                                className="mt-1"
+                                                className="mt-1 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
                                                 {...field}
                                                 value={field.value ?? ''}
                                             />

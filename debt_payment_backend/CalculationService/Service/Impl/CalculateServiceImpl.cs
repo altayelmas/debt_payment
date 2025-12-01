@@ -132,7 +132,15 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 SnowballResult = snowballResult,
                 AvalancheResult = avalancheResult,
                 Recommendation = recommendation,
-                ExtraPayment = request.ExtraMonthlyPayment
+                ExtraPayment = request.ExtraMonthlyPayment,
+                IncludedDebtIds = userDebts.Select(d => d.DebtId).OrderBy(id => id).ToList(),
+                DebtStatuses = userDebts.Select(d => new ActiveDebtStatusDto
+                {
+                    DebtName = d.Name,
+                    DebtId = d.DebtId,
+                    StartingBalance = d.CurrentBalance, 
+                    CurrentBalance = d.CurrentBalance 
+                }).ToList()
             };
 
             var report = new CalculationReport

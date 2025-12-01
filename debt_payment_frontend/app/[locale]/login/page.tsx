@@ -4,10 +4,9 @@ import {useTranslations, useLocale} from 'next-intl';
 import {useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
 import {useAuth} from "@/context/AuthContext";
-import {useRouter} from "next/navigation";
-import api from "@/lib/api";
+import {useRouter, Link} from "@/i18n/navigation";
+import api from '@/lib/api';
 import toast from "react-hot-toast";
-import Link from "next/link";
 import {Eye, EyeOff, Loader2} from 'lucide-react';
 
 import {z} from "zod";
@@ -34,18 +33,17 @@ import {LanguageSwitcher} from "@/components/LanguageSwitcher";
 
 export const dynamic = 'force-dynamic';
 
-
 export default function LoginPage() {
     const t = useTranslations('LoginPage');
-    const tZod = useTranslations('LoginPage.zodErrors');
+    const tZod = useTranslations('LoginPage.zodErrors'); // Çeviri dosyasında bu anahtarların olduğundan emin olun
     const locale = useLocale();
 
     const loginFormSchema = z.object({
         email: z.string()
-            .min(1, {message: "This field cannot be blank"})
-            .email({message: "Invalid email address."}),
+            .min(1, {message: tZod('required')})
+            .email({message: tZod('emailInvalid')}),
         password: z.string()
-            .min(1, {message: "This field cannot be blank"}),
+            .min(1, {message: tZod('required')}),
     });
 
     type LoginFormInputs = z.infer<typeof loginFormSchema>;
@@ -66,9 +64,9 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace(`/${locale}/dashboard`);
+            router.replace('/dashboard');
         }
-    }, [isAuthenticated, router, locale]);
+    }, [isAuthenticated, router]);
 
     const onSubmit = async (data: LoginFormInputs) => {
         setLoading(true);
@@ -81,7 +79,7 @@ export default function LoginPage() {
             login(response.data.token);
 
             toast.success(t('toasts.success'));
-            router.push(`/${locale}/dashboard`);
+            router.push('/dashboard');
         } catch (error: any) {
             console.error('Login error: ', error);
             const errorMessage = error.response?.data?.errors?.[0] ||
@@ -96,19 +94,19 @@ export default function LoginPage() {
 
     if (isAuthenticated) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background">
-                <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
+            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
+                <Loader2 className="mr-2 h-6 w-6 animate-spin text-primary"/>
                 <p className="text-lg text-muted-foreground">{t('redirecting')}</p>
             </div>
         );
     }
 
     return (
-        <div className={"flex items-center justify-center min-h-screen bg-background p-4"}>
-            <Card className={"w-full max-w-md"}>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950 p-4">
+            <Card className="w-full max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-                    <CardDescription>{t('subtitle')}</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
+                    <CardDescription className="text-gray-500 dark:text-gray-400">{t('subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -119,11 +117,12 @@ export default function LoginPage() {
                                 name="email"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.emailLabel')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('form.emailLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
                                                 placeholder={t('form.emailPlaceholder')}
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -137,12 +136,13 @@ export default function LoginPage() {
                                 name="password"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.passwordLabel')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('form.passwordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
                                                     placeholder={t('form.passwordPlaceholder')}
+                                                    className="pr-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white"
                                                     {...field}
                                                     autoComplete="current-password"
                                                 />
@@ -151,7 +151,7 @@ export default function LoginPage() {
                                                 type="button"
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute inset-y-0 right-0 h-full aspect-square"
+                                                className="absolute inset-y-0 right-0 h-full aspect-square hover:bg-transparent text-gray-500 dark:text-gray-400"
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? (
@@ -184,9 +184,9 @@ export default function LoginPage() {
                     <div className="flex justify-between items-center w-full">
                         <LanguageSwitcher/>
 
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-gray-400">
                             {t('footer.noAccount')}
-                            <Link href={"/register"} className="text-primary hover:underline ml-1 font-semibold">
+                            <Link href="/register" className="text-primary hover:underline ml-1 font-semibold dark:text-blue-400">
                                 {t('footer.registerLink')}
                             </Link>
                         </p>

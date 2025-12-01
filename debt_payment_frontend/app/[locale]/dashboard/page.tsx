@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen flex flex-col bg-gray-50">
+            <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
                 <Navbar/>
                 <main className="container mx-auto p-4 md:p-6 flex-grow flex flex-col">
                     <OverviewCard pagedData={pagedData} loadingDebts={loadingDebts}/>

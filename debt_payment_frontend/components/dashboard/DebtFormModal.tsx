@@ -120,24 +120,28 @@ export default function DebtFormModal({
             open={isOpen}
             onOpenChange={onOpenChange}
         >
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <DialogHeader>
-                    <DialogTitle>{editingDebt ? t('titleEdit') : t('titleAdd')}</DialogTitle>
+                    <DialogTitle className="text-gray-900 dark:text-gray-50">
+                        {editingDebt ? t('titleEdit') : t('titleAdd')}
+                    </DialogTitle>
                 </DialogHeader>
                 <div className="pt-4">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmitDebt)}
                               className="space-y-4">
-
-                            {/* FormField'lar (Name, Balance, Interest, MinPayment) */}
                             <FormField
                                 control={form.control}
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('labels.name')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.name')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t('labels.namePlaceholder')} {...field} />
+                                            <Input
+                                                placeholder={t('labels.namePlaceholder')}
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -148,9 +152,13 @@ export default function DebtFormModal({
                                 name="currentBalance"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('labels.balance')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.balance')}</FormLabel>
                                         <FormControl>
-                                            <Input type="number" min="0" step="0.01" placeholder="1500" {...field} />
+                                            <Input
+                                                type="number" min="0" step="0.01" placeholder="1500"
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -161,9 +169,13 @@ export default function DebtFormModal({
                                 name="interestRate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('labels.interest')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.interest')}</FormLabel>
                                         <FormControl>
-                                            <Input type="number" min="0" step="0.01" placeholder={t('labels.interestPlaceholder')} {...field} />
+                                            <Input
+                                                type="number" min="0" step="0.01" placeholder={t('labels.interestPlaceholder')}
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -174,9 +186,13 @@ export default function DebtFormModal({
                                 name="minPayment"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('labels.minPayment')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.minPayment')}</FormLabel>
                                         <FormControl>
-                                            <Input type="number" min="0" step="0.01" placeholder={t('labels.minPaymentPlaceholder')} {...field} />
+                                            <Input
+                                                type="number" min="0" step="0.01" placeholder={t('labels.minPaymentPlaceholder')}
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

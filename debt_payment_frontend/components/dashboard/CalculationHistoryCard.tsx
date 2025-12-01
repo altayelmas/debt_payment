@@ -36,11 +36,11 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
 
     const locale = useLocale();
 
+    // ... (state ve fonksiyonlar aynı)
     const [history, setHistory] = useState<CalculationHistoryDto[] | null>(null);
     const [loadingHistory, setLoadingHistory] = useState(true);
     const {isAuthenticated} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -69,7 +69,6 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
         try {
             await api.delete(`/api/Calculation/${reportId}`);
             toast.success(t('toasts.deleteSuccess'));
-
             fetchHistory();
         } catch (error) {
             toast.error(t('toasts.deleteError'));
@@ -79,16 +78,20 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
     };
 
     return (
-        <Card className="lg:col-span-1 flex flex-col">
+        <Card className="lg:col-span-1 flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
             <CardHeader>
                 <div className="flex justify-between items-center gap-4">
                     <div>
-                        <CardTitle className="text-2xl">{t('title')}</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="text-2xl text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
+                        <CardDescription className="text-muted-foreground dark:text-gray-400">
                             {t('description')}
                         </CardDescription>
                     </div>
-                    <Button onClick={() => setIsModalOpen(true)} size="sm">
+                    <Button
+                        onClick={() => setIsModalOpen(true)}
+                        size="sm"
+                        className="dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
+                    >
                         <Plus className="h-4 w-4 mr-2"/>
                         {t_formButton('buttonShort')}
                     </Button>
@@ -98,8 +101,8 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
             <CardContent>
                 {loadingHistory ? (
                     <div className="space-y-3">
-                        <Skeleton className="h-[60px] w-full rounded-md"/>
-                        <Skeleton className="h-[60px] w-full rounded-md"/>
+                        <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800"/>
+                        <Skeleton className="h-[60px] w-full rounded-md bg-gray-200 dark:bg-gray-800"/>
                     </div>
                 ) : !history || history.length === 0 ? (
                     <p className="text-muted-foreground">{t('empty')}</p>
@@ -108,7 +111,10 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                         {history.map(report => (
                             <div
                                 key={report.reportId}
-                                className="flex items-center gap-2 border rounded-lg hover:bg-muted transition-colors pr-2"
+                                className="flex items-center gap-2 border rounded-lg pr-2 transition-colors
+                                bg-gray-50 dark:bg-gray-800/40
+                                border-gray-100 dark:border-gray-700/50
+                                hover:border-blue-300 dark:hover:border-blue-700"
                             >
                                 <Link
                                     key={report.reportId}
@@ -116,7 +122,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                                     className="flex-grow block p-4"
                                 >
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                                    <span className="font-semibold text-blue-600">
+                                    <span className="font-semibold text-blue-600 dark:text-blue-400">
                                         {new Date(report.createdAt).toLocaleString(locale, {
                                             day: '2-digit',
                                             month: 'long',
@@ -125,7 +131,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                                             minute: '2-digit'
                                         })}
                                     </span>
-                                        <span className="text-sm font-semibold text-foreground">
+                                        <span className="text-sm font-semibold text-foreground dark:text-gray-200">
                                         {report.recommendedPayOffDate}
                                     </span>
                                     </div>
@@ -133,15 +139,15 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                                         className="text-sm text-muted-foreground mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
                                         <div>
                                             {t('details.totalDebt')} <strong
-                                            className="text-foreground">{formatCurrency(report.totalDebt, locale)}</strong>
+                                            className="text-foreground dark:text-gray-300">{formatCurrency(report.totalDebt, locale)}</strong>
                                         </div>
                                         <div>
                                             {t('details.extraPayment')} <strong
-                                            className="text-foreground">{formatCurrency(report.extraPayment, locale)}</strong>
+                                            className="text-foreground dark:text-gray-300">{formatCurrency(report.extraPayment, locale)}</strong>
                                         </div>
                                         <div>
                                             {t('details.saved')} <strong
-                                            className="text-green-600">{formatCurrency(report.recommendedInterestSaved, locale)}</strong>
+                                            className="text-green-600 dark:text-green-400">{formatCurrency(report.recommendedInterestSaved, locale)}</strong>
                                         </div>
                                     </div>
                                 </Link>
@@ -150,7 +156,7 @@ export default function CalculationHistoryCard({isCalculationDisabled}: Calculat
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-muted-foreground hover:text-destructive flex-shrink-0"
+                                            className="text-muted-foreground hover:text-destructive dark:hover:text-red-400"
                                             disabled={deletingId === report.reportId}
                                         >
                                             {deletingId === report.reportId ? (

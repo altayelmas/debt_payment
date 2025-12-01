@@ -18,6 +18,7 @@ import TrackingSummary from "@/components/tracking/TrackingSummary";
 import TrackingChart from "@/components/tracking/TrackingChart";
 import TrackingTimeline from "@/components/tracking/TrackingTimeline";
 import MakePaymentModal from "@/components/tracking/MakePaymentModal";
+import TrackingDebtList from "@/components/tracking/TrackingDebtList";
 
 export default function TrackingPage() {
     const t = useTranslations('TrackingPage.page');
@@ -79,11 +80,11 @@ export default function TrackingPage() {
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
                 <Navbar />
                 <main className="container mx-auto p-4 md:p-8 max-w-5xl">
                     {isDebtFullyPaid && (
-                        <div className="mb-8 p-8 bg-green-100 border border-green-300 rounded-xl text-center shadow-sm">
+                        <div className="mb-8 p-8 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-xl text-center shadow-sm">
                             <PartyPopper className="h-16 w-16 text-green-600 mx-auto mb-4 animate-bounce" />
                             <h2 className="text-3xl font-bold text-green-800 mb-2">{t('success.title')}</h2>
                             <p className="text-lg text-green-700 max-w-2xl mx-auto">{t('success.description')}</p>
@@ -118,7 +119,7 @@ export default function TrackingPage() {
                     )}
 
                     <div className="mb-8 text-center sm:text-left">
-                        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('title')}</h1>
                         <p className="text-muted-foreground">{t('subtitle')}</p>
                     </div>
 
@@ -145,7 +146,9 @@ export default function TrackingPage() {
                                 activePlan={activePlan}
                                 currentStrategyResult={currentStrategyResult}
                             />
-
+                            <div className="mt-8">
+                                <TrackingDebtList debtStatuses={activePlan.debtStatuses}/>
+                            </div>
                             <div className="mt-8">
                                 <TrackingChart
                                     paymentSchedule={currentStrategyResult.paymentSchedule}

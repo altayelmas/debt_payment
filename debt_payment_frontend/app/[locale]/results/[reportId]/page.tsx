@@ -52,7 +52,8 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
     if (loading) {
         return (
             <ProtectedRoute>
-                <div className="flex items-center justify-center min-h-screen bg-background">
+                {/* GÜNCELLEME: Loading ekranı dark mode */}
+                <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
                     <p className="text-lg ml-3 text-muted-foreground">{t('loading')}</p>
                 </div>
@@ -63,12 +64,13 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
     if (!report) {
         return (
             <ProtectedRoute>
-                <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+                {/* GÜNCELLEME: Not Found ekranı dark mode */}
+                <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
                     <h2 className="text-2xl font-semibold text-destructive">{t('notFoundTitle')}</h2>
                     <p className="text-muted-foreground mt-2">{t('notFoundDescription')}</p>
                     <Link
                         href="/dashboard"
-                        className={buttonVariants({variant: "outline", className: "mt-4"})}
+                        className={buttonVariants({variant: "outline", className: "mt-4 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"})}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4"/>
                         {t('backButton')}
@@ -84,49 +86,50 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
 
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
                 <Navbar/>
 
                 <main className="container mx-auto p-4 md:p-8 max-w-5xl">
-                    <header className="text-center mb-6">
-                        <h1 className="text-3xl font-bold">{t('headerTitle')}</h1>
-                        <p className="text-base text-muted-foreground mt-2">{t('headerSubtitle')}</p>
+                    <header className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('headerTitle')}</h1>
+                        <p className="text-base text-muted-foreground dark:text-gray-400 mt-2">{t('headerSubtitle')}</p>
 
-                        <div
-                            className="text-base mt-3 inline-block rounded-lg border bg-muted p-3 text-muted-foreground">
-                            <span
-                                className="font-semibold text-foreground">{t('extraPaymentLabel')}</span> {formatCurrency(report.extraPayment, locale)}
+                        <div className="text-base mt-4 inline-block rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                {t('extraPaymentLabel')}
+                            </span> {formatCurrency(report.extraPayment, locale)}
                             <br/>
-                            <span
-                                className="font-semibold text-foreground">{t('initialDebtLabel')}</span> {formatCurrency(report.beginningDebt, locale)}
+                            <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                {t('initialDebtLabel')}
+                            </span> {formatCurrency(report.beginningDebt, locale)}
                         </div>
                     </header>
 
-                    <Alert className="mb-6 max-w-3xl mx-auto p-3">
-                        <Lightbulb className="h-4 w-4"/>
-                        <AlertTitle className="font-semibold">{t('recommendationTitle')}</AlertTitle>
-                        <AlertDescription>
-                            <p className="text-sm leading-snug">
+                    <Alert className="mb-8 max-w-3xl mx-auto p-4 bg-white dark:bg-gray-900 border-blue-200 dark:border-blue-900">
+                        <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400"/>
+                        <AlertTitle className="font-semibold text-gray-900 dark:text-gray-100 ml-2">
+                            {t('recommendationTitle')}
+                        </AlertTitle>
+                        <AlertDescription className="mt-2 ml-2 text-gray-700 dark:text-gray-300">
+                            <p className="text-sm leading-relaxed">
                                 {(interestSaved > 0 && monthsSaved > 0) ? (
                                     t.rich('recommendationText', {
                                         strategyName: recommendedStrategy,
                                         interestSaved: formatCurrency(interestSaved, locale),
                                         monthsSaved: monthsSaved,
-                                        str: (chunks) => <strong
-                                            className="font-semibold text-foreground">{chunks}</strong>
+                                        str: (chunks) => <strong className="font-bold text-gray-900 dark:text-white">{chunks}</strong>
                                     })
                                 ) : (
                                     t.rich('recommendationText_noSavings', {
                                         strategyName: recommendedStrategy,
-                                        str: (chunks) => <strong
-                                            className="font-semibold text-foreground">{chunks}</strong>
+                                        str: (chunks) => <strong className="font-bold text-gray-900 dark:text-white">{chunks}</strong>
                                     })
                                 )}
                             </p>
                         </AlertDescription>
                     </Alert>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                         <ResultCard
                             result={report.snowballResult}
                             isSnowball={true}
@@ -141,10 +144,13 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
                         />
                     </div>
 
-                    <div className="text-center mt-8">
+                    <div className="text-center mt-10">
                         <Link
                             href="/dashboard"
-                            className={buttonVariants({variant: "outline"})}
+                            className={buttonVariants({
+                                variant: "outline",
+                                className: "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            })}
                         >
                             <ArrowLeft className="mr-2 h-4 w-4"/>
                             {t('newCalcButton')}

@@ -1,9 +1,9 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
+// İYİLEŞTİRME: i18n routing için doğru importlar
+import {useRouter, Link} from '@/i18n/navigation';
 import api from '@/lib/api';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
 import {useForm} from 'react-hook-form';
 import {Eye, EyeOff, Loader2} from 'lucide-react';
@@ -41,19 +41,19 @@ export default function RegisterPage() {
 
     const registerFormSchema = z.object({
         email: z.string()
-            .min(1, {message: "Email field cannot be blank"})
-            .email({message: "Invalid email address."}),
+            .min(1, {message: tZod('emailBlank')})
+            .email({message: tZod('emailInvalid')}),
         password: z.string()
-            .min(1, {message: "Password cannot be blank"})
+            .min(1, {message: tZod('passwordBlank')})
             .regex(
                 /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/,
-                {message: "Password is not strong enough."}
+                {message: tZod('passwordNotStrong')}
             ),
         confirmPassword: z.string()
-            .min(1, {message: "Please confirm your password"})
+            .min(1, {message: tZod('confirmPasswordBlank')})
     })
         .refine(data => data.password === data.confirmPassword, {
-            message: "Password does not match",
+            message: tZod('passwordsNoMatch'),
             path: ["confirmPassword"],
         });
 
@@ -119,19 +119,19 @@ export default function RegisterPage() {
 
     if (isAuthenticated) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-background">
-                <Loader2 className="mr-2 h-6 w-6 animate-spin"/>
+            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
+                <Loader2 className="mr-2 h-6 w-6 animate-spin text-primary"/>
                 <p className="text-lg text-muted-foreground">{t('redirecting')}</p>
             </div>
         );
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-background p-4">
-            <Card className="w-full max-w-md">
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950 p-4">
+            <Card className="w-full max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-                    <CardDescription>{t('subtitle')}</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-50">{t('title')}</CardTitle>
+                    <CardDescription className="text-gray-500 dark:text-gray-400">{t('subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -141,11 +141,12 @@ export default function RegisterPage() {
                                 name="email"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.emailLabel')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('form.emailLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
                                                 placeholder={t('form.emailPlaceholder')}
+                                                className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -158,12 +159,13 @@ export default function RegisterPage() {
                                 name="password"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.passwordLabel')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('form.passwordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
                                                     placeholder={t('form.passwordPlaceholder')}
+                                                    className="pr-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white"
                                                     {...field}
                                                     autoComplete="new-password"
                                                 />
@@ -172,7 +174,7 @@ export default function RegisterPage() {
                                                 type="button"
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute inset-y-0 right-0 h-full aspect-square"
+                                                className="absolute inset-y-0 right-0 h-full aspect-square text-gray-500 dark:text-gray-400 hover:bg-transparent"
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? <EyeOff className="h-4 w-4"/> :
@@ -180,7 +182,7 @@ export default function RegisterPage() {
                                             </Button>
                                         </div>
                                         {!form.formState.errors.password && (
-                                            <FormDescription className="text-xs">
+                                            <FormDescription className="text-xs text-muted-foreground dark:text-gray-400">
                                                 {t('form.passwordDescription')}
                                             </FormDescription>
                                         )}
@@ -193,12 +195,13 @@ export default function RegisterPage() {
                                 name="confirmPassword"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.confirmPasswordLabel')}</FormLabel>
+                                        <FormLabel className="text-gray-900 dark:text-gray-200">{t('form.confirmPasswordLabel')}</FormLabel>
                                         <div className="relative">
                                             <FormControl>
                                                 <Input
                                                     type={showConfirmPassword ? "text" : "password"}
                                                     placeholder={t('form.passwordPlaceholder')}
+                                                    className="pr-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white"
                                                     {...field}
                                                     autoComplete="new-password"
                                                 />
@@ -207,7 +210,7 @@ export default function RegisterPage() {
                                                 type="button"
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute inset-y-0 right-0 h-full aspect-square"
+                                                className="absolute inset-y-0 right-0 h-full aspect-square text-gray-500 dark:text-gray-400 hover:bg-transparent"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                             >
                                                 {showConfirmPassword ? <EyeOff className="h-4 w-4"/> :
@@ -232,9 +235,9 @@ export default function RegisterPage() {
                 <CardFooter>
                     <div className="flex justify-between items-center w-full">
                         <LanguageSwitcher/>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground dark:text-gray-400">
                             {t('footer.haveAccount')}
-                            <Link href="/login" className="text-primary hover:underline ml-1 font-semibold">
+                            <Link href="/login" className="text-primary hover:underline ml-1 font-semibold dark:text-blue-400">
                                 {t('footer.loginLink')}
                             </Link>
                         </p>

@@ -126,11 +126,11 @@ export default function CalculationFormCard({
                         <CardDescription>{t('description')}</CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <div className="bg-blue-50 p-3 rounded-md border border-blue-100 text-sm text-blue-800">
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-100 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-200">
                             <p>
                                 {t('infoTotalMin')} <strong>{formatCurrency(totalMinPayment, locale)}</strong>
                             </p>
-                            <p className="text-xs text-blue-600 mt-1 opacity-80">
+                            <p className="text-xs text-blue-600 dark:text-blue-300 mt-1 opacity-80">
                                 {t('infoTotalMinDesc')}
                             </p>
                         </div>

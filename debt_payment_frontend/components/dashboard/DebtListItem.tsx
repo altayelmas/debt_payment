@@ -56,30 +56,37 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
 
     return (
         <TooltipProvider>
-            <Card className="shadow-sm">
+            <Card className="shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <div className="px-3 py-2">
                     <div className="flex justify-between items-start gap-4">
                         <div className="flex-grow flex items-baseline gap-x-4 gap-y-1 flex-wrap min-w-0">
-                            <h3 className="text-base font-semibold leading-tight truncate" title={debt.name}>
+                            <h3 className="text-base font-semibold leading-tight truncate text-gray-900 dark:text-gray-50" title={debt.name}>
                                 {debt.name}
                             </h3>
                             <div className="flex items-baseline gap-x-3 gap-y-1 flex-wrap">
                                 <div>
-                                    <span
-                                        className="text-xs text-muted-foreground uppercase">{t('details.balance')}:</span>
-                                    <span
-                                        className="text-sm font-medium ml-1">{formatCurrency(debt.currentBalance, locale)}</span>
+                                    <span className="text-xs text-muted-foreground dark:text-gray-400 uppercase">
+                                        {t('details.balance')}:
+                                    </span>
+                                    <span className="text-sm font-medium ml-1 text-gray-900 dark:text-gray-200">
+                                        {formatCurrency(debt.currentBalance, locale)}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span
-                                        className="text-xs text-muted-foreground uppercase">{t('details.minPayment')}:</span>
-                                    <span
-                                        className="text-sm font-medium ml-1">{formatCurrency(debt.minPayment, locale)}</span>
+                                    <span className="text-xs text-muted-foreground dark:text-gray-400 uppercase">
+                                        {t('details.minPayment')}:
+                                    </span>
+                                    <span className="text-sm font-medium ml-1 text-gray-900 dark:text-gray-200">
+                                        {formatCurrency(debt.minPayment, locale)}
+                                    </span>
                                 </div>
                                 <div>
-                                    <span
-                                        className="text-xs text-muted-foreground uppercase">{t('details.interest')}:</span>
-                                    <Badge variant="secondary" className="ml-1 text-xs">%{debt.interestRate}</Badge>
+                                    <span className="text-xs text-muted-foreground dark:text-gray-400 uppercase">
+                                        {t('details.interest')}:
+                                    </span>
+                                    <Badge variant="secondary" className="ml-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                        %{debt.interestRate}
+                                    </Badge>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +96,7 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="text-muted-foreground hover:text-blue-600 h-8 w-8"
+                                        className="text-muted-foreground hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-gray-800 h-8 w-8"
                                         onClick={() => onEditClick(debt)}
                                     >
                                         <Pencil className="h-4 w-4"/>
@@ -108,7 +115,7 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="text-muted-foreground hover:text-destructive h-8 w-8"
+                                                className="text-muted-foreground hover:text-destructive dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-gray-800 h-8 w-8"
                                                 disabled={isDeleting}
                                             >
                                                 {isDeleting ? (
@@ -124,17 +131,22 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
                                         <p>{t('deleteTooltip')}</p>
                                     </TooltipContent>
                                 </Tooltip>
-                                <AlertDialogContent>
+
+                                <AlertDialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>{t('dialogTitle')}</AlertDialogTitle>
-                                        <AlertDialogDescription>
+                                        <AlertDialogTitle className="text-gray-900 dark:text-gray-50">
+                                            {t('dialogTitle')}
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
                                             {t('dialogDescription', {debtName: debt.name})}
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogCancel className="dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700">
+                                            Cancel
+                                        </AlertDialogCancel>
                                         <AlertDialogAction
-                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800"
                                             onClick={handleDelete}
                                         >
                                             {t('dialogConfirm')}

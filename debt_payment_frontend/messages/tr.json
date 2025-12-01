@@ -26,8 +26,8 @@
       "submitButtonLoading": "Giriş yapılıyor..."
     },
     "zodErrors": {
-      "blank": "Bu alan boş bırakılamaz",
-      "invalidEmail": "Geçersiz e-posta adresi."
+      "required": "Bu alan boş bırakılamaz",
+      "emailInvalid": "Geçersiz e-posta adresi."
     },
     "toasts": {
       "success": "Giriş başarılı, yönlendiriliyorsunuz...",
@@ -291,7 +291,8 @@
         "partialMessage": "⚠️ Hedefin <str>{amount}</str> altında.",
         "makePaymentButton": "Ödeme Yap",
         "completePaymentButton": "Ödemeyi Tamamla",
-        "paidOffMessage": "Kapanan borç:"
+        "paidOffMessage": "Kapanan borç:",
+        "targetPayoffMessage": "Hedeflenen Bitiş: {debts}"
       },
       "chart": {
         "title": "İlerleme Grafiği",

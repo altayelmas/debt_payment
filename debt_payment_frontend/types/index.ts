@@ -26,6 +26,7 @@ export interface CalculationResult {
     currentTotalDebt: number;
     calculationId: string;
     isPlanOutdated: boolean;
+    debtStatuses: ActiveDebtStatusDto[];
 }
 
 export interface PagedResult<T> {
@@ -65,4 +66,12 @@ export interface DebtPayoffMilestone {
     month: number;
     monthYear: string;
     debtName: string;
+}
+
+export interface ActiveDebtStatusDto {
+    debtId: number;
+    debtName: string;
+    currentBalance: number;
+    startingBalance: number;
+    isPaidOff: boolean;
 }

@@ -55,29 +55,29 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                 <CardContent className="p-6">
-                    <p className="text-sm text-blue-600 font-medium">{t('summary.targetDate')}</p>
-                    <p className="text-2xl font-bold text-blue-900">
+                    <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{t('summary.targetDate')}</p>
+                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-50">
                         {formatPayOffDate(currentStrategyResult.payOffDate)}
                     </p>
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <CardContent className="p-6">
                     <p className="text-sm text-muted-foreground font-medium">{t('summary.totalRemaining')}</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-50">
                         {formatCurrency(activePlan.currentTotalDebt, locale)}
                     </p>
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <CardContent className="p-6">
                     <p className="text-sm text-muted-foreground font-medium">{t('summary.progress')}</p>
                     <div className="flex items-end gap-2">
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                             {progressPercentage}%
                         </p>
                         <span className="text-sm text-muted-foreground mb-1">{t('summary.completed')}</span>
