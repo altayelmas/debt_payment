@@ -166,20 +166,8 @@ namespace CalculationService.Service.Impl
 
                 report.CurrentTotalDebt = realCurrentDebt;
                 
-                var tolerance = Math.Max(validRangeStart * 0.05m, 1000m);
-
-                bool isDebtHigherThanExpected = realCurrentDebt > (validRangeStart + tolerance);
-
-                if (isDebtHigherThanExpected)
-                {
-                    report.IsPlanOutdated = true;
-                    Console.WriteLine($"Plan Outdated! Real: {realCurrentDebt}, Expected Max: {validRangeStart + tolerance}");
-                }
-                else
-                {
-                    report.IsPlanOutdated = false;
-                }
-
+                report.IsPlanOutdated = false;
+                
                 var originalDebts = report.DebtStatuses ?? new List<ActiveDebtStatusDto>();
 
                 report.DebtStatuses = new List<ActiveDebtStatusDto>();

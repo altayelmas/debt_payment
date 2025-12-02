@@ -164,5 +164,22 @@ namespace debt_payment_backend.DebtService.Service.Impl
 
             return totalDebt;
         }
+
+        public async Task<bool> ApplyMonthlyInterestAsync(string userId)
+        {
+            var activeDebts = await _debtRepository.GetActiveDebtsByUserIdAsync(userId);
+            
+            if (activeDebts == null || !activeDebts.Any()) return false;
+
+            foreach (var debt in activeDebts)
+            {
+                decimal monthlyInterest = (debt.CurrentBalance * (debt.InterestRate / 100)) / 12;
+                
+                debt.CurrentBalance += monthlyInterest;
+            }
+
+            await _debtRepository.SaveChangesAsync();
+            return true;
+        }
     }
 }

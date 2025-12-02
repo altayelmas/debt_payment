@@ -16,7 +16,8 @@ import {
     RefreshCw,
     LineChart,
     Wallet,
-    CalendarCheck
+    CalendarCheck,
+    FastForward
 } from "lucide-react";
 
 import {useTranslations} from 'next-intl';
@@ -76,6 +77,19 @@ export default function TrackingPage() {
             toast.error("Could not recalculate plan.", {id: loadingToast});
         } finally {
             setRecalculating(false);
+        }
+    };
+
+    const handleNextMonth = async () => {
+        const loadingToast = toast.loading("Faizler işleniyor ve yeni aya geçiliyor...");
+        try {
+            await api.post('/api/debt/next-month');
+
+            toast.success("Yeni aya geçildi!", {id: loadingToast});
+
+            await fetchActivePlan();
+        } catch (error) {
+            toast.error("İşlem başarısız oldu.", {id: loadingToast});
         }
     };
 
@@ -142,9 +156,20 @@ export default function TrackingPage() {
                             </AlertDescription>
                         </Alert>
                     )}
-                    <div className="mb-6 text-center sm:text-left">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('title')}</h1>
-                        <p className="text-muted-foreground">{t('subtitle')}</p>
+                    <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('title')}</h1>
+                            <p className="text-muted-foreground">{t('subtitle')}</p>
+                        </div>
+                        {!loading && activePlan && (
+                            <Button
+                                onClick={handleNextMonth}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95"
+                            >
+                                <FastForward className="mr-2 h-4 w-4"/>
+                                {t('fastForward')}
+                            </Button>
+                        )}
                     </div>
                     {loading ? (
                         <div className="space-y-4">

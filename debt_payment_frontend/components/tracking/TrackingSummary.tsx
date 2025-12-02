@@ -14,18 +14,21 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
     const t = useTranslations('TrackingPage.page');
     const locale = useLocale();
 
-    const initialDebt = activePlan.beginningDebt;
-    const currentDebt = activePlan.currentTotalDebt;
+    const totalObligation = currentStrategyResult.totalPaid;
+
+    const totalPaidSoFar = currentStrategyResult.paymentSchedule.reduce((acc, month) => {
+        return acc + (month.actualPaidAmount || 0);
+    }, 0);
+
+    let remainingTotal = totalObligation - totalPaidSoFar;
+    if (remainingTotal < 0) remainingTotal = 0;
+
     let progressPercentage = 0;
-    if (initialDebt > 0) {
-        if (currentDebt <= 0) {
-            progressPercentage = 100;
-        } else {
-            const paidAmount = initialDebt - currentDebt;
-            progressPercentage = Math.round((paidAmount / initialDebt) * 100);
-        }
+    if (totalObligation > 0) {
+        progressPercentage = Math.round((totalPaidSoFar / totalObligation) * 100);
     }
     if (progressPercentage > 100) progressPercentage = 100;
+
 
     const formatPayOffDate = (rawString: string) => {
         if (!rawString) return "";
@@ -68,7 +71,7 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
                 <CardContent className="p-6">
                     <p className="text-sm text-muted-foreground font-medium">{t('summary.totalRemaining')}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-gray-50">
-                        {formatCurrency(activePlan.currentTotalDebt, locale)}
+                        {formatCurrency(remainingTotal, locale)}
                     </p>
                 </CardContent>
             </Card>

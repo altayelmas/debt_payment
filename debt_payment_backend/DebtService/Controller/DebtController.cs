@@ -111,5 +111,15 @@ namespace debt_payment_backend.DebtService.Controller
 
             return Ok(result);
         }
+
+        [HttpPost("next-month")]
+        public async Task<IActionResult> MoveToNextMonth()
+        {
+            var userId = GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            
+            await _debtService.ApplyMonthlyInterestAsync(userId);
+            return Ok(new { message = "Moved to next month" });
+        }
     }
 }

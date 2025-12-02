@@ -265,6 +265,7 @@
     "page": {
       "title": "Borçtan Kurtuluş Yolculuğunuz",
       "subtitle": "İlerlemenizi ay ay takip edin.",
+      "fastForward": "Ayı Tamamla / İleri Sar",
       "tabs": {
         "plan": "Plan",
         "analysis": "Analiz",

@@ -265,6 +265,7 @@
     "page": {
       "title": "Your Debt Freedom Journey",
       "subtitle": "Track your progress month by month.",
+      "fastForward": "Complete the Month / Fast Forward",
       "tabs": {
         "plan": "Plan",
         "analysis": "Analysis",

@@ -17,6 +17,6 @@ namespace debt_payment_backend.DebtService.Service.Impl
         Task<DebtDto?> GetDebtByIdAsync(int id, string userId);
         Task<PaginationDtos<DebtDto>> GetDebtsForUserAsync(string userId, int pageNumber, int pageSize);
         Task<decimal> GetTotalDebtAsync(string userId);
-
+        Task<bool> ApplyMonthlyInterestAsync(string userId);
     }
 }
