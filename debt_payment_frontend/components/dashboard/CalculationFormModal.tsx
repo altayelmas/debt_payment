@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import {formatCurrency} from "@/lib/utils";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 
@@ -57,7 +58,7 @@ export default function CalculationFormModal({
     const tZod = useTranslations('DashboardPage.CalculationForm.zod');
     const tErrors = useTranslations('Errors');
 
-
+    const locale = useLocale();
     const [calculating, setCalculating] = useState(false);
     const router = useRouter();
 
@@ -85,11 +86,25 @@ export default function CalculationFormModal({
         } catch (error: any) {
             console.error("Calculation error:", error);
             const errorData = error.response?.data;
-
             const code = errorData?.errorCode || errorData?.ErrorCode;
 
             if (code) {
-                toast.error(tErrors(code));
+                if (code === 'PAYMENT_INSUFFICIENT' && errorData.deficit) {
+                    const deficitRaw = errorData.deficit;
+                    const step = 50;
+                    const roundedDeficit = Math.ceil(deficitRaw / step) * step;
+
+                    const formattedAmount =  formatCurrency(roundedDeficit, locale);
+
+                    toast.error(
+                        <span>
+                            {tErrors.rich('PAYMENT_INSUFFICIENT', {
+                                amount: formattedAmount,
+                                str: (chunks) => <strong className="font-bold">{chunks}</strong>
+                            })}
+                        </span>
+                    );
+                }
             } else if (errorData?.message || errorData?.Message) {
                 toast.error(errorData.message || errorData.Message);
             }

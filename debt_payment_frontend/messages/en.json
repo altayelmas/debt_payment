@@ -76,7 +76,7 @@
     "CalculationForm": {
       "title": "Calculation",
       "description": "Enter an extra budget to speed up your debt repayment.",
-      "label": "Monthly Extra Budget (TL)",
+      "label": "Monthly Extra Budget",
       "placeholder": "0",
       "button": "Calculate",
       "buttonLoading": "Calculating...",
@@ -91,7 +91,7 @@
       "zod": {
         "negative": "Cannot be negative",
         "maxAmount": "Value cannot exceed 999,999,999,999.99",
-        "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>."
+        "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please make your Monthly Extra Budget at least <str>{amount}</str>."
       }
     },
     "CalculationHistory": {
@@ -115,7 +115,7 @@
     }
   },
   "Errors": {
-    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>.",
+    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please make your Monthly Extra Budget at least <str>{amount}</str>.",
     "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
     "NO_DEBTS_FOUND": "No debts found for calculation.",
     "GENERIC_ERROR": "An unexpected error occurred. Please try again later."

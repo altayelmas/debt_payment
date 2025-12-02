@@ -146,7 +146,7 @@
     "CalculationForm": {
       "title": "Hesaplama",
       "description": "Borç ödemenizi hızlandırmak için aylık ekstra bir bütçe girin.",
-      "label": "Aylık Ekstra Bütçe (TL)",
+      "label": "Aylık Ekstra Bütçe",
       "placeholder": "0",
       "button": "Hesapla",
       "buttonLoading": "Hesaplanıyor...",
@@ -161,7 +161,7 @@
       "zod": {
         "negative": "Negatif olamaz",
         "maxAmount": "Değer 999.999.999.999,99'u geçemez",
-        "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> artırmalısınız."
+        "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> yapmalısınız."
       }
     },
     "CalculationHistory": {
@@ -256,7 +256,7 @@
     }
   },
   "Errors": {
-    "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> artırmalısınız.",
+    "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> yapmalısınız.",
     "CALCULATION_LIMIT_EXCEEDED": "Hesaplama limiti aşıldı. Ödeme tutarı borcu kapatmak için çok düşük olabilir.",
     "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
     "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."
