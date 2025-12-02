@@ -82,6 +82,8 @@ export default function MakePaymentModal({
             const d = new Date(monthYear)
             const safeDate = new Date(Date.UTC(d.getFullYear(), d.getMonth(), 15, 12, 0, 0));
 
+            console.log("Gönderilen Strateji:", strategyName);
+
             await api.post('/api/payment/distribute', {
                 amount: data.amount,
                 strategy: strategyName,

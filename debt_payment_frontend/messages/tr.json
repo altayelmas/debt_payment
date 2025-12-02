@@ -265,6 +265,12 @@
     "page": {
       "title": "Borçtan Kurtuluş Yolculuğunuz",
       "subtitle": "İlerlemenizi ay ay takip edin.",
+      "tabs": {
+        "plan": "Plan",
+        "analysis": "Analiz",
+        "debts": "Borçlar"
+      },
+      "debtSectionTitle": "Güncel Borç Durumu",
       "outdatedAlert": {
         "title": "Planınız Güncel Değil",
         "description": "Borçlarınızda değişiklik yaptığınız (ekleme/silme/güncelleme) tespit edildi. Mevcut planınız artık gerçek durumu yansıtmıyor olabilir.",
@@ -311,7 +317,7 @@
     },
     "MakePaymentModal": {
       "title": "{monthYear} Ödemesi Yap",
-      "description": "Planlanan tutar: <str>{amount}</str>.<br>Bu tutar <str>{strategyName}</str> stratejisine göre otomatik olarak dağıtılacaktır.",
+      "description": "Planlanan tutar: <str>{amount}</str>.<br></br> Bu tutar <str>{strategyName}</str> stratejisine göre otomatik olarak dağıtılacaktır.",
       "labelAmount": "Toplam Ödeme Tutarı",
       "buttonCancel": "İptal",
       "buttonConfirm": "Ödemeyi Onayla",
@@ -322,6 +328,11 @@
       "zod": {
         "minAmount": "Tutar 0'dan büyük olmalıdır"
       }
+    },
+    "DebtList": {
+      "title": "Borç Portföyü",
+      "total": "Toplam:",
+      "remaining": "Kalan"
     }
   }
 }

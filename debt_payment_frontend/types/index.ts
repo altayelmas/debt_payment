@@ -27,6 +27,7 @@ export interface CalculationResult {
     calculationId: string;
     isPlanOutdated: boolean;
     debtStatuses: ActiveDebtStatusDto[];
+    selectedStrategy?: "Avalanche" | "Snowball";
 }
 
 export interface PagedResult<T> {

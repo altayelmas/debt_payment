@@ -28,20 +28,22 @@ namespace CalculationService.Service.Impl
             _httpContextAccessor = httpContextAccessor;
         }
        
-        public async Task<bool> ActivatePlanAsync(string userId, Guid reportId)
+        public async Task<bool> ActivatePlanAsync(string userId, Guid reportId, String strategy)
         {
             var reportExists = await _calculateService.GetCalculationResultById(userId, reportId);
             if (reportExists == null) return false;
 
-            var oldPlans = await _planRepository.GetActivePlansByUserIdAsync(userId);
+            if (strategy != "Avalanche" && strategy != "Snowball") return false;
 
+            var oldPlans = await _planRepository.GetActivePlansByUserIdAsync(userId);
             if (oldPlans != null) foreach (var p in oldPlans) p.IsActive = false;
 
             var newPlan = new UserActivePlan
             {
                 UserId = userId,
                 CalculationReportId = reportId,
-                IsActive = true
+                IsActive = true,
+                SelectedStrategy = strategy
             };
 
             await _planRepository.AddUserActivePlanAsync(newPlan);
@@ -53,7 +55,6 @@ namespace CalculationService.Service.Impl
         public async Task<CalculationResultDto?> GetActivePlanAsync(string userId)
         {
             var activePlan = await _planRepository.GetActivePlanByUserIdAsync(userId);
-
             if (activePlan == null) return null;
 
             var report = await _calculateService.GetCalculationResultById(userId, activePlan.CalculationReportId);
@@ -78,7 +79,7 @@ namespace CalculationService.Service.Impl
                 Console.WriteLine($"DebtService Error: {ex.Message}");
             }
 
-            var targetSchedule = report.Recommendation.Contains("Avalanche") 
+            var targetSchedule = activePlan.SelectedStrategy == "Avalanche"
                 ? report.AvalancheResult.PaymentSchedule 
                 : report.SnowballResult.PaymentSchedule;
 
@@ -204,6 +205,7 @@ namespace CalculationService.Service.Impl
                 Console.WriteLine($"Health Check Error: {ex.Message}");
                 report.IsPlanOutdated = false;
             }
+            report.SelectedStrategy = activePlan.SelectedStrategy;
             return report;
         }
 

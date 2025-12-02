@@ -2,17 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Wallet } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ActiveDebtStatusDto } from "@/types";
 
 export default function TrackingDebtList({ debtStatuses }: { debtStatuses: ActiveDebtStatusDto[] }) {
     const locale = useLocale();
+    const t = useTranslations('TrackingPage.DebtList');
 
     return (
         <Card className="border-none shadow-sm bg-transparent">
-            <CardHeader className="pl-2 pt-0 mb-6">
-                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-50">Borç Portföyü</CardTitle>
-            </CardHeader>
             <CardContent className="space-y-4 px-0">
                 {debtStatuses.map((debt) => {
                     const percentPaid = debt.startingBalance > 0
@@ -38,7 +36,7 @@ export default function TrackingDebtList({ debtStatuses }: { debtStatuses: Activ
                                     <div>
                                         <h4 className="font-medium text-gray-900 dark:text-gray-100">{debt.debtName}</h4>
                                         <span className="text-xs text-muted-foreground block">
-                                            Toplam: {formatCurrency(debt.startingBalance, locale)}
+                                            {t('total')} {formatCurrency(debt.startingBalance, locale)}
                                         </span>
                                     </div>
                                 </div>
@@ -51,7 +49,7 @@ export default function TrackingDebtList({ debtStatuses }: { debtStatuses: Activ
                                     >
                                         {formatCurrency(debt.currentBalance, locale)}
                                     </span>
-                                    <span className="text-xs text-muted-foreground block">Kalan</span>
+                                    <span className="text-xs text-muted-foreground block">{t('remaining')}</span>
                                 </div>
                             </div>
 

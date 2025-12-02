@@ -18,5 +18,6 @@ namespace debt_payment_backend.CalculationService.Model.Dto
         public bool IsPlanOutdated { get; set; }
         public List<int> IncludedDebtIds { get; set; } = new List<int>();
         public List<ActiveDebtStatusDto> DebtStatuses { get; set; } = new List<ActiveDebtStatusDto>();
+        public string SelectedStrategy { get; set; } = string.Empty;
     }
 }

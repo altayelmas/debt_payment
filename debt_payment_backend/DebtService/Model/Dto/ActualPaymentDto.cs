@@ -9,5 +9,6 @@ namespace DebtService.Model.Dto
     {
         public decimal Amount { get; set; }
         public DateTime PaymentDate { get; set; }
+        public int DebtId { get; set; }
     }
 }

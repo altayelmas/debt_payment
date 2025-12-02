@@ -45,6 +45,7 @@ namespace DebtService.Repository.Impl
             return await query
                 .Select(p => new ActualPaymentDto 
                 {
+                    DebtId = p.DebtId,
                     Amount = p.Amount,
                     PaymentDate = p.PaymentDate
                 })

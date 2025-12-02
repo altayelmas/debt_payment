@@ -1,74 +1,4 @@
 {
-  "Navbar": {
-    "appTitle": "Debt Calculator",
-    "logoutButton": "Logout",
-    "languageLabel": "Change language",
-    "turkish": "Turkish (TR)",
-    "english": "English (EN)",
-    "lightMode": "Light",
-    "darkMode": "Dark",
-    "systemMode": "System",
-    "themeLabel": "Theme",
-    "trackingLink": "My Plan"
-  },
-  "LoginPage": {
-    "title": "Login",
-    "subtitle": "Enter your credentials to access your account.",
-    "redirecting": "Redirecting to dashboard...",
-    "form": {
-      "emailLabel": "Email",
-      "emailPlaceholder": "name@example.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "••••••••",
-      "showPassword": "Show password",
-      "hidePassword": "Hide password",
-      "submitButton": "Login",
-      "submitButtonLoading": "Logging in..."
-    },
-    "zodErrors": {
-      "required": "This field cannot be blank",
-      "emailInvalid": "Invalid email address."
-    },
-    "toasts": {
-      "success": "Login successful, redirecting...",
-      "defaultError": "Login failed"
-    },
-    "footer": {
-      "noAccount": "Don't have an account?",
-      "registerLink": "Register"
-    }
-  },
-  "RegisterPage": {
-    "title": "Create Account",
-    "subtitle": "Create your account to get started.",
-    "redirecting": "Redirecting to dashboard...",
-    "form": {
-      "emailLabel": "Email",
-      "emailPlaceholder": "name@example.com",
-      "passwordLabel": "Password",
-      "passwordDescription": "Min. 8 Chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Symbol.",
-      "passwordPlaceholder": "••••••••",
-      "confirmPasswordLabel": "Confirm Password",
-      "submitButton": "Register",
-      "submitButtonLoading": "Registering..."
-    },
-    "zodErrors": {
-      "emailBlank": "Email field cannot be blank",
-      "emailInvalid": "Invalid email address.",
-      "passwordBlank": "Password cannot be blank",
-      "passwordNotStrong": "Password is not strong enough.",
-      "confirmPasswordBlank": "Please confirm your password",
-      "passwordsNoMatch": "Passwords do not match"
-    },
-    "toasts": {
-      "success": "Register successful! Please log in.",
-      "defaultError": "Register failed.."
-    },
-    "footer": {
-      "haveAccount": "Already have an account?",
-      "loginLink": "Login"
-    }
-  },
   "DashboardPage": {
     "page": {
       "toasts": {
@@ -184,8 +114,84 @@
       "dialogConfirm": "Delete"
     }
   },
+  "Errors": {
+    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>.",
+    "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
+    "NO_DEBTS_FOUND": "No debts found for calculation.",
+    "GENERIC_ERROR": "An unexpected error occurred. Please try again later."
+  },
   "HomePage": {
     "redirecting": "Redirecting..."
+  },
+  "LoginPage": {
+    "title": "Login",
+    "subtitle": "Enter your credentials to access your account.",
+    "redirecting": "Redirecting to dashboard...",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submitButton": "Login",
+      "submitButtonLoading": "Logging in..."
+    },
+    "zodErrors": {
+      "required": "This field cannot be blank",
+      "emailInvalid": "Invalid email address."
+    },
+    "toasts": {
+      "success": "Login successful, redirecting...",
+      "defaultError": "Login failed"
+    },
+    "footer": {
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register"
+    }
+  },
+  "Navbar": {
+    "appTitle": "Debt Calculator",
+    "logoutButton": "Logout",
+    "languageLabel": "Change language",
+    "turkish": "Turkish (TR)",
+    "english": "English (EN)",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "systemMode": "System",
+    "themeLabel": "Theme",
+    "trackingLink": "My Plan"
+  },
+  "RegisterPage": {
+    "title": "Create Account",
+    "subtitle": "Create your account to get started.",
+    "redirecting": "Redirecting to dashboard...",
+    "form": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "passwordLabel": "Password",
+      "passwordDescription": "Min. 8 Chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Symbol.",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "submitButton": "Register",
+      "submitButtonLoading": "Registering..."
+    },
+    "zodErrors": {
+      "emailBlank": "Email field cannot be blank",
+      "emailInvalid": "Invalid email address.",
+      "passwordBlank": "Password cannot be blank",
+      "passwordNotStrong": "Password is not strong enough.",
+      "confirmPasswordBlank": "Please confirm your password",
+      "passwordsNoMatch": "Passwords do not match"
+    },
+    "toasts": {
+      "success": "Register successful! Please log in.",
+      "defaultError": "Register failed.."
+    },
+    "footer": {
+      "haveAccount": "Already have an account?",
+      "loginLink": "Login"
+    }
   },
   "ResultsPage": {
     "page": {
@@ -255,16 +261,16 @@
       "startPlanButton": "Start This Plan"
     }
   },
-  "Errors": {
-    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please increase your Monthly Extra Budget by at least <str>{amount}</str>.",
-    "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
-    "NO_DEBTS_FOUND": "No debts found for calculation.",
-    "GENERIC_ERROR": "An unexpected error occurred. Please try again later."
-  },
   "TrackingPage": {
     "page": {
       "title": "Your Debt Freedom Journey",
       "subtitle": "Track your progress month by month.",
+      "tabs": {
+        "plan": "Plan",
+        "analysis": "Analysis",
+        "debts": "Debts"
+      },
+      "debtSectionTitle": "Current Debt Status",
       "outdatedAlert": {
         "title": "Plan Outdated",
         "description": "Changes in your debts (add/delete/update) have been detected. Your current plan may no longer reflect the actual situation.",
@@ -311,7 +317,7 @@
     },
     "MakePaymentModal": {
       "title": "Make Payment for {monthYear}",
-      "description": "Planned amount: <str>{amount}</str>.<br>This amount will be automatically distributed according to the <str>{strategyName}</str> strategy.",
+      "description": "Planned amount: <str>{amount}</str>.<br></br> This amount will be automatically distributed according to the <str>{strategyName}</str> strategy.",
       "labelAmount": "Total Payment Amount",
       "buttonCancel": "Cancel",
       "buttonConfirm": "Confirm Payment",
@@ -322,6 +328,11 @@
       "zod": {
         "minAmount": "Amount must be greater than 0"
       }
+    },
+    "DebtList": {
+      "title": "Debt Portfolio",
+      "total": "Total:",
+      "remaining": "Remaining"
     }
   }
 }

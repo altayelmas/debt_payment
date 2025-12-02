@@ -56,6 +56,9 @@ namespace DebtService.Service.Impl
             var debts = await _debtRepository.GetActiveDebtsByUserIdAsync(userId);
             if (debts == null || !debts.Any()) return false;
 
+            var targetDate = date ?? DateTime.UtcNow;
+            var existingPayments = await _paymentRepository.GetUserPaymentsAsync(userId, reportId);
+
             decimal remainingMoney = totalAmount;
             
             var paymentsToMake = new List<PaymentDto>();
@@ -64,7 +67,17 @@ namespace DebtService.Service.Impl
             {
                 if (remainingMoney > 0)
                 {
-                    decimal paymentAmount = Math.Min(debt.MinPayment, debt.CurrentBalance);
+
+                    var paidSoFarThisMonth = existingPayments
+                        .Where(p => p.DebtId == debt.DebtId && 
+                                    p.PaymentDate.Year == targetDate.Year && 
+                                    p.PaymentDate.Month == targetDate.Month)
+                        .Sum(p => p.Amount);
+
+                    decimal remainingMinPayment = debt.MinPayment - paidSoFarThisMonth;
+                    if (remainingMinPayment < 0) remainingMinPayment = 0;
+
+                    decimal paymentAmount = Math.Min(remainingMinPayment, debt.CurrentBalance);
                     paymentAmount = Math.Min(paymentAmount, remainingMoney);
 
                     if (paymentAmount > 0)
@@ -77,7 +90,6 @@ namespace DebtService.Service.Impl
                             CalculationReportId = reportId ?? Guid.Empty
                         });
                         
-                        debt.CurrentBalance -= paymentAmount; 
                         remainingMoney -= paymentAmount;
                     }
                 }
@@ -85,29 +97,23 @@ namespace DebtService.Service.Impl
 
             if (remainingMoney > 0)
             {
-                var targetDebt = strategy == "Snowball"
+                var isSnowball = string.Equals(strategy, "Snowball", StringComparison.OrdinalIgnoreCase);
+                var targetDebt = isSnowball
                     ? debts.Where(d => d.CurrentBalance > 0).OrderBy(d => d.CurrentBalance).FirstOrDefault()
                     : debts.Where(d => d.CurrentBalance > 0).OrderByDescending(d => d.InterestRate).FirstOrDefault();
 
                 if (targetDebt != null)
                 {
                     var existingPayment = paymentsToMake.FirstOrDefault(p => p.DebtId == targetDebt.DebtId);
+                    decimal amountToAdd = remainingMoney;
 
                     if (existingPayment != null)
                     {
-                        decimal amountToAdd = remainingMoney;
-                        if (existingPayment.Amount + amountToAdd > targetDebt.CurrentBalance + existingPayment.Amount)
-                        {
-                             existingPayment.Amount += amountToAdd;
-                        }
-                        else
-                        {
-                            existingPayment.Amount += amountToAdd;
-                        }
+                        existingPayment.Amount += amountToAdd;
                     }
                     else
                     {
-                         paymentsToMake.Add(new PaymentDto 
+                        paymentsToMake.Add(new PaymentDto 
                         { 
                             DebtId = targetDebt.DebtId, 
                             Amount = remainingMoney, 

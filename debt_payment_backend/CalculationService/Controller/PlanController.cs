@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CalculationService.Model.Dto;
 using CalculationService.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +26,13 @@ namespace CalculationService.Controller
             return User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
         }
 
-        [HttpPost("activate/{reportId:guid}")]
-        public async Task<IActionResult> ActivatePlan([FromRoute] Guid reportId)
+        [HttpPost("activate")]
+        public async Task<IActionResult> ActivatePlan([FromBody] ActivatePlanRequest request)
         {
             var userId = GetUserIdFromToken();
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var success = await _planService.ActivatePlanAsync(userId, reportId);
+            var success = await _planService.ActivatePlanAsync(userId, request.ReportId, request.Strategy);
 
             if (!success) return NotFound("Report not found.");
 

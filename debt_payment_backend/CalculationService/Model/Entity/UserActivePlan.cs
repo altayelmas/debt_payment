@@ -10,15 +10,12 @@ namespace CalculationService.Model.Entity
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
         public string UserId { get; set; } = string.Empty;
-
         [Required]
         public Guid CalculationReportId { get; set; }
-
         public DateTime ActivatedAt { get; set; } = DateTime.UtcNow;
-
         public bool IsActive { get; set; } = true;
+        public string SelectedStrategy { get; set; } = string.Empty;
     }
 }

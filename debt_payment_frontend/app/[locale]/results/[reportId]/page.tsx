@@ -27,12 +27,10 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
     const {reportId} = params;
 
     useEffect(() => {
-
         if (!reportId) {
             setLoading(false);
             return;
         }
-
         const fetchReport = async () => {
             try {
                 const response = await api.get<CalculationResult>(`/api/Calculation/${reportId}`);
@@ -44,15 +42,12 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
                 setLoading(false);
             }
         };
-
         fetchReport();
-
     }, [reportId, router]);
 
     if (loading) {
         return (
             <ProtectedRoute>
-                {/* GÜNCELLEME: Loading ekranı dark mode */}
                 <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
                     <p className="text-lg ml-3 text-muted-foreground">{t('loading')}</p>
@@ -64,7 +59,6 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
     if (!report) {
         return (
             <ProtectedRoute>
-                {/* GÜNCELLEME: Not Found ekranı dark mode */}
                 <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-950">
                     <h2 className="text-2xl font-semibold text-destructive">{t('notFoundTitle')}</h2>
                     <p className="text-muted-foreground mt-2">{t('notFoundDescription')}</p>
@@ -88,48 +82,55 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
         <ProtectedRoute>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
                 <Navbar/>
+                <main className="container mx-auto p-3 max-w-3xl">
 
-                <main className="container mx-auto p-4 md:p-8 max-w-5xl">
-                    <header className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">{t('headerTitle')}</h1>
-                        <p className="text-base text-muted-foreground dark:text-gray-400 mt-2">{t('headerSubtitle')}</p>
+                    <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+                        <div>
+                            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50 leading-tight">{t('headerTitle')}</h1>
+                            <p className="text-xs text-muted-foreground dark:text-gray-400 mt-0.5">{t('headerSubtitle')}</p>
+                        </div>
 
-                        <div className="text-base mt-4 inline-block rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-sm text-gray-500 dark:text-gray-400">
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">
-                                {t('extraPaymentLabel')}
-                            </span> {formatCurrency(report.extraPayment, locale)}
-                            <br/>
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">
-                                {t('initialDebtLabel')}
-                            </span> {formatCurrency(report.beginningDebt, locale)}
+                        <div className="flex flex-wrap gap-2 text-xs">
+                            <div className="px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm text-gray-600 dark:text-gray-300">
+                                <span className="font-semibold text-gray-900 dark:text-gray-100 mr-1.5">
+                                    {t('extraPaymentLabel')}
+                                </span>
+                                {formatCurrency(report.extraPayment, locale)}
+                            </div>
+                            <div className="px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm text-gray-600 dark:text-gray-300">
+                                <span className="font-semibold text-gray-900 dark:text-gray-100 mr-1.5">
+                                    {t('initialDebtLabel')}
+                                </span>
+                                {formatCurrency(report.beginningDebt, locale)}
+                            </div>
                         </div>
                     </header>
 
-                    <Alert className="mb-8 max-w-3xl mx-auto p-4 bg-white dark:bg-gray-900 border-blue-200 dark:border-blue-900">
-                        <Lightbulb className="h-4 w-4 text-blue-600 dark:text-blue-400"/>
-                        <AlertTitle className="font-semibold text-gray-900 dark:text-gray-100 ml-2">
-                            {t('recommendationTitle')}
-                        </AlertTitle>
-                        <AlertDescription className="mt-2 ml-2 text-gray-700 dark:text-gray-300">
-                            <p className="text-sm leading-relaxed">
+                    <Alert className="mb-4 p-3 bg-white dark:bg-gray-900 border-blue-200 dark:border-blue-900/50 shadow-sm flex items-start">
+                        <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0"/>
+                        <div className="ml-3 flex-1">
+                            <AlertTitle className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">
+                                {t('recommendationTitle')}
+                            </AlertTitle>
+                            <AlertDescription className="text-gray-600 dark:text-gray-300 text-xs leading-relaxed inline-block">
                                 {(interestSaved > 0 && monthsSaved > 0) ? (
                                     t.rich('recommendationText', {
                                         strategyName: recommendedStrategy,
                                         interestSaved: formatCurrency(interestSaved, locale),
                                         monthsSaved: monthsSaved,
-                                        str: (chunks) => <strong className="font-bold text-gray-900 dark:text-white">{chunks}</strong>
+                                        str: (chunks) => <span className="font-bold text-gray-900 dark:text-white">{chunks}</span>
                                     })
                                 ) : (
                                     t.rich('recommendationText_noSavings', {
                                         strategyName: recommendedStrategy,
-                                        str: (chunks) => <strong className="font-bold text-gray-900 dark:text-white">{chunks}</strong>
+                                        str: (chunks) => <span className="font-bold text-gray-900 dark:text-white">{chunks}</span>
                                     })
                                 )}
-                            </p>
-                        </AlertDescription>
+                            </AlertDescription>
+                        </div>
                     </Alert>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <ResultCard
                             result={report.snowballResult}
                             isSnowball={true}
@@ -144,15 +145,16 @@ export default function ResultsPage({params}: { params: { reportId: string } }) 
                         />
                     </div>
 
-                    <div className="text-center mt-10">
+                    <div className="text-center mt-6">
                         <Link
                             href="/dashboard"
                             className={buttonVariants({
                                 variant: "outline",
-                                className: "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                size: "sm",
+                                className: "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs h-8"
                             })}
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4"/>
+                            <ArrowLeft className="mr-2 h-3.5 w-3.5"/>
                             {t('newCalcButton')}
                         </Link>
                     </div>

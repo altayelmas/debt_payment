@@ -8,7 +8,7 @@ namespace CalculationService.Service
 {
     public interface PlanService
     {
-        Task<bool> ActivatePlanAsync(string userId, Guid reportId);
+        Task<bool> ActivatePlanAsync(string userId, Guid reportId, string strategy);
         Task<CalculationResultDto?> GetActivePlanAsync(string userId);
         Task<Guid?> RecalculateActivePlanAsync(string userId);
     }

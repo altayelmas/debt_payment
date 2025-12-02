@@ -47,10 +47,13 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
 
     const description = isSnowball ? t('descriptionSnowball') : t('descriptionAvalanche');
 
-    const handleActivatePlan = async () => {
+    const handleActivatePlan = async (selectedStrategy: string) => {
         const loadingToast = toast.loading("Activating plan...");
         try {
-            await api.post(`/api/plan/activate/${reportId}`);
+            await api.post(`/api/plan/activate`, {
+                reportId : reportId,
+                strategy : selectedStrategy
+            });
 
             toast.success("Plan activated! Redirecting to tracking...", {id: loadingToast});
 
@@ -61,45 +64,48 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
         }
     };
 
+    const strategyKey = isSnowball ? "Snowball" : "Avalanche";
+
     return (
         <Card className={`border-t-4 ${borderColor} relative flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm`}>
             {isRecommended && (
-                <Badge className="absolute -top-3 right-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 border-none">
+                <Badge className="absolute -top-2.5 right-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 border-none px-2 py-0.5 text-[10px] uppercase tracking-wide">
                     {t('recommendedBadge')}
                 </Badge>
             )}
 
-            <CardHeader className="p-4">
-                <CardTitle className={`text-xl font-bold ${titleColor}`}>
+            <CardHeader className="p-3 pb-1">
+                <CardTitle className={`text-lg font-bold ${titleColor}`}>
                     {result.strategyName}
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className="p-4 space-y-2 text-base">
+            <CardContent className="p-3 space-y-1.5 text-sm">
                 <div className="flex justify-between items-baseline">
-                    <span className="text-sm text-muted-foreground dark:text-gray-400">{t('endDate')}</span>
+                    <span className="text-muted-foreground dark:text-gray-400 text-xs">{t('endDate')}</span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{formatPayOffDate(result.payOffDate)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                    <span className="text-sm text-muted-foreground dark:text-gray-400">{t('totalInterest')}</span>
+                    <span className="text-muted-foreground dark:text-gray-400 text-xs">{t('totalInterest')}</span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(result.totalInterestPaid, locale)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                    <span className="text-sm text-muted-foreground dark:text-gray-400">{t('totalPaid')}</span>
+                    <span className="text-muted-foreground dark:text-gray-400 text-xs">{t('totalPaid')}</span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(result.totalPaid, locale)}</span>
                 </div>
             </CardContent>
 
-            <CardFooter className="p-4 pt-0 mt-auto">
-                <div className="flex flex-col items-start gap-4 w-full">
-                    <p className="text-sm text-muted-foreground dark:text-gray-400 min-h-[40px]">{description}</p>
+            <CardFooter className="p-3 pt-0 mt-auto">
+                <div className="flex flex-col items-start gap-3 w-full">
+                    <p className="text-xs text-muted-foreground dark:text-gray-400 min-h-[32px] leading-relaxed">{description}</p>
+
                     <div className={"w-full flex flex-col gap-2"}>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                    className="w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 h-8 text-xs"
                                 >
                                     {t('viewPlanButton')}
                                 </Button>
@@ -155,21 +161,21 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                         <Button
                             variant="outline"
                             size="sm"
-                            className="w-full mt-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            className="w-full mt-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 h-8 text-xs"
                             onClick={handleDownloadPdf}
                             disabled={isLoading}
                         >
-                            <Download className="mr-2 h-4 w-4"/>
+                            <Download className="mr-2 h-3.5 w-3.5"/>
                             {isLoading ? t('toastGeneratingPdf') : t('downloadPdfButton')}
                         </Button>
-
                         <Button
-                            className={`w-full text-white ${isRecommended
+                            size="sm"
+                            className={`w-full text-white h-8 text-xs ${isRecommended
                                 ? "bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
                                 : "bg-primary dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"}`}
-                            onClick={handleActivatePlan}
+                            onClick={() => handleActivatePlan(strategyKey)}
                         >
-                            <Play className="mr-2 h-4 w-4"/>
+                            <Play className="mr-2 h-3.5 w-3.5"/>
                             {t('startPlanButton')}
                         </Button>
                     </div>
