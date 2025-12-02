@@ -333,7 +333,10 @@
     "DebtList": {
       "title": "Debt Portfolio",
       "total": "Total:",
-      "remaining": "Remaining"
+      "remaining": "Remaining",
+      "starting": "Starting:",
+      "debtIncreased": "Debt Increased (+{amount})",
+      "paidPercentage": "{percent}% paid"
     }
   }
 }

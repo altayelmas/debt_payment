@@ -333,7 +333,10 @@
     "DebtList": {
       "title": "Borç Portföyü",
       "total": "Toplam:",
-      "remaining": "Kalan"
+      "remaining": "Kalan",
+      "starting": "Başlangıç:",
+      "debtIncreased": "Borç Arttı (+{amount})",
+      "paidPercentage": "%{percent} ödendi"
     }
   }
 }
