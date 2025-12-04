@@ -1,7 +1,6 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-// İYİLEŞTİRME: i18n routing için doğru importlar
 import {useRouter, Link} from '@/i18n/navigation';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -38,6 +37,7 @@ export const dynamic = 'force-dynamic';
 export default function RegisterPage() {
     const t = useTranslations('RegisterPage');
     const tZod = useTranslations('RegisterPage.zodErrors');
+    const tErrors = useTranslations('Errors');
 
     const registerFormSchema = z.object({
         email: z.string()

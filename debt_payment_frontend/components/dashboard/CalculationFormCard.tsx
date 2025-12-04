@@ -99,7 +99,6 @@ export default function CalculationFormCard({
                 const deficitAmount = errorData.deficit || 0;
                 const formattedAmount = formatCurrency(deficitAmount, locale);
 
-                // TODO - Payment Insufficient doesn't show the correct amount.
                 toast.error(
                     <span>
                         {tZod.rich('PAYMENT_INSUFFICIENT', {

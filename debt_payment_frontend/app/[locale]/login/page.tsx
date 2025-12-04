@@ -35,7 +35,8 @@ export const dynamic = 'force-dynamic';
 
 export default function LoginPage() {
     const t = useTranslations('LoginPage');
-    const tZod = useTranslations('LoginPage.zodErrors'); // Çeviri dosyasında bu anahtarların olduğundan emin olun
+    const tZod = useTranslations('LoginPage.zodErrors');
+    const tErrors = useTranslations('Errors');
     const locale = useLocale();
 
     const loginFormSchema = z.object({
@@ -82,11 +83,30 @@ export default function LoginPage() {
             router.push('/dashboard');
         } catch (error: any) {
             console.error('Login error: ', error);
+            const code = error.response?.data?.errors?.[0]
+
+            if (code) {
+                if (code === 'COULD_NOT_FIND_EMAIL') {
+                    toast.error(
+                        tErrors('COULD_NOT_FIND_EMAIL')
+                    );
+                }
+            } else if (code === 'INVALID_PASSWORD') {
+                toast.error(
+                    tErrors('INVALID_PASSWORD')
+                );
+            } else {
+                toast.error(
+                    tErrors("GENERIC_ERROR")
+                );
+            }
+
+
             const errorMessage = error.response?.data?.errors?.[0] ||
                 error.response?.data?.Error ||
                 error.response?.data ||
                 'Login failed';
-            toast.error(errorMessage || t('toasts.defaultError'));
+            //toast.error(errorMessage || t('toasts.defaultError'));
         } finally {
             setLoading(false);
         }

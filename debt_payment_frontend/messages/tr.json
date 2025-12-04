@@ -255,12 +255,6 @@
       "startPlanButton": "Bu Planı Başlat"
     }
   },
-  "Errors": {
-    "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> yapmalısınız.",
-    "CALCULATION_LIMIT_EXCEEDED": "Hesaplama limiti aşıldı. Ödeme tutarı borcu kapatmak için çok düşük olabilir.",
-    "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
-    "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."
-  },
   "TrackingPage": {
     "page": {
       "title": "Borçtan Kurtuluş Yolculuğunuz",
@@ -338,5 +332,26 @@
       "debtIncreased": "Borç Arttı (+{amount})",
       "paidPercentage": "%{percent} ödendi"
     }
+  },
+  "Errors": {
+    "PAYMENT_INSUFFICIENT": "Bütçeniz aylık faizi karşılamıyor. Borcun azalması için Aylık Ekstra Bütçenizi en az <str>{amount}</str> yapmalısınız.",
+    "CALCULATION_LIMIT_EXCEEDED": "Hesaplama limiti aşıldı. Ödeme tutarı borcu kapatmak için çok düşük olabilir.",
+    "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
+    "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+    "COULD_NOT_FIND_EMAIL": "Email adresi bulunamadı. Lütfen emailinizi kontrol edin.",
+    "DefaultError": "Bir hata oluştu.",
+    "DuplicateEmail": "Bu e-posta adresi zaten kullanımda.",
+    "DuplicateUserName": "Bu kullanıcı adı zaten alınmış.",
+    "InvalidEmail": "Geçersiz e-posta adresi.",
+    "InvalidUserName": "Geçersiz kullanıcı adı.",
+    "PasswordMismatch": "Parola eşleşmiyor.",
+    "PasswordRequiresDigit": "Parola en az bir rakam ('0'-'9') içermelidir.",
+    "PasswordRequiresLower": "Parola en az bir küçük harf ('a'-'z') içermelidir.",
+    "PasswordRequiresNonAlphanumeric": "Parola en az bir sembol (örn: ! * ?) içermelidir.",
+    "PasswordRequiresUniqueChars": "Parola daha fazla benzersiz karakter içermelidir.",
+    "PasswordRequiresUpper": "Parola en az bir büyük harf ('A'-'Z') içermelidir.",
+    "PasswordTooShort": "Parola çok kısa.",
+    "UserAlreadyHasPassword": "Kullanıcının zaten bir parolası var.",
+    "UserLockoutNotEnabled": "Bu kullanıcı için kilitleme aktif değil."
   }
 }

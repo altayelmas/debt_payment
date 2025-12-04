@@ -114,12 +114,6 @@
       "dialogConfirm": "Delete"
     }
   },
-  "Errors": {
-    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please make your Monthly Extra Budget at least <str>{amount}</str>.",
-    "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
-    "NO_DEBTS_FOUND": "No debts found for calculation.",
-    "GENERIC_ERROR": "An unexpected error occurred. Please try again later."
-  },
   "HomePage": {
     "redirecting": "Redirecting..."
   },
@@ -338,5 +332,26 @@
       "debtIncreased": "Debt Increased (+{amount})",
       "paidPercentage": "{percent}% paid"
     }
+  },
+  "Errors": {
+    "PAYMENT_INSUFFICIENT": "Your budget does not cover the monthly interest. Please make your Monthly Extra Budget at least <str>{amount}</str>.",
+    "CALCULATION_LIMIT_EXCEEDED": "Calculation limit exceeded. The payment amount might be too low to pay off the debt.",
+    "NO_DEBTS_FOUND": "No debts found for calculation.",
+    "GENERIC_ERROR": "An unexpected error occurred. Please try again later.",
+    "COULD_NOT_FIND_EMAIL": "Email address not found. Please check your email address.",
+    "DefaultError": "An error occurred.",
+    "DuplicateEmail": "Email is already taken.",
+    "DuplicateUserName": "Username is already taken.",
+    "InvalidEmail": "Email is invalid.",
+    "InvalidUserName": "Username is invalid.",
+    "PasswordMismatch": "Incorrect password.",
+    "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9').",
+    "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z').",
+    "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non-alphanumeric character.",
+    "PasswordRequiresUniqueChars": "Passwords must use more unique characters.",
+    "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z').",
+    "PasswordTooShort": "Passwords must be longer.",
+    "UserAlreadyHasPassword": "User already has a password set.",
+    "UserLockoutNotEnabled": "Lockout is not enabled for this user."
   }
 }
