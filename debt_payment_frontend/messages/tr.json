@@ -280,7 +280,8 @@
         "targetDate": "Hedef Tarih",
         "totalRemaining": "Kalan Toplam",
         "progress": "İlerleme",
-        "completed": "tamamlandı"
+        "completed": "tamamlandı",
+        "principal": "Güncel Anapara: {amount}"
       },
       "cards": {
         "month": "Ay {month}",

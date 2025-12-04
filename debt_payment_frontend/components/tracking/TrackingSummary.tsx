@@ -14,17 +14,20 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
     const t = useTranslations('TrackingPage.page');
     const locale = useLocale();
 
-    const initialDebt = activePlan.beginningDebt;
-    const currentRealDebt = activePlan.currentTotalDebt;
+    const totalObligation = currentStrategyResult.totalPaid;
+
+    const totalPaidSoFar = currentStrategyResult.paymentSchedule.reduce((acc, month) => {
+        return acc + (month.actualPaidAmount || 0);
+    }, 0);
+
+    let remainingTotalCost = totalObligation - totalPaidSoFar;
+    if (remainingTotalCost < 0) remainingTotalCost = 0;
+
+    const currentPrincipal = activePlan.currentTotalDebt;
 
     let progressPercentage = 0;
-    if (initialDebt > 0) {
-        if (currentRealDebt <= 0) {
-            progressPercentage = 100;
-        } else {
-            const paidAmount = initialDebt - currentRealDebt;
-            progressPercentage = Math.max(0, Math.round((paidAmount / initialDebt) * 100));
-        }
+    if (totalObligation > 0) {
+        progressPercentage = Math.round((totalPaidSoFar / totalObligation) * 100);
     }
     if (progressPercentage > 100) progressPercentage = 100;
 
@@ -66,10 +69,15 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
             </Card>
 
             <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardContent className="p-6">
-                    <p className="text-sm text-muted-foreground font-medium">{t('summary.totalRemaining')}</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-50">
-                        {formatCurrency(currentRealDebt, locale)}
+                <CardContent className="p-6 flex flex-col justify-center">
+                    <p className="text-sm text-muted-foreground font-medium mb-1">{t('summary.totalRemaining')}</p>
+
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-50 flex items-baseline gap-2">
+                        {formatCurrency(remainingTotalCost, locale)}
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mt-1 font-medium bg-gray-100 dark:bg-gray-700/50 px-2 py-1 rounded w-fit">
+                        {t('summary.principal', { amount: formatCurrency(currentPrincipal, locale) })}
                     </p>
                 </CardContent>
             </Card>
@@ -79,7 +87,7 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
                     <p className="text-sm text-muted-foreground font-medium">{t('summary.progress')}</p>
                     <div className="flex items-end gap-2">
                         <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                            {progressPercentage}%
+                            %{progressPercentage}
                         </p>
                         <span className="text-sm text-muted-foreground mb-1">{t('summary.completed')}</span>
                     </div>

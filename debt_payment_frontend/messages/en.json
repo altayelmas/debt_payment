@@ -280,7 +280,8 @@
         "targetDate": "Target Date",
         "totalRemaining": "Total Remaining",
         "progress": "Progress",
-        "completed": "completed"
+        "completed": "completed",
+        "principal": "Current Principal: {amount}"
       },
       "cards": {
         "month": "Month {month}",
