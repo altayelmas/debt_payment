@@ -31,7 +31,7 @@ namespace debt_payment_backend.IdentityService.Service.Impl
                 return new AuthResponseDto
                 {
                     IsSuccess = false,
-                    Errors = new[] { "Invalid Email or Password" }
+                    Errors = new[] {"COULD_NOT_FIND_EMAIL"}
                 };
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, userLoginDto.Password, false);
@@ -40,7 +40,7 @@ namespace debt_payment_backend.IdentityService.Service.Impl
                 return new AuthResponseDto
                 {
                     IsSuccess = false,
-                    Errors = new[] { "Invalid Email or Password" }
+                    Errors = new[] { "INVALID_PASSWORD" }
                 };
             }
             string token = _jwtService.CreateToken(user);
@@ -66,7 +66,7 @@ namespace debt_payment_backend.IdentityService.Service.Impl
                 return new AuthResponseDto
                 {
                     IsSuccess = false,
-                    Errors = result.Errors.Select(e => e.Description)
+                    Errors = result.Errors.Select(e => e.Code)
                 };
             }
             return new AuthResponseDto
