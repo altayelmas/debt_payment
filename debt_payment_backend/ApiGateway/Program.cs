@@ -27,7 +27,7 @@ try  {
                 partitionKey: remoteIpAddress, 
                 factory: _ => new FixedWindowRateLimiterOptions
                 {
-                    PermitLimit = 30,
+                    PermitLimit = 100,
                     Window = TimeSpan.FromMinutes(1),
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     QueueLimit = 2
@@ -42,7 +42,7 @@ try  {
                 partitionKey: remoteIpAddress, 
                 factory: _ => new FixedWindowRateLimiterOptions
                 {
-                    PermitLimit = 10,
+                    PermitLimit = 25,
                     Window = TimeSpan.FromMinutes(1),
                     QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                     QueueLimit = 0
