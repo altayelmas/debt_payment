@@ -19,6 +19,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Loader2 } from "lucide-react";
 import { formatCurrency } from '@/lib/utils';
 import { useLocale, useTranslations } from 'next-intl';
+import { NumericFormat } from 'react-number-format';
 
 interface MakePaymentModalProps {
     isOpen: boolean;
@@ -101,10 +102,10 @@ export default function MakePaymentModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
                 <DialogHeader>
-                    <DialogTitle>{t('title', {monthYear: formatMonthYear(monthYear)})}</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-gray-900 dark:text-gray-50">{t('title', {monthYear: formatMonthYear(monthYear)})}</DialogTitle>
+                    <DialogDescription className="text-muted-foreground dark:text-gray-400">
                         {t.rich('description', {
                             amount: formatCurrency(targetAmount, locale),
                             strategyName: strategyName,
@@ -122,17 +123,24 @@ export default function MakePaymentModal({
                             name="amount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('labelAmount')}</FormLabel>
+                                    <FormLabel className="text-gray-900 dark:text-gray-200">{t('labelAmount')}</FormLabel>
                                     <FormControl>
                                         <div className="relative">
-                                            <span className="absolute left-3 top-2 text-muted-foreground">
+                                            <span className="absolute left-3 top-[10px] text-muted-foreground z-10">
                                                 {locale === 'tr' ? '₺' : '$'}
                                             </span>
-                                            <Input
-                                                type="number"
-                                                step="0.01"
-                                                className="pl-7 text-lg font-semibold"
-                                                {...field}
+
+                                            <NumericFormat
+                                                value={field.value}
+                                                onValueChange={(values) => {
+                                                    field.onChange(values.floatValue);
+                                                }}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                allowNegative={false}
+                                                customInput={Input}
+                                                className="pl-7 text-lg font-semibold bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
                                             />
                                         </div>
                                     </FormControl>
@@ -142,7 +150,7 @@ export default function MakePaymentModal({
                         />
 
                         <div className="flex justify-end gap-2">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700">
                                 {t('buttonCancel')}
                             </Button>
                             <Button type="submit">

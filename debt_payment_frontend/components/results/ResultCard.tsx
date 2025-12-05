@@ -55,12 +55,12 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                 strategy : selectedStrategy
             });
 
-            toast.success("Plan activated! Redirecting to tracking...", {id: loadingToast});
+            toast.success(t('toastActivationSuccess'), {id: loadingToast});
 
             setTimeout(() => router.push('/tracking'), 1000);
 
         } catch (error) {
-            toast.error("Could not activate plan.", {id: loadingToast});
+            toast.error(t('toastActivationError'), {id: loadingToast});
         }
     };
 

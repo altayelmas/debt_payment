@@ -252,7 +252,10 @@
       "milestoneItemPaid": "Paid in full",
       "gapFocusTitle": "Focus Phase",
       "gapFocusDescription": "Months {start}-{end}: Keep directing all extra budget towards <str>\"{debtName}\"</str>.",
-      "startPlanButton": "Start This Plan"
+      "startPlanButton": "Start This Plan",
+      "toastActivatingPlan": "Activating plan...",
+      "toastActivationSuccess": "Plan activated! Redirecting to tracking...",
+      "toastActivationError": "Could not activate plan."
     }
   },
   "TrackingPage": {

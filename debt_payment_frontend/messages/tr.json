@@ -252,7 +252,10 @@
       "milestoneItemPaid": "Tamamen ödendi",
       "gapFocusTitle": "Odaklanma Dönemi",
       "gapFocusDescription": "Ay {start} - {end} arasında: Tüm ekstra bütçenizi <str>\"{debtName}\"</str> borcuna yönlendirin.",
-      "startPlanButton": "Bu Planı Başlat"
+      "startPlanButton": "Bu Planı Başlat",
+      "toastActivatingPlan": "Plan aktifleştiriliyor...",
+      "toastActivationSuccess": "Plan aktifleştirildi! Plan sayfasına yönlendiriliyor...",
+      "toastActivationError": "Plan aktifleştirilemedi."
     }
   },
   "TrackingPage": {
