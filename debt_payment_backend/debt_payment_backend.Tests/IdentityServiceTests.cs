@@ -69,7 +69,7 @@ namespace debt_payment_backend.Tests
             var result = await _sut.LoginAsync(loginDto);
             Assert.False(result.IsSuccess);
             Assert.Empty(result.Token);
-            Assert.Contains("Invalid Email or Password", result.Errors);
+            Assert.Contains("COULD_NOT_FIND_EMAIL", result.Errors.ElementAt(0));
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace debt_payment_backend.Tests
 
             Assert.False(result.IsSuccess);
             Assert.Empty(result.Token);
-            Assert.Contains("Invalid Email or Password", result.Errors);
+            Assert.Contains("INVALID_PASSWORD", result.Errors.ElementAt(0));
         }
 
         [Fact]
@@ -124,8 +124,8 @@ namespace debt_payment_backend.Tests
                 Email = registerDto.Email
             };
 
-            var errorMessage1 = "Password is too short.";
-            var errorMessage2 = "Invalid email format.";
+            var errorMessage1 = "PasswordTooShort";
+            var errorMessage2 = "InvalidEmail";
 
             var errors = new List<IdentityError>
             {
