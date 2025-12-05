@@ -85,28 +85,14 @@ export default function LoginPage() {
             console.error('Login error: ', error);
             const code = error.response?.data?.errors?.[0]
 
-            if (code) {
-                if (code === 'COULD_NOT_FIND_EMAIL') {
-                    toast.error(
-                        tErrors('COULD_NOT_FIND_EMAIL')
-                    );
-                }
+            if (code === 'COULD_NOT_FIND_EMAIL') {
+                toast.error(tErrors('COULD_NOT_FIND_EMAIL'));
             } else if (code === 'INVALID_PASSWORD') {
-                toast.error(
-                    tErrors('INVALID_PASSWORD')
-                );
+                toast.error(tErrors('INVALID_PASSWORD'));
             } else {
-                toast.error(
-                    tErrors("GENERIC_ERROR")
-                );
+                toast.error(tErrors("GENERIC_ERROR"));
             }
 
-
-            const errorMessage = error.response?.data?.errors?.[0] ||
-                error.response?.data?.Error ||
-                error.response?.data ||
-                'Login failed';
-            //toast.error(errorMessage || t('toasts.defaultError'));
         } finally {
             setLoading(false);
         }

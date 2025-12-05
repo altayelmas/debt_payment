@@ -349,6 +349,7 @@
     "NO_DEBTS_FOUND": "Hesaplama yapılacak borç bulunamadı.",
     "GENERIC_ERROR": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
     "COULD_NOT_FIND_EMAIL": "Email adresi bulunamadı. Lütfen emailinizi kontrol edin.",
+    "INVALID_PASSWORD": "Şifreniz yanlış. Lütfen şifrenizi kontrol edin.",
     "DefaultError": "Bir hata oluştu.",
     "DuplicateEmail": "Bu e-posta adresi zaten kullanımda.",
     "DuplicateUserName": "Bu kullanıcı adı zaten alınmış.",
