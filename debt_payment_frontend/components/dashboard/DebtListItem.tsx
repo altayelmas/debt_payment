@@ -58,7 +58,7 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
             <div className="group relative flex flex-col sm:flex-row justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50 hover:border-blue-300 dark:hover:border-blue-700 transition-all shadow-sm">
 
                 <div className="flex justify-between items-start gap-3 w-full">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="hidden sm:flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                             <Wallet className="h-4 w-4" />
                         </div>
@@ -150,7 +150,7 @@ export default function DebtListItem({debt, onEditClick, onDeleteComplete}: Debt
                                     <AlertDialogTitle className="text-gray-900 dark:text-gray-50">
                                         {t('dialogTitle')}
                                     </AlertDialogTitle>
-                                    <AlertDialogDescription className="text-gray-500 dark:text-gray-400">
+                                    <AlertDialogDescription className="text-gray-500 dark:text-gray-400 break-all">
                                         {t('dialogDescription', {debtName: debt.name})}
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>

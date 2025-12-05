@@ -309,6 +309,12 @@
         "title": "Your debts are paid off! 🎉",
         "description": "Congratulations! You have successfully paid off all your debts. This plan is complete. Enjoy your financial freedom.",
         "button": "Set New Goals"
+      },
+      "toasts": {
+        "recalculateSuccess": "Plan updated successfully.",
+        "recalculateIncreased": "Due to debt increase, your monthly payment has been automatically updated to {amount}.",
+        "calculating": "Recalculating plan based on current debts...",
+        "defaultError": "Could not recalculate plan"
       }
     },
     "MakePaymentModal": {

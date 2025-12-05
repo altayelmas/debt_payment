@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CalculationService.Exceptions;
 using CalculationService.Model.Dto;
 using CalculationService.Model.Entity;
 using CalculationService.Repository;
@@ -187,6 +188,21 @@ namespace CalculationService.Service.Impl
                 
                 }
                 report.CurrentTotalDebt = realCurrentDebt;
+
+                var tolerance = 1000m; 
+
+                var difference = realCurrentDebt - validRangeStart;
+
+                if (Math.Abs(difference) > tolerance)
+                {
+                    report.IsPlanOutdated = true;
+                    var status = difference > 0 ? "Debt increased" : "Debt decreased";
+                    Console.WriteLine($"Plan Outdated! {status}. Difference: {difference}");
+                }
+                else
+                {
+                    report.IsPlanOutdated = false;
+                }
             }
             catch (Exception ex)
             {
@@ -197,25 +213,74 @@ namespace CalculationService.Service.Impl
             return report;
         }
 
-        public async  Task<Guid?> RecalculateActivePlanAsync(string userId)
+        public async  Task<RecalculateResultDto?> RecalculateActivePlanAsync(string userId)
         {
             var activePlan = await _planRepository.GetActivePlanByUserIdAsync(userId);
             if (activePlan == null) return null;
 
-            var oldReport = await _calculateService.GetCalculationResultById(userId, activePlan.CalculationReportId);
-            if (oldReport == null) return null;
-
-            var newReportId = await _calculateService.CalculateAsync(
-                new CalculationRequestDto { ExtraMonthlyPayment = oldReport.ExtraPayment }, 
-                userId
-            );
-
-            activePlan.CalculationReportId = newReportId;
-            activePlan.ActivatedAt = DateTime.UtcNow; 
+            var oldReportData = await _calculateService.GetCalculationResultById(userId, activePlan.CalculationReportId);
+            if (oldReportData == null) return null;
             
+            decimal oldPayment = oldReportData.ExtraPayment;
+            
+            decimal currentTryingPayment = oldPayment;
+            Guid newReportId = Guid.Empty;
+            bool calculationSucceeded = false;
+            int retryCount = 0;
+            const int MAX_RETRIES = 10;
+
+            while (!calculationSucceeded && retryCount < MAX_RETRIES)
+            {
+                try
+                {
+                    newReportId = await _calculateService.CalculateAsync(
+                        new CalculationRequestDto { ExtraMonthlyPayment = currentTryingPayment }, 
+                        userId
+                    );
+                    
+                    calculationSucceeded = true;
+                }
+                catch (PaymentInsufficientException ex)
+                {
+                    decimal suggestedByService = ex.DeficitAmount;
+
+                    if (suggestedByService <= currentTryingPayment * 1.01m)
+                    {
+                        currentTryingPayment = currentTryingPayment * 1.2m;
+                        
+                        if(currentTryingPayment < 1000) currentTryingPayment += 1000;
+                    }
+                    else
+                    {
+                        currentTryingPayment = suggestedByService * 1.05m;
+                    }
+
+                    currentTryingPayment = Math.Ceiling(currentTryingPayment);
+
+                    retryCount++;
+                    Console.WriteLine($"Recalculation retry {retryCount}/{MAX_RETRIES}. Adjusted Payment Target: {currentTryingPayment:N2}");
+                }
+            }
+
+            if (!calculationSucceeded)
+            {
+                throw new InvalidOperationException($"Calculation failed after {MAX_RETRIES} attempts. Debt creates infinite loop.");
+            }
+
+            // Başarılı olduysa planı güncelle
+            activePlan.CalculationReportId = newReportId;
+            activePlan.ActivatedAt = DateTime.UtcNow;
             await _planRepository.UpdateUserActivePlanAsync(activePlan);
 
-            return newReportId;
+            var newReportData = await _calculateService.GetCalculationResultById(userId, newReportId);
+            decimal finalPayment = newReportData.ExtraPayment;
+
+            return new RecalculateResultDto
+            {
+                ReportId = newReportId,
+                NewMonthlyPayment = finalPayment,
+                PaymentIncreased = finalPayment > oldPayment
+            };
         }
     }
 }

@@ -18,13 +18,13 @@ namespace debt_payment_backend.DebtService.Model.Entity
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal CurrentBalance { get; set; }
         [Required]
         [Column(TypeName = "decimal(5, 2)")]
         public decimal InterestRate { get; set; }
         [Required]
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal MinPayment { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

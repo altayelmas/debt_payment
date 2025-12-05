@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import {formatCurrency} from "@/lib/utils";
+import {NumericFormat} from "react-number-format";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 
@@ -145,15 +146,18 @@ export default function CalculationFormModal({
                                     <FormItem>
                                         <FormLabel className="text-gray-900 dark:text-gray-200">{t('label')}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="number"
-                                                step="50"
-                                                min="0"
-                                                max={MAX_CURRENCY_VALUE}
+                                            <NumericFormat
+                                                value={field.value}
+                                                onValueChange={(values) => {
+                                                    field.onChange(values.floatValue);
+                                                }}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                allowNegative={false}
+                                                customInput={Input}
                                                 placeholder="0"
                                                 className="mt-1 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
-                                                {...field}
-                                                value={field.value ?? ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

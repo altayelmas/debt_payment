@@ -77,14 +77,54 @@ namespace debt_payment_backend.CalculationService.Service.Impl
 
             decimal totalMonthlyInterest = userDebts.Sum(d => d.CurrentBalance * (d.InterestRate / 100) / 12);
             decimal totalMinPayment = userDebts.Sum(d => d.MinPayment);
-            decimal totalPaymentPower = totalMinPayment + request.ExtraMonthlyPayment;
+            decimal totalDebtPrincipal = userDebts.Sum(d => d.CurrentBalance);
 
-            if (totalPaymentPower <= totalMonthlyInterest)
+            decimal interestThreshold = totalMonthlyInterest * 1.05m;
+            decimal safeTimeLimitMonths = MAX_SIMULATION_MONTHS * 0.9m;
+            decimal minPrincipalPerMonth = totalDebtPrincipal / safeTimeLimitMonths;
+            decimal absoluteMinRequired = Math.Max(interestThreshold, totalMonthlyInterest + minPrincipalPerMonth);
+
+            decimal currentTotalPaymentPower = totalMinPayment + request.ExtraMonthlyPayment;
+
+            decimal validatedSuggestion = Math.Max(currentTotalPaymentPower, absoluteMinRequired);
+
+            bool isSearchingForSuggestion = currentTotalPaymentPower < absoluteMinRequired;
+
+            decimal tryingExtraPayment = Math.Max(request.ExtraMonthlyPayment, validatedSuggestion - totalMinPayment);
+
+            bool simulationPassed = false;
+            int attempts = 0;
+            const int MAX_ATTEMPTS = 10;
+
+            while (!simulationPassed && attempts < MAX_ATTEMPTS)
             {
-                decimal deficit = totalMonthlyInterest - totalPaymentPower;
-                decimal suggestedExtra = request.ExtraMonthlyPayment + deficit + 100;
+                try
+                {
+                    
+                    var testResult = SimulatePayment(userDebts, tryingExtraPayment, OrderForSnowball);
+                    simulationPassed = true;
+                }
+                catch (Exception) 
+                {
+                    attempts++;
+                    isSearchingForSuggestion = true;
 
-                throw new PaymentInsufficientException(suggestedExtra);
+                    decimal previousVal = tryingExtraPayment;
+                    tryingExtraPayment = Math.Max(tryingExtraPayment * 1.2m, tryingExtraPayment + 1000);
+                    tryingExtraPayment = Math.Ceiling(tryingExtraPayment);
+
+                    Console.WriteLine($"Pre-Validation attempt {attempts} failed. Increasing suggestion from {previousVal} to {tryingExtraPayment}");
+                }
+            }
+
+            if (!simulationPassed)
+            {
+                throw new InvalidOperationException("Debt is too large to simulate within constraints.");
+            }
+
+            if (request.ExtraMonthlyPayment < tryingExtraPayment)
+            {
+                throw new PaymentInsufficientException(tryingExtraPayment);
             }
             
             string scenarioHash = CreateScenarioHash(userId, request.ExtraMonthlyPayment, userDebts);
@@ -98,8 +138,36 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                 return existingReport.CalculationId;
             }
 
-            var snowballResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForSnowball);
-            var avalancheResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForAvalanche);
+            StrategyResultDto snowballResult;
+            StrategyResultDto avalancheResult;
+            
+            try
+            {
+                snowballResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForSnowball);
+                avalancheResult = SimulatePayment(userDebts, request.ExtraMonthlyPayment, OrderForAvalanche);
+            }
+            catch (Exception ex) when (ex is OverflowException || ex is InvalidOperationException)
+            {
+                Console.WriteLine($"Simulation Failed ({ex.GetType().Name})! Adjusting suggestion aggressively.");
+
+                decimal currentTotalPay = totalMinPayment + request.ExtraMonthlyPayment;
+                decimal deficit = (totalMonthlyInterest * 1.05m) - currentTotalPay;
+
+                decimal baseSuggestion = request.ExtraMonthlyPayment;
+
+                if (deficit > 0)
+                {
+                    baseSuggestion = request.ExtraMonthlyPayment + (deficit * 1.2m);
+                }
+                else
+                {
+                    baseSuggestion = Math.Max(request.ExtraMonthlyPayment * 1.2m, request.ExtraMonthlyPayment + 2000);
+                }
+
+                decimal suggestedExtra = Math.Ceiling(baseSuggestion);
+
+                throw new PaymentInsufficientException(suggestedExtra);
+            }
 
             snowballResult.StrategyName = "Snowball";
             avalancheResult.StrategyName = "Avalanche";
@@ -211,6 +279,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
             var paymentSchedule = new List<MonthlyPaymentDetailDto>();
             var milestones = new List<DebtPayoffMilestoneDto>();
 
+        
             while (activeDebts.Any())
             {
                 months++;
@@ -278,7 +347,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                         }
                     }
                 }
-               
+            
                 activeDebts.RemoveAll(d => d.CurrentBalance <= 0);
                 decimal monthEndingBalance = activeDebts.Sum(d => d.CurrentBalance);
                 decimal totalPaidThisMonth = monthlyTotalBudget - availableForSnowball;
@@ -312,6 +381,7 @@ namespace debt_payment_backend.CalculationService.Service.Impl
                     PaidOffDebts = paidOffThisMonth.Select(d => d.Name).ToList()
                 });
             }
+    
             var payoffDate = DateTime.Now.AddMonths(months);
 
             return new StrategyResultDto

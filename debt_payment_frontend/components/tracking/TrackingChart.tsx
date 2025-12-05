@@ -50,10 +50,20 @@ export default function TrackingChart({ paymentSchedule, totalLiability }: Track
         );
     };
 
+    const formatYAxisTick = (value: number) => {
+        if (value === 0) return "0";
+
+        return new Intl.NumberFormat(locale, {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1,
+        }).format(value);
+    };
+
     const CustomYAxisTick = ({ x, y, payload }: any) => {
         return (
             <text x={x} y={y + 4} textAnchor="end" className="fill-gray-600 dark:fill-gray-400 text-xs font-medium">
-                {formatCurrency(payload.value, locale)}
+                {formatYAxisTick(payload.value)}
             </text>
         );
     };

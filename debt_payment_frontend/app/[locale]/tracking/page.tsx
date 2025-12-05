@@ -20,7 +20,7 @@ import {
     FastForward
 } from "lucide-react";
 
-import {useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import toast from "react-hot-toast";
@@ -32,10 +32,13 @@ import TrackingChart from "@/components/tracking/TrackingChart";
 import TrackingTimeline from "@/components/tracking/TrackingTimeline";
 import MakePaymentModal from "@/components/tracking/MakePaymentModal";
 import TrackingDebtList from "@/components/tracking/TrackingDebtList";
+import {formatCurrency} from "@/lib/utils";
 
 export default function TrackingPage() {
 
     const t = useTranslations('TrackingPage.page');
+    const locale = useLocale();
+
     const [activePlan, setActivePlan] = useState<CalculationResult | null>(null);
     const [loading, setLoading] = useState(true);
     const [recalculating, setRecalculating] = useState(false);
@@ -67,14 +70,35 @@ export default function TrackingPage() {
     const handleRecalculate = async () => {
 
         setRecalculating(true);
-        const loadingToast = toast.loading("Recalculating plan based on current debts...");
+        const loadingToast = toast.loading(t('toasts.calculating'));
 
         try {
-            await api.post('/api/plan/recalculate');
-            toast.success("Plan updated successfully!", {id: loadingToast});
+            const response = await api.post('/api/plan/recalculate');
+
+            const { paymentIncreased, newMonthlyPayment } = response.data;
+
+            if (paymentIncreased) {
+                toast.success(
+                    t('toasts.recalculateIncreased', {
+                        amount: formatCurrency(newMonthlyPayment, locale)
+                    }),
+                    {
+                        id: loadingToast,
+                        duration: 6000,
+                        icon: '⚠️',
+                        style: { border: '1px solid #facc15', color: '#854d0e' }
+                    }
+                );
+            } else {
+                toast.success(t('toasts.recalculateSuccess'), {
+                    id: loadingToast,
+                    duration: 3000
+                });
+            }
+
             await fetchActivePlan();
         } catch (error) {
-            toast.error("Could not recalculate plan.", {id: loadingToast});
+            toast.error(t('toasts.defaultError'), { id: loadingToast });
         } finally {
             setRecalculating(false);
         }
@@ -133,24 +157,26 @@ export default function TrackingPage() {
                         </div>
                     )}
                     {activePlan?.isPlanOutdated && !isDebtFullyPaid && (
-                        <Alert variant="destructive"
-                               className="mb-6 border-yellow-600/50 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200">
-                            <AlertTriangle className="h-4 w-4 stroke-yellow-600"/>
-                            <AlertTitle className="text-yellow-700 dark:text-yellow-400 font-bold">
+                        <Alert className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200">
+
+                            <RefreshCw className="h-4 w-4 stroke-blue-600" />
+
+                            <AlertTitle className="text-blue-700 dark:text-blue-300 font-bold">
                                 {t('outdatedAlert.title')}
                             </AlertTitle>
-                            <AlertDescription
-                                className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-2">
-                                <p>{t('outdatedAlert.description')}</p>
+
+                            <AlertDescription className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-2">
+                                <p>
+                                    {t('outdatedAlert.description')}
+                                </p>
                                 <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={handleRecalculate}
                                     disabled={recalculating}
-                                    className="bg-white text-black border-yellow-600 hover:bg-yellow-100 shrink-0 mt-2 sm:mt-0"
+                                    className="bg-white text-blue-700 border-blue-200 hover:bg-blue-100 shrink-0 mt-2 sm:mt-0"
                                 >
-                                    {recalculating ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> :
-                                        <RefreshCw className="mr-2 h-4 w-4"/>}
+                                    {recalculating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                                     {t('outdatedAlert.button')}
                                 </Button>
                             </AlertDescription>

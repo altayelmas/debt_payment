@@ -309,6 +309,12 @@
         "title": "Borçlarınız Bitti! 🎉",
         "description": "Tebrikler! Tüm borçlarınızı başarıyla ödediniz. Bu plan tamamlandı. Artık finansal özgürlüğünüzün tadını çıkarabilirsiniz.",
         "button": "Yeni Hedefler Belirle"
+      },
+      "toasts": {
+        "recalculateSuccess": "Plan başarıyla güncellendi.",
+        "recalculateIncreased": "Borç artışı nedeniyle aylık ödemeniz otomatik olarak {amount} tutarına güncellendi.",
+        "calculating": "Yeni borçlara göre plan yeniden hesaplanıyor...",
+        "defaultError": "Plan yeniden hesaplanamadı"
       }
     },
     "MakePaymentModal": {

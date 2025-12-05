@@ -26,6 +26,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import {NumericFormat} from "react-number-format";
 
 const MAX_CURRENCY_VALUE = 999999999999.99;
 const MAX_INTEREST_RATE = 100;
@@ -54,7 +55,9 @@ export default function DebtFormModal({
     const tZod = useTranslations('DashboardPage.DebtFormModal.zod');
 
     const debtFormSchema = z.object({
-        name: z.string().min(1, { message: "This field is required" }),
+        name: z.string()
+            .min(1, { message: "This field is required" })
+            .max(100, { message: "Name cannot exceed 100 characters" }),
         currentBalance: z.coerce.number()
             .min(0.01, { message: "Must be at least 0.01" })
             .max(MAX_CURRENCY_VALUE, { message: `Value cannot exceed ${MAX_CURRENCY_VALUE}` }),
@@ -139,6 +142,7 @@ export default function DebtFormModal({
                                         <FormControl>
                                             <Input
                                                 placeholder={t('labels.namePlaceholder')}
+                                                maxLength={100}
                                                 className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
                                                 {...field}
                                             />
@@ -154,10 +158,19 @@ export default function DebtFormModal({
                                     <FormItem>
                                         <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.balance')}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="number" min="0" step="0.01" placeholder="1500"
+                                            <NumericFormat
+                                                value={field.value}
+                                                onValueChange={(values) => {
+                                                    field.onChange(values.floatValue);
+                                                }}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                fixedDecimalScale={false}
+                                                allowNegative={false}
+                                                customInput={Input}
+                                                placeholder="1.500"
                                                 className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
-                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -171,10 +184,20 @@ export default function DebtFormModal({
                                     <FormItem>
                                         <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.interest')}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="number" min="0" step="0.01" placeholder={t('labels.interestPlaceholder')}
+                                            <NumericFormat
+                                                value={field.value}
+                                                onValueChange={(values) => field.onChange(values.floatValue)}
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                allowNegative={false}
+                                                isAllowed={(values) => {
+                                                    const { floatValue } = values;
+                                                    return floatValue === undefined || floatValue <= 100;
+                                                }}
+                                                suffix="%"
+                                                customInput={Input}
+                                                placeholder={t('labels.interestPlaceholder')}
                                                 className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
-                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -188,10 +211,18 @@ export default function DebtFormModal({
                                     <FormItem>
                                         <FormLabel className="text-gray-900 dark:text-gray-200">{t('labels.minPayment')}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="number" min="0" step="0.01" placeholder={t('labels.minPaymentPlaceholder')}
+                                            <NumericFormat
+                                                value={field.value}
+                                                onValueChange={(values) => {
+                                                    field.onChange(values.floatValue);
+                                                }}
+                                                thousandSeparator="."
+                                                decimalSeparator=","
+                                                decimalScale={2}
+                                                allowNegative={false}
+                                                customInput={Input}
+                                                placeholder={t('labels.minPaymentPlaceholder')}
                                                 className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500"
-                                                {...field}
                                             />
                                         </FormControl>
                                         <FormMessage />
