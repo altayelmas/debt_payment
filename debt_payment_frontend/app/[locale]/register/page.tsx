@@ -99,17 +99,21 @@ export default function RegisterPage() {
 
             if (data && Array.isArray(data)) {
                 if (data.length > 0 && typeof data[0] === 'string') {
-                    errorMessage = data.join(' ');
+                    errorMessage = data.map((errorCode: string) => {
+                        return tErrors(errorCode as any);
+                    }).join(' ');
                 }
-                else if (data.length > 0 && typeof data[0] === 'object' && data[0].description) {
-                    errorMessage = data.map((err: any) => err.description).join(' ');
+                else if (data.length > 0 && typeof data[0] === 'object') {
+                    errorMessage = data.map((err: any) => {
+                        return err.code ? tErrors(err.code as any) : err.description;
+                    }).join(' ');
                 }
             }
             else if (data?.Errors && Array.isArray(data.Errors)) {
-                errorMessage = data.Errors.join(' ');
+                errorMessage = data.Errors.map((code: string) => tErrors(code as any)).join(' ');
             }
             else if (typeof data === 'string') {
-                errorMessage = data;
+                errorMessage = data.includes(' ') ? data : tErrors(data as any);
             }
             toast.error(errorMessage);
         } finally {
