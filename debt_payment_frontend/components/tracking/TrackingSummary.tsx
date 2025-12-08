@@ -70,14 +70,16 @@ export default function TrackingSummary({ activePlan, currentStrategyResult }: T
 
             <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <CardContent className="p-6 flex flex-col justify-center">
-                    <p className="text-sm text-muted-foreground font-medium mb-1">{t('summary.totalRemaining')}</p>
+                    <p className="text-sm text-muted-foreground font-medium mb-1">
+                        {t('summary.totalCostWithInterest')}
+                    </p>
 
                     <div className="text-2xl font-bold text-gray-900 dark:text-gray-50 flex items-baseline gap-2">
                         {formatCurrency(remainingTotalCost, locale)}
                     </div>
 
                     <p className="text-xs text-muted-foreground mt-1 font-medium bg-gray-100 dark:bg-gray-700/50 px-2 py-1 rounded w-fit">
-                        {t('summary.principal', { amount: formatCurrency(currentPrincipal, locale) })}
+                        {t('summary.principalOnly', { amount: formatCurrency(currentPrincipal, locale) })}
                     </p>
                 </CardContent>
             </Card>

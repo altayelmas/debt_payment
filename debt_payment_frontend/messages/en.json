@@ -281,10 +281,10 @@
       },
       "summary": {
         "targetDate": "Target Date",
-        "totalRemaining": "Total Remaining",
+        "totalCostWithInterest": "Remaining Total Cost (Including Interest)",
+        "principalOnly": "Current Principal (Interest-Free): : {amount}",
         "progress": "Progress",
-        "completed": "completed",
-        "principal": "Current Principal: {amount}"
+        "completed": "completed"
       },
       "cards": {
         "month": "Month {month}",

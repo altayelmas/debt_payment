@@ -267,7 +267,6 @@ namespace CalculationService.Service.Impl
                 throw new InvalidOperationException($"Calculation failed after {MAX_RETRIES} attempts. Debt creates infinite loop.");
             }
 
-            // Başarılı olduysa planı güncelle
             activePlan.CalculationReportId = newReportId;
             activePlan.ActivatedAt = DateTime.UtcNow;
             await _planRepository.UpdateUserActivePlanAsync(activePlan);

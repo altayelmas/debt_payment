@@ -281,10 +281,10 @@
       },
       "summary": {
         "targetDate": "Hedef Tarih",
-        "totalRemaining": "Kalan Toplam",
+        "totalCostWithInterest": "Kalan Toplam Maliyet (Faiz Dahil)",
+        "principalOnly": "Güncel Anapara (Faizsiz): {amount}",
         "progress": "İlerleme",
-        "completed": "tamamlandı",
-        "principal": "Güncel Anapara: {amount}"
+        "completed": "tamamlandı"
       },
       "cards": {
         "month": "Ay {month}",

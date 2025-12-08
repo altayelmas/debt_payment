@@ -48,67 +48,67 @@ namespace DebtService.Service.Impl
         }
 
         public async Task<bool> DistributeAndPayAsync(decimal totalAmount, 
-            string userId, 
-            string strategy = "Avalanche", 
-            DateTime? date = null,
+            string userId, string strategy = "Avalanche", 
+            DateTime? date = null, 
             Guid? reportId = null)
         {
             var debts = await _debtRepository.GetActiveDebtsByUserIdAsync(userId);
             if (debts == null || !debts.Any()) return false;
 
+            var simulatedBalances = debts.ToDictionary(d => d.DebtId, d => d.CurrentBalance);
+
             var targetDate = date ?? DateTime.UtcNow;
             var existingPayments = await _paymentRepository.GetUserPaymentsAsync(userId, reportId);
 
             decimal remainingMoney = totalAmount;
-            
             var paymentsToMake = new List<PaymentDto>();
 
             foreach (var debt in debts)
             {
                 if (remainingMoney > 0)
                 {
-
                     var paidSoFarThisMonth = existingPayments
-                        .Where(p => p.DebtId == debt.DebtId && 
-                                    p.PaymentDate.Year == targetDate.Year && 
+                        .Where(p => p.DebtId == debt.DebtId &&
+                                    p.PaymentDate.Year == targetDate.Year &&
                                     p.PaymentDate.Month == targetDate.Month)
                         .Sum(p => p.Amount);
 
                     decimal remainingMinPayment = debt.MinPayment - paidSoFarThisMonth;
                     if (remainingMinPayment < 0) remainingMinPayment = 0;
 
-                    decimal paymentAmount = Math.Min(remainingMinPayment, debt.CurrentBalance);
+                    decimal paymentAmount = Math.Min(remainingMinPayment, simulatedBalances[debt.DebtId]);
                     paymentAmount = Math.Min(paymentAmount, remainingMoney);
 
                     if (paymentAmount > 0)
                     {
-                        paymentsToMake.Add(new PaymentDto 
-                        { 
-                            DebtId = debt.DebtId, 
-                            Amount = paymentAmount, 
-                            Date = date ?? DateTime.UtcNow,
+                        paymentsToMake.Add(new PaymentDto
+                        {
+                            DebtId = debt.DebtId,
+                            Amount = paymentAmount,
+                            Date = targetDate,
                             CalculationReportId = reportId ?? Guid.Empty
                         });
-                        
+
+                        simulatedBalances[debt.DebtId] -= paymentAmount;
                         remainingMoney -= paymentAmount;
                     }
                 }
             }
-            
 
             while (remainingMoney > 0)
             {
                 var isSnowball = string.Equals(strategy, "Snowball", StringComparison.OrdinalIgnoreCase);
+                
                 var targetDebt = isSnowball
-                    ? debts.Where(d => d.CurrentBalance > 0).OrderBy(d => d.CurrentBalance).FirstOrDefault()
-                    : debts.Where(d => d.CurrentBalance > 0).OrderByDescending(d => d.InterestRate).FirstOrDefault();
+                    ? debts.Where(d => simulatedBalances[d.DebtId] > 0).OrderBy(d => simulatedBalances[d.DebtId]).FirstOrDefault()
+                    : debts.Where(d => simulatedBalances[d.DebtId] > 0).OrderByDescending(d => d.InterestRate).FirstOrDefault();
 
                 if (targetDebt == null) break;
 
                 var existingPayment = paymentsToMake.FirstOrDefault(p => p.DebtId == targetDebt.DebtId);
-                
-                decimal amountNeeded = targetDebt.CurrentBalance;
-                
+
+                decimal amountNeeded = simulatedBalances[targetDebt.DebtId];
+
                 decimal paymentAmount = Math.Min(remainingMoney, amountNeeded);
 
                 if (existingPayment != null)
@@ -117,18 +117,19 @@ namespace DebtService.Service.Impl
                 }
                 else
                 {
-                    paymentsToMake.Add(new PaymentDto 
-                    { 
-                        DebtId = targetDebt.DebtId, 
-                        Amount = paymentAmount, 
-                        Date = targetDate, 
-                        CalculationReportId = reportId ?? Guid.Empty 
+                    paymentsToMake.Add(new PaymentDto
+                    {
+                        DebtId = targetDebt.DebtId,
+                        Amount = paymentAmount,
+                        Date = targetDate,
+                        CalculationReportId = reportId ?? Guid.Empty
                     });
                 }
 
-                targetDebt.CurrentBalance -= paymentAmount;
+                simulatedBalances[targetDebt.DebtId] -= paymentAmount;
                 remainingMoney -= paymentAmount;
             }
+
             return await _paymentRepository.AddBulkPaymentsAsync(paymentsToMake, userId);
         }
 
