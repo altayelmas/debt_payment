@@ -45,6 +45,12 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
         ? 'text-blue-600 dark:text-blue-400'
         : (isSnowball ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400');
 
+    const actionButtonClass = isRecommended
+        ? "bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
+        : (isSnowball
+            ? "bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white"
+            : "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 text-white");
+
     const description = isSnowball ? t('descriptionSnowball') : t('descriptionAvalanche');
 
     const handleActivatePlan = async (selectedStrategy: string) => {
@@ -170,9 +176,7 @@ export default function ResultCard({result, isSnowball, isRecommended, reportId}
                         </Button>
                         <Button
                             size="sm"
-                            className={`w-full text-white h-8 text-xs ${isRecommended
-                                ? "bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
-                                : "bg-primary dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"}`}
+                            className={`w-full h-8 text-xs ${actionButtonClass}`}
                             onClick={() => handleActivatePlan(strategyKey)}
                         >
                             <Play className="mr-2 h-3.5 w-3.5"/>
