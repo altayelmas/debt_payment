@@ -94,34 +94,40 @@ namespace DebtService.Service.Impl
                     }
                 }
             }
+            
 
-            if (remainingMoney > 0)
+            while (remainingMoney > 0)
             {
                 var isSnowball = string.Equals(strategy, "Snowball", StringComparison.OrdinalIgnoreCase);
                 var targetDebt = isSnowball
                     ? debts.Where(d => d.CurrentBalance > 0).OrderBy(d => d.CurrentBalance).FirstOrDefault()
                     : debts.Where(d => d.CurrentBalance > 0).OrderByDescending(d => d.InterestRate).FirstOrDefault();
 
-                if (targetDebt != null)
-                {
-                    var existingPayment = paymentsToMake.FirstOrDefault(p => p.DebtId == targetDebt.DebtId);
-                    decimal amountToAdd = remainingMoney;
+                if (targetDebt == null) break;
 
-                    if (existingPayment != null)
-                    {
-                        existingPayment.Amount += amountToAdd;
-                    }
-                    else
-                    {
-                        paymentsToMake.Add(new PaymentDto 
-                        { 
-                            DebtId = targetDebt.DebtId, 
-                            Amount = remainingMoney, 
-                            Date = date ?? DateTime.UtcNow,
-                            CalculationReportId = reportId ?? Guid.Empty
-                        });
-                    }
+                var existingPayment = paymentsToMake.FirstOrDefault(p => p.DebtId == targetDebt.DebtId);
+                
+                decimal amountNeeded = targetDebt.CurrentBalance;
+                
+                decimal paymentAmount = Math.Min(remainingMoney, amountNeeded);
+
+                if (existingPayment != null)
+                {
+                    existingPayment.Amount += paymentAmount;
                 }
+                else
+                {
+                    paymentsToMake.Add(new PaymentDto 
+                    { 
+                        DebtId = targetDebt.DebtId, 
+                        Amount = paymentAmount, 
+                        Date = targetDate, 
+                        CalculationReportId = reportId ?? Guid.Empty 
+                    });
+                }
+
+                targetDebt.CurrentBalance -= paymentAmount;
+                remainingMoney -= paymentAmount;
             }
             return await _paymentRepository.AddBulkPaymentsAsync(paymentsToMake, userId);
         }

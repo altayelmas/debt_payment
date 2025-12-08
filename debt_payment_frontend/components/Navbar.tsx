@@ -3,7 +3,7 @@
 import {useAuth} from "@/context/AuthContext";
 import {useRouter, Link} from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { LogOut, LineChart, LayoutDashboard } from "lucide-react"
+import { LogOut, LineChart, LayoutDashboard, BrainCircuit } from "lucide-react"
 import { useTranslations } from 'next-intl';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -24,8 +24,13 @@ export default function Navbar() {
             <div className="container mx-auto flex justify-between items-center p-4">
 
                 <div className="flex items-center gap-6 md:gap-8">
-                    <Link href="/dashboard" className="text-xl font-bold text-gray-900 dark:text-white hover:opacity-80 transition-colors flex items-center gap-2">
-                        {t('appTitle')}
+                    <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-90 transition-opacity group">
+                        <div className="bg-indigo-600 dark:bg-indigo-500 p-1.5 rounded-lg shadow-sm group-hover:bg-indigo-700 transition-colors">
+                            <BrainCircuit className="h-6 w-6 text-white" />
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            {t('appTitle')}
+                        </span>
                     </Link>
 
                     <div className="hidden md:flex items-center gap-6">
