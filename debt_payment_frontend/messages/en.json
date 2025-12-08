@@ -145,7 +145,7 @@
     }
   },
   "Navbar": {
-    "appTitle": "Debt Calculator",
+    "appTitle": "DebtLogic",
     "logoutButton": "Logout",
     "languageLabel": "Change language",
     "turkish": "Turkish (TR)",

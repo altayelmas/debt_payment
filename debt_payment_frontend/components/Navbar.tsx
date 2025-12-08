@@ -48,7 +48,6 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-4">
-                    {/* Email Rengi */}
                     <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block font-medium">
                         {userEmail}
                     </span>
