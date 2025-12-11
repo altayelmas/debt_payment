@@ -130,20 +130,52 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      #- name: Get Git SHA and Shorten
-      #  id: get_sha
-      #  run: |
-      #    SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-      #    echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+      - name: Get Git SHA and Shorten
+        id: get_sha
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Extract Version from Project File
+        id: get_version
+        run: |
+          SERVICE_NAME=${{ inputs.service }}
+          VERSION="0.0.1"
+
+          if [ "$SERVICE_NAME" == "frontend" ]; then
+            VERSION=$(jq -r .version ./debt_payment_frontend/package.json)
+          
+          else
+            FOLDER_NAME="$(tr '[:lower:]' '[:upper:]' <<< ${SERVICE_NAME:0:1})${SERVICE_NAME:1}"
+            
+            PROJECT_PATH="./debt_payment_backend/$FOLDER_NAME/$FOLDER_NAME.csproj"
+            
+            if [ -f "$PROJECT_PATH" ]; then
+              EXTRACTED=$(grep -oPm1 "(?<=<Version>)[^<]+" "$PROJECT_PATH" || echo "")
+              
+              if [ ! -z "$EXTRACTED" ]; then
+                 VERSION=$EXTRACTED
+              fi
+            else
+              echo "::warning::Project file not found at $PROJECT_PATH, using default version."
+            fi
+          fi
+
+          echo "Detected Version: $VERSION"
+          echo "prop_version=$VERSION" >> $GITHUB_OUTPUT 
+
 
       - name: Build the relevant service and push it as a ‘snapshot’.
         run: |
           SERVICE_NAME=${{ inputs.service }}
-          IMAGE_TAG="${{ inputs.version }}"
-          
+          PROJECT_VERSION=${{ steps.get_version.outputs.prop_version }}
+          SHORT_SHA=${{ steps.get_sha.outputs.sha }}
+
+          IMAGE_TAG="v${PROJECT_VERSION}-snapshot-${SHORT_SHA}"
+
           DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           
-          echo "Building $SERVICE_NAME with tag $IMAGE_TAG from main branch"
+          echo "Building $SERVICE_NAME with tag $IMAGE_TAG"
 
           if [ "$SERVICE_NAME" == "frontend" ]; then
             docker build -t $DOCKER_USERNAME/frontend:$IMAGE_TAG -f ./debt_payment_frontend/Dockerfile ./debt_payment_frontend
