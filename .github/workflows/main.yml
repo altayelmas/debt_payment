@@ -108,6 +108,25 @@ jobs:
           echo "Detected Version: $VERSION"
           echo "prop_version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Check if Release Already Exists
+        if: inputs.build_type == 'release'
+        run: |
+          SERVICE_NAME=${{ inputs.service }}
+          PROJECT_VERSION=${{ steps.get_version.outputs.prop_version }}
+          DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+          
+          FULL_IMAGE_NAME="$DOCKER_USERNAME/$SERVICE_NAME:v$PROJECT_VERSION"
+          
+          echo "Checking registry for $FULL_IMAGE_NAME..."
+          
+          if docker manifest inspect "$FULL_IMAGE_NAME" > /dev/null 2>&1; then
+            echo "::error:: CRITICAL: Version v$PROJECT_VERSION already exists for $SERVICE_NAME!"
+            echo "::error:: You must increment the <Version> in your .csproj file before releasing."
+            exit 1
+          else
+            echo "✅ Version v$PROJECT_VERSION is available. Proceeding..."
+          fi
+
       - name: Build and Push
         run: |
           SERVICE_NAME=${{ inputs.service }}
