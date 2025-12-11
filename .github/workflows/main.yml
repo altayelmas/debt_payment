@@ -141,9 +141,18 @@ jobs:
             VERSION=$(jq -r .version ./debt_payment_frontend/package.json)
           
           else
-            FOLDER_NAME="$(tr '[:lower:]' '[:upper:]' <<< ${SERVICE_NAME:0:1})${SERVICE_NAME:1}"
+            case $SERVICE_NAME in
+              "identityservice") FOLDER_NAME="IdentityService" ;;
+              "debtservice") FOLDER_NAME="DebtService" ;;
+              "calculationservice") FOLDER_NAME="CalculationService" ;;
+              "notificationservice") FOLDER_NAME="NotificationService" ;;
+              "apigateway") FOLDER_NAME="ApiGateway" ;;
+              *) FOLDER_NAME="$(tr '[:lower:]' '[:upper:]' <<< ${SERVICE_NAME:0:1})${SERVICE_NAME:1}" ;;
+            esac
             
             PROJECT_PATH="./debt_payment_backend/$FOLDER_NAME/$FOLDER_NAME.csproj"
+            
+            echo "Checking path: $PROJECT_PATH" # Debug için yazdırıyoruz
             
             if [ -f "$PROJECT_PATH" ]; then
               EXTRACTED=$(grep -oPm1 "(?<=<Version>)[^<]+" "$PROJECT_PATH" || echo "")
@@ -152,12 +161,12 @@ jobs:
                  VERSION=$EXTRACTED
               fi
             else
-              echo "::warning::Project file not found at $PROJECT_PATH, using default version."
+              echo "::warning::Project file not found at $PROJECT_PATH. Using default 0.0.1"
             fi
           fi
 
           echo "Detected Version: $VERSION"
-          echo "prop_version=$VERSION" >> $GITHUB_OUTPUT 
+          echo "prop_version=$VERSION" >> $GITHUB_OUTPUT
 
 
       - name: Build the relevant service and push it as a ‘snapshot’.
