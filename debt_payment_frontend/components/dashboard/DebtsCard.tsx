@@ -135,7 +135,6 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                                     />
                                 ))
                             ) : (
-                                /* COMPACT: Boş durum (Empty State) dikey boşlukları azaltıldı */
                                 <div className="flex flex-col items-center justify-center gap-2 text-center py-10 min-h-[200px]">
                                     <div className="h-12 w-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-1">
                                         <Inbox className="h-6 w-6 text-muted-foreground" />
@@ -153,8 +152,6 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                 </div>
             </CardContent>
 
-            {/* Pagination */}
-            {/* COMPACT: Footer padding azaltıldı ve min-height kaldırıldı */}
             <CardFooter className="p-2 border-t border-gray-100 dark:border-gray-800 mt-auto">
                 {!loadingDebts && pagedData && pagedData.totalPages > 1 && (
                     <Pagination className="justify-center">
@@ -162,7 +159,7 @@ export default function DebtsCard({ isAuthenticated, onDebtsChange }: DebtsCardP
                             <PaginationItem>
                                 <PaginationPrevious
                                     href="#"
-                                    size="sm" // Butonları küçültmek için (Shadcn UI destekliyorsa) veya className ile h-8
+                                    size="sm"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         handlePageChange(currentPage - 1);
